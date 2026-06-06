@@ -902,3 +902,4 @@ if __name__ == '__main__':
     print("\nâœ… WealthLens MX running at http://localhost:5000\n")
     app.run(debug=True, port=5000)
 
+
