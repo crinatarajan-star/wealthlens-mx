@@ -29,7 +29,9 @@ def _reload_ai_config():
     AI_MODEL    = os.environ.get('AI_MODEL', AI_MODEL)
 
 app = Flask(__name__)
-app.secret_key = os.environ.get('SECRET_KEY', 'wealthlens-mx-secret-2026-change-in-prod')
+app.secret_key = os.environ.get('SECRET_KEY')
+if not app.secret_key:
+    raise RuntimeError("SECRET_KEY environment variable is not set. Add it to your .env file.")
 app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(__file__), 'uploads')
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB
 

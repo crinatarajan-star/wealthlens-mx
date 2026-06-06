@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WealthLens MX — Register</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', 'Segoe UI', sans-serif;
+    background: #f4f6f9;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    padding: 2.5rem 2rem;
+    width: 100%;
+    max-width: 400px;
+  }
+  .logo {
+    text-align: center;
+    margin-bottom: 1.75rem;
+  }
+  .logo h1 { font-size: 1.6rem; font-weight: 700; color: #1D9E75; }
+  .logo p { color: #888; font-size: 0.9rem; margin-top: 4px; }
+  label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #444;
+    margin-bottom: 4px;
+    margin-top: 1rem;
+  }
+  input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border 0.2s;
+  }
+  input:focus { border-color: #1D9E75; }
+  .btn {
+    width: 100%;
+    padding: 11px;
+    background: #1D9E75;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 1.5rem;
+    transition: background 0.2s;
+  }
+  .btn:hover { background: #17866A; }
+  .footer {
+    text-align: center;
+    margin-top: 1.25rem;
+    font-size: 0.875rem;
+    color: #888;
+  }
+  .footer a { color: #1D9E75; text-decoration: none; font-weight: 500; }
+  .alert-error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+  }
+  .alert-success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+  }
+  .hint { font-size: 0.78rem; color: #aaa; margin-top: 3px; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">
+    <h1>💰 WealthLens MX</h1>
+    <p>Create your free account</p>
+  </div>
+
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      {% for msg in messages %}
+        {% if msg == 'registration_success' %}
+          <div class="alert-success">✅ Account created! Please log in.</div>
+        {% elif msg == 'email_exists' %}
+          <div class="alert-error">⚠️ That email is already registered. <a href="/login">Log in instead?</a></div>
+        {% elif msg == 'fields_required' %}
+          <div class="alert-error">⚠️ All fields are required.</div>
+        {% else %}
+          <div class="alert-error">⚠️ Something went wrong. Please try again.</div>
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <form method="POST" action="/register">
+    <label>Full name</label>
+    <input type="text" name="name" placeholder="Natarajan Narayanan" required autofocus>
+
+    <label>Email address</label>
+    <input type="email" name="email" placeholder="you@example.com" required>
+
+    <label>Password</label>
+    <input type="password" name="password" placeholder="••••••••" minlength="6" required>
+    <div class="hint">At least 6 characters</div>
+
+    <button type="submit" class="btn">Create Account</button>
+  </form>
+
+  <div class="footer">
+    Already have an account? <a href="/login">Sign in</a>
+  </div>
+</div>
+</body>
+</html>

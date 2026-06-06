@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WealthLens MX — {% if lang=='es' %}Configuración{% else %}Settings{% endif %}</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#C9A84C;--gold-light:#F5EFD8;--gold-dark:#8A6A1E;
+  --ink:#0E0E0E;--ink-mid:#2C2C2A;--ink-soft:#5F5E5A;
+  --cream:#FAF7F2;--cream-border:#E8E3D8;--surface:#F2EEE6;
+  --white:#FFFFFF;
+  --green:#1D9E75;--green-light:#E1F5EE;
+  --red:#D85A30;--red-light:#FAECE7;
+  --blue:#185FA5;--blue-light:#E6F1FB;
+  --purple:#534AB7;--purple-light:#EEEDFE;
+  --sidebar:220px;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--ink);display:flex;min-height:100vh;font-size:15px}
+
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sidebar);background:var(--ink);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:50;padding:0}
+.sidebar-logo{padding:1.5rem 1.25rem 1rem;border-bottom:1px solid rgba(255,255,255,.08)}
+.sidebar-logo a{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:600;color:#fff;text-decoration:none}
+.sidebar-logo a span{color:var(--gold)}
+.sidebar-user{padding:.85rem 1.25rem;border-bottom:1px solid rgba(255,255,255,.08)}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:var(--gold);display:inline-flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:600;color:var(--ink);margin-right:8px;vertical-align:middle}
+.user-name{font-size:.82rem;color:rgba(255,255,255,.75);vertical-align:middle}
+nav.sidebar-nav{flex:1;padding:1rem 0;overflow-y:auto}
+.nav-item{display:flex;align-items:center;gap:10px;padding:.65rem 1.25rem;font-size:.85rem;color:rgba(255,255,255,.55);cursor:pointer;transition:all .2s;border-left:3px solid transparent;text-decoration:none}
+.nav-item:hover{color:#fff;background:rgba(255,255,255,.05)}
+.nav-item.active{color:#fff;border-left-color:var(--gold);background:rgba(255,255,255,.07)}
+.nav-icon{width:16px;height:16px;opacity:.7;flex-shrink:0}
+.nav-item.active .nav-icon{opacity:1}
+.sidebar-bottom{padding:1rem 1.25rem;border-top:1px solid rgba(255,255,255,.08)}
+.lang-switch{display:flex;gap:6px;margin-bottom:.75rem}
+.lang-btn{flex:1;text-align:center;padding:.3rem;font-size:.72rem;border-radius:6px;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.5);text-decoration:none;transition:all .2s}
+.lang-btn.active,.lang-btn:hover{background:rgba(255,255,255,.1);color:#fff}
+.logout-btn{display:block;text-align:center;padding:.45rem;font-size:.78rem;color:rgba(255,255,255,.4);text-decoration:none;transition:color .2s}
+.logout-btn:hover{color:#fff}
+
+/* ── MAIN ── */
+.main{margin-left:var(--sidebar);flex:1;padding:1.75rem;min-height:100vh}
+
+/* ── TOP BAR ── */
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.75rem;flex-wrap:wrap;gap:.75rem}
+.page-title{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:600;color:var(--ink)}
+
+/* ── SETTINGS LAYOUT ── */
+.settings-layout{display:grid;grid-template-columns:200px 1fr;gap:1.5rem;align-items:start}
+@media(max-width:840px){.settings-layout{grid-template-columns:1fr}}
+
+/* ── SETTINGS NAV ── */
+.settings-nav{background:var(--white);border:1px solid var(--cream-border);border-radius:16px;overflow:hidden;position:sticky;top:1.75rem}
+.snav-item{display:flex;align-items:center;gap:10px;padding:.7rem 1.1rem;font-size:.83rem;color:var(--ink-soft);cursor:pointer;transition:all .2s;border-left:3px solid transparent}
+.snav-item:hover{background:var(--cream);color:var(--ink)}
+.snav-item.active{color:var(--gold-dark);border-left-color:var(--gold);background:var(--gold-light);font-weight:500}
+.snav-item .sn-icon{font-size:.95rem;width:20px;text-align:center;flex-shrink:0}
+.snav-divider{height:1px;background:var(--cream-border);margin:.25rem 0}
+
+/* ── SETTINGS PANELS ── */
+.settings-panel{display:none}
+.settings-panel.active{display:flex;flex-direction:column;gap:1.25rem}
+#panelsContainer{min-height:400px}
+
+/* ── CARD ── */
+.card{background:var(--white);border:1px solid var(--cream-border);border-radius:16px;padding:1.5rem}
+.card-title{font-size:.9rem;font-weight:600;color:var(--ink);margin-bottom:1.25rem;display:flex;align-items:center;gap:.5rem}
+.card-title .ct-icon{font-size:1.1rem}
+.card-sub{font-size:.78rem;color:var(--ink-soft);margin-top:-.9rem;margin-bottom:1.1rem}
+
+/* ── FORM ELEMENTS ── */
+.field{margin-bottom:1rem}
+.field:last-child{margin-bottom:0}
+label.flabel{display:block;font-size:.78rem;color:var(--ink-soft);margin-bottom:.35rem;font-weight:400}
+input.finput,select.fselect,textarea.ftextarea{
+  width:100%;padding:.6rem .85rem;border:1px solid var(--cream-border);border-radius:10px;
+  font-family:'DM Sans',sans-serif;font-size:.875rem;color:var(--ink);background:var(--cream);
+  outline:none;transition:border-color .2s
+}
+input.finput:focus,select.fselect:focus,textarea.ftextarea:focus{border-color:var(--gold)}
+textarea.ftextarea{resize:vertical;min-height:80px}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+@media(max-width:560px){.field-row{grid-template-columns:1fr}}
+
+/* ── BUTTONS ── */
+.btn-primary{font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:500;padding:.6rem 1.25rem;background:var(--ink);color:#fff;border:none;border-radius:10px;cursor:pointer;transition:opacity .2s}
+.btn-primary:hover{opacity:.85}
+.btn-outline{font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:500;padding:.6rem 1.25rem;background:transparent;color:var(--ink);border:1px solid var(--cream-border);border-radius:10px;cursor:pointer;transition:all .2s}
+.btn-outline:hover{border-color:var(--gold);background:var(--gold-light)}
+.btn-danger{font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:500;padding:.6rem 1.25rem;background:transparent;color:var(--red);border:1px solid var(--red-light);border-radius:10px;cursor:pointer;transition:all .2s}
+.btn-danger:hover{background:var(--red-light)}
+.btn-row{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;margin-top:1.1rem}
+
+/* ── TOGGLE SWITCH ── */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:.6rem 0;border-bottom:1px solid var(--surface)}
+.toggle-row:last-child{border-bottom:none}
+.toggle-info .ti-label{font-size:.85rem;font-weight:500;color:var(--ink)}
+.toggle-info .ti-desc{font-size:.73rem;color:var(--ink-soft);margin-top:2px}
+.sw{position:relative;width:38px;height:20px;flex-shrink:0}
+.sw input{opacity:0;width:0;height:0}
+.swslider{position:absolute;inset:0;background:var(--cream-border);border-radius:20px;cursor:pointer;transition:.3s}
+.swslider::before{content:'';position:absolute;height:14px;width:14px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s}
+.sw input:checked + .swslider{background:var(--green)}
+.sw input:checked + .swslider::before{transform:translateX(18px)}
+
+/* ── COLOR SWATCHES ── */
+.swatch-row{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.5rem}
+.swatch{width:32px;height:32px;border-radius:8px;cursor:pointer;transition:transform .15s;border:2px solid transparent}
+.swatch:hover{transform:scale(1.12)}
+.swatch.selected{border-color:var(--ink);box-shadow:0 0 0 2px var(--white) inset}
+
+/* ── THEME CARDS ── */
+.theme-options{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:.75rem;margin-top:.5rem}
+.theme-card{border:2px solid var(--cream-border);border-radius:12px;padding:.85rem;cursor:pointer;transition:all .2s;text-align:center}
+.theme-card:hover{border-color:var(--gold)}
+.theme-card.selected{border-color:var(--gold);background:var(--gold-light)}
+.theme-card .tc-preview{width:100%;height:48px;border-radius:7px;margin-bottom:.5rem;display:flex;overflow:hidden}
+.theme-card .tc-name{font-size:.75rem;font-weight:500;color:var(--ink)}
+
+/* ── CURRENCY GRID ── */
+.currency-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:.6rem;margin-top:.5rem}
+.cur-btn{padding:.55rem .5rem;border:1.5px solid var(--cream-border);border-radius:9px;cursor:pointer;text-align:center;transition:all .2s;background:var(--cream);font-family:'DM Sans',sans-serif}
+.cur-btn:hover{border-color:var(--gold);background:var(--gold-light)}
+.cur-btn.selected{border-color:var(--gold);background:var(--gold-light)}
+.cur-btn .cur-flag{font-size:1.1rem;display:block;margin-bottom:3px}
+.cur-btn .cur-code{font-size:.73rem;font-weight:600;color:var(--ink)}
+.cur-btn .cur-sym{font-size:.68rem;color:var(--ink-soft)}
+
+/* ── LANG OPTIONS ── */
+.lang-options{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-top:.5rem}
+.lang-opt{padding:.85rem 1rem;border:2px solid var(--cream-border);border-radius:12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.65rem}
+.lang-opt:hover{border-color:var(--gold);background:var(--gold-light)}
+.lang-opt.selected{border-color:var(--gold);background:var(--gold-light)}
+.lang-opt .lo-flag{font-size:1.4rem}
+.lang-opt .lo-label{font-size:.85rem;font-weight:500;color:var(--ink)}
+.lang-opt .lo-sub{font-size:.7rem;color:var(--ink-soft)}
+
+/* ── SECURITY ── */
+.security-score{display:flex;align-items:center;gap:1rem;padding:1rem;background:var(--surface);border-radius:12px;margin-bottom:1rem}
+.score-ring{position:relative;width:56px;height:56px;flex-shrink:0}
+.score-ring svg{transform:rotate(-90deg)}
+.score-val{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:600;color:var(--ink)}
+.score-details .sd-label{font-size:.82rem;font-weight:500;color:var(--ink)}
+.score-details .sd-sub{font-size:.73rem;color:var(--ink-soft);margin-top:2px}
+
+/* ── DANGER ZONE ── */
+.danger-zone{border:1px solid #F0997B;border-radius:12px;padding:1.1rem;background:#FFFAF8}
+.danger-title{font-size:.82rem;font-weight:600;color:var(--red);margin-bottom:.5rem;display:flex;align-items:center;gap:.4rem}
+.danger-desc{font-size:.78rem;color:var(--ink-soft);line-height:1.55;margin-bottom:.85rem}
+
+/* ── ALERT ── */
+.alert-success{background:var(--green-light);color:#0F6E56;border:1px solid #A6DFCE;border-radius:8px;padding:.6rem 1rem;font-size:.82rem;margin-bottom:1rem;display:none}
+.alert-error{background:var(--red-light);color:#993C1D;border:1px solid #F0997B;border-radius:8px;padding:.6rem 1rem;font-size:.82rem;margin-bottom:1rem;display:none}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--ink);color:#fff;padding:.65rem 1.25rem;border-radius:10px;font-size:.83rem;z-index:999;opacity:0;transform:translateY(10px);transition:all .3s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.card{animation:fadeUp .35s ease both}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <a href="/dashboard">Wealth<span>Lens</span> <span style="font-size:.65rem;color:rgba(255,255,255,.35);font-family:'DM Sans',sans-serif;font-weight:300;vertical-align:middle">MX</span></a>
+  </div>
+  <div class="sidebar-user">
+    <span class="user-avatar" id="avatarInitials">?</span>
+    <span class="user-name" id="sidebarName">...</span>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="/dashboard" class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      <span>{% if lang=='es' %}Resumen{% else %}Overview{% endif %}</span>
+    </a>
+    <a href="/dashboard#assets" class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>
+      <span>{% if lang=='es' %}Patrimonio{% else %}Assets{% endif %}</span>
+    </a>
+    <a href="/dashboard#goals" class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+      <span>{% if lang=='es' %}Metas{% else %}Goals{% endif %}</span>
+    </a>
+    <a href="/dashboard#transactions" class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+      <span>{% if lang=='es' %}Movimientos{% else %}Transactions{% endif %}</span>
+    </a>
+    <a href="/dashboard#import" class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+      <span>{% if lang=='es' %}Importar{% else %}Import{% endif %}</span>
+    </a>
+    <a href="/ai" class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2a10 10 0 110 20A10 10 0 0112 2zm0 0v4m0 14v-4m10-6h-4M6 12H2m15.07-7.07l-2.83 2.83M8.76 15.24l-2.83 2.83m0-12.14l2.83 2.83m6.48 6.48l2.83 2.83"/></svg>
+      <span>{% if lang=='es' %}Asesor IA{% else %}AI Advisor{% endif %}</span>
+    </a>
+    <a href="/financial-dashboard" class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3v18h18"/><path d="M18 9l-5 5-2-2-4 4"/></svg>
+      <span>{% if lang=='es' %}Dashboard IA{% else %}AI Dashboard{% endif %}</span>
+    </a>
+    <a href="/settings" class="nav-item active">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      <span>{% if lang=='es' %}Configuración{% else %}Settings{% endif %}</span>
+    </a>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="lang-switch">
+      <a href="/set_lang/es" class="lang-btn {% if lang=='es' %}active{% endif %}">🇲🇽 ES</a>
+      <a href="/set_lang/en" class="lang-btn {% if lang=='en' %}active{% endif %}">🇺🇸 EN</a>
+    </div>
+    <a href="/logout" class="logout-btn">{% if lang=='es' %}Cerrar sesión{% else %}Sign out{% endif %}</a>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <div>
+      <div class="page-title">{% if lang=='es' %}⚙️ Configuración{% else %}⚙️ Settings{% endif %}</div>
+      <div style="font-size:.8rem;color:var(--ink-soft);margin-top:2px">
+        {% if lang=='es' %}Personaliza tu experiencia en WealthLens MX{% else %}Customize your WealthLens MX experience{% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="settings-layout">
+
+    <!-- SETTINGS SIDEBAR NAV -->
+    <div class="settings-nav">
+      <div class="snav-item active" onclick="switchPanel('profile',this)">
+        <span class="sn-icon">👤</span>
+        <span>{% if lang=='es' %}Perfil{% else %}Profile{% endif %}</span>
+      </div>
+      <div class="snav-item" onclick="switchPanel('appearance',this)">
+        <span class="sn-icon">🎨</span>
+        <span>{% if lang=='es' %}Apariencia{% else %}Appearance{% endif %}</span>
+      </div>
+      <div class="snav-item" onclick="switchPanel('currency',this)">
+        <span class="sn-icon">💱</span>
+        <span>{% if lang=='es' %}Moneda{% else %}Currency{% endif %}</span>
+      </div>
+      <div class="snav-item" onclick="switchPanel('language',this)">
+        <span class="sn-icon">🌐</span>
+        <span>{% if lang=='es' %}Idioma{% else %}Language{% endif %}</span>
+      </div>
+      <div class="snav-divider"></div>
+      <div class="snav-item" onclick="switchPanel('security',this)">
+        <span class="sn-icon">🔐</span>
+        <span>{% if lang=='es' %}Seguridad{% else %}Security{% endif %}</span>
+      </div>
+      <div class="snav-item" onclick="switchPanel('notifications',this)">
+        <span class="sn-icon">🔔</span>
+        <span>{% if lang=='es' %}Notificaciones{% else %}Notifications{% endif %}</span>
+      </div>
+      <div class="snav-item" onclick="switchPanel('privacy',this)">
+        <span class="sn-icon">🛡️</span>
+        <span>{% if lang=='es' %}Privacidad{% else %}Privacy{% endif %}</span>
+      </div>
+      <div class="snav-divider"></div>
+      <div class="snav-item" onclick="switchPanel('danger',this)">
+        <span class="sn-icon">⚠️</span>
+        <span style="color:var(--red)">{% if lang=='es' %}Zona peligrosa{% else %}Danger zone{% endif %}</span>
+      </div>
+    </div>
+
+    <!-- PANELS CONTAINER -->
+    <div id="panelsContainer">
+
+      <!-- ══ PROFILE PANEL ══ -->
+      <div class="settings-panel active" id="panel-profile">
+        <div class="card">
+          <div class="card-title"><span class="ct-icon">👤</span> {% if lang=='es' %}Información Personal{% else %}Personal Information{% endif %}</div>
+          <div class="card-sub">{% if lang=='es' %}Actualiza tus datos básicos de cuenta.{% else %}Update your basic account details.{% endif %}</div>
+
+          <div id="profileAlertSuccess" class="alert-success">{% if lang=='es' %}✓ Perfil actualizado correctamente.{% else %}✓ Profile updated successfully.{% endif %}</div>
+          <div id="profileAlertError" class="alert-error">{% if lang=='es' %}Error al guardar los cambios.{% else %}Error saving changes.{% endif %}</div>
+
+          <!-- Avatar section -->
+          <div style="display:flex;align-items:center;gap:1.25rem;margin-bottom:1.25rem;padding:1rem;background:var(--surface);border-radius:12px">
+            <div id="bigAvatar" style="width:64px;height:64px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:600;color:var(--ink);flex-shrink:0">?</div>
+            <div>
+              <div style="font-size:.85rem;font-weight:500;color:var(--ink)" id="profileNameDisplay">...</div>
+              <div style="font-size:.75rem;color:var(--ink-soft);margin-top:2px" id="profileEmailDisplay">...</div>
+              <div style="margin-top:.6rem">
+                <div style="font-size:.72rem;color:var(--ink-soft)">{% if lang=='es' %}Color de avatar{% else %}Avatar color{% endif %}</div>
+                <div class="swatch-row" id="avatarSwatches">
+                  <div class="swatch selected" style="background:#C9A84C" data-color="#C9A84C" onclick="selectAvatarColor(this)"></div>
+                  <div class="swatch" style="background:#1D9E75" data-color="#1D9E75" onclick="selectAvatarColor(this)"></div>
+                  <div class="swatch" style="background:#185FA5" data-color="#185FA5" onclick="selectAvatarColor(this)"></div>
+                  <div class="swatch" style="background:#534AB7" data-color="#534AB7" onclick="selectAvatarColor(this)"></div>
+                  <div class="swatch" style="background:#D85A30" data-color="#D85A30" onclick="selectAvatarColor(this)"></div>
+                  <div class="swatch" style="background:#0E0E0E" data-color="#0E0E0E" onclick="selectAvatarColor(this)"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label class="flabel">{% if lang=='es' %}Nombre completo{% else %}Full name{% endif %}</label>
+              <input class="finput" type="text" id="editName" placeholder="{% if lang=='es' %}Tu nombre{% else %}Your name{% endif %}">
+            </div>
+            <div class="field">
+              <label class="flabel">{% if lang=='es' %}Correo electrónico{% else %}Email{% endif %}</label>
+              <input class="finput" type="email" id="editEmail" placeholder="correo@ejemplo.com">
+            </div>
+          </div>
+          <div class="field">
+            <label class="flabel">{% if lang=='es' %}Ciudad / Estado{% else %}City / State{% endif %}</label>
+            <input class="finput" type="text" id="editCity" placeholder="{% if lang=='es' %}ej. Ciudad de México, CDMX{% else %}e.g. Mexico City, CDMX{% endif %}">
+          </div>
+          <div class="field">
+            <label class="flabel">{% if lang=='es' %}Ocupación{% else %}Occupation{% endif %}</label>
+            <select class="fselect" id="editOccupation">
+              <option value="">{% if lang=='es' %}Selecciona...{% else %}Select...{% endif %}</option>
+              <option value="empleado">{% if lang=='es' %}Empleado{% else %}Employee{% endif %}</option>
+              <option value="freelance">{% if lang=='es' %}Freelance / Autónomo{% else %}Freelance / Self-employed{% endif %}</option>
+              <option value="empresario">{% if lang=='es' %}Empresario / Dueño de negocio{% else %}Business owner{% endif %}</option>
+              <option value="estudiante">{% if lang=='es' %}Estudiante{% else %}Student{% endif %}</option>
+              <option value="jubilado">{% if lang=='es' %}Jubilado{% else %}Retired{% endif %}</option>
+              <option value="otro">{% if lang=='es' %}Otro{% else %}Other{% endif %}</option>
+            </select>
+          </div>
+          <div class="btn-row">
+            <button class="btn-primary" onclick="saveProfile()">{% if lang=='es' %}Guardar cambios{% else %}Save changes{% endif %}</button>
+            <button class="btn-outline" onclick="loadProfile()">{% if lang=='es' %}Descartar{% else %}Discard{% endif %}</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ APPEARANCE PANEL ══ -->
+      <div class="settings-panel" id="panel-appearance">
+        <div class="card">
+          <div class="card-title"><span class="ct-icon">🎨</span> {% if lang=='es' %}Tema de color{% else %}Color theme{% endif %}</div>
+          <div class="card-sub">{% if lang=='es' %}Elige el tema visual de la aplicación.{% else %}Choose the visual theme of the app.{% endif %}</div>
+          <div class="theme-options">
+            <div class="theme-card selected" data-theme="cream" onclick="selectTheme(this,'cream')">
+              <div class="tc-preview">
+                <div style="width:40%;background:#0E0E0E"></div>
+                <div style="flex:1;background:#FAF7F2"></div>
+              </div>
+              <div class="tc-name">{% if lang=='es' %}Crema (Default){% else %}Cream (Default){% endif %}</div>
+            </div>
+            <div class="theme-card" data-theme="dark" onclick="selectTheme(this,'dark')">
+              <div class="tc-preview">
+                <div style="width:40%;background:#1a1a2e"></div>
+                <div style="flex:1;background:#16213e"></div>
+              </div>
+              <div class="tc-name">{% if lang=='es' %}Oscuro{% else %}Dark{% endif %}</div>
+            </div>
+            <div class="theme-card" data-theme="forest" onclick="selectTheme(this,'forest')">
+              <div class="tc-preview">
+                <div style="width:40%;background:#1a3a2a"></div>
+                <div style="flex:1;background:#f0f7f4"></div>
+              </div>
+              <div class="tc-name">{% if lang=='es' %}Bosque{% else %}Forest{% endif %}</div>
+            </div>
+            <div class="theme-card" data-theme="ocean" onclick="selectTheme(this,'ocean')">
+              <div class="tc-preview">
+                <div style="width:40%;background:#0c2340"></div>
+                <div style="flex:1;background:#f0f6ff"></div>
+              </div>
+              <div class="tc-name">Ocean</div>
+            </div>
+          </div>
+          <div class="btn-row" style="margin-top:.85rem">
+            <button class="btn-primary" onclick="saveAppearance()">{% if lang=='es' %}Aplicar tema{% else %}Apply theme{% endif %}</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><span class="ct-icon">📐</span> {% if lang=='es' %}Preferencias de visualización{% else %}Display preferences{% endif %}</div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="ti-label">{% if lang=='es' %}Modo compacto{% else %}Compact mode{% endif %}</div>
+              <div class="ti-desc">{% if lang=='es' %}Reduce el espaciado para ver más contenido{% else %}Reduce spacing to see more content{% endif %}</div>
+            </div>
+            <label class="sw"><input type="checkbox" id="togCompact" onchange="savePref('compact',this.checked)"><span class="swslider"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="ti-label">{% if lang=='es' %}Animaciones{% else %}Animations{% endif %}</div>
+              <div class="ti-desc">{% if lang=='es' %}Efectos de transición y movimiento{% else %}Transition and motion effects{% endif %}</div>
+            </div>
+            <label class="sw"><input type="checkbox" id="togAnimations" checked onchange="savePref('animations',this.checked)"><span class="swslider"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="ti-label">{% if lang=='es' %}Números en modo privado por defecto{% else %}Private numbers by default{% endif %}</div>
+              <div class="ti-desc">{% if lang=='es' %}Oculta valores al entrar al dashboard{% else %}Hides values when entering the dashboard{% endif %}</div>
+            </div>
+            <label class="sw"><input type="checkbox" id="togPrivacyDefault" onchange="savePref('privacyDefault',this.checked)"><span class="swslider"></span></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ CURRENCY PANEL ══ -->
+      <div class="settings-panel" id="panel-currency">
+        <div class="card">
+          <div class="card-title"><span class="ct-icon">💱</span> {% if lang=='es' %}Moneda predeterminada{% else %}Default currency{% endif %}</div>
+          <div class="card-sub">{% if lang=='es' %}Todos los valores se mostrarán en esta moneda. La conversión usa tasas aproximadas.{% else %}All values will be displayed in this currency. Conversion uses approximate rates.{% endif %}</div>
+
+          <div class="currency-grid">
+            <button class="cur-btn selected" data-cur="MXN" onclick="selectCurrency(this,'MXN')">
+              <span class="cur-flag">🇲🇽</span>
+              <span class="cur-code">MXN</span>
+              <span class="cur-sym">$</span>
+            </button>
+            <button class="cur-btn" data-cur="USD" onclick="selectCurrency(this,'USD')">
+              <span class="cur-flag">🇺🇸</span>
+              <span class="cur-code">USD</span>
+              <span class="cur-sym">US$</span>
+            </button>
+            <button class="cur-btn" data-cur="EUR" onclick="selectCurrency(this,'EUR')">
+              <span class="cur-flag">🇪🇺</span>
+              <span class="cur-code">EUR</span>
+              <span class="cur-sym">€</span>
+            </button>
+            <button class="cur-btn" data-cur="CAD" onclick="selectCurrency(this,'CAD')">
+              <span class="cur-flag">🇨🇦</span>
+              <span class="cur-code">CAD</span>
+              <span class="cur-sym">CA$</span>
+            </button>
+            <button class="cur-btn" data-cur="GBP" onclick="selectCurrency(this,'GBP')">
+              <span class="cur-flag">🇬🇧</span>
+              <span class="cur-code">GBP</span>
+              <span class="cur-sym">£</span>
+            </button>
+          </div>
+
+          <div style="margin-top:1.1rem;padding:.85rem 1rem;background:var(--surface);border-radius:10px;font-size:.78rem;color:var(--ink-soft);line-height:1.6">
+            💡 {% if lang=='es' %}Tasas de referencia aproximadas (MXN): USD ≈ $17.15 · EUR ≈ $18.60 · CAD ≈ $12.60 · GBP ≈ $21.70. Las tasas reales pueden variar.{% else %}Approximate reference rates (to MXN): 1 USD ≈ $17.15 · 1 EUR ≈ $18.60 · 1 CAD ≈ $12.60 · 1 GBP ≈ $21.70. Actual rates may vary.{% endif %}
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-primary" onclick="saveCurrency()">{% if lang=='es' %}Guardar moneda{% else %}Save currency{% endif %}</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ LANGUAGE PANEL ══ -->
+      <div class="settings-panel" id="panel-language">
+        <div class="card">
+          <div class="card-title"><span class="ct-icon">🌐</span> {% if lang=='es' %}Idioma de la interfaz{% else %}Interface language{% endif %}</div>
+          <div class="card-sub">{% if lang=='es' %}Cambia el idioma de todo el contenido de WealthLens MX.{% else %}Change the language for all WealthLens MX content.{% endif %}</div>
+
+          <div class="lang-options">
+            <div class="lang-opt {% if lang=='es' %}selected{% endif %}" onclick="selectLang(this,'es')">
+              <span class="lo-flag">🇲🇽</span>
+              <div>
+                <div class="lo-label">Español</div>
+                <div class="lo-sub">Español (México)</div>
+              </div>
+            </div>
+            <div class="lang-opt {% if lang=='en' %}selected{% endif %}" onclick="selectLang(this,'en')">
+              <span class="lo-flag">🇺🇸</span>
+              <div>
+                <div class="lo-label">English</div>
+                <div class="lo-sub">English (US)</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-primary" id="applyLangBtn" onclick="applyLanguage()">{% if lang=='es' %}Aplicar idioma{% else %}Apply language{% endif %}</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><span class="ct-icon">📅</span> {% if lang=='es' %}Formato regional{% else %}Regional format{% endif %}</div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="ti-label">{% if lang=='es' %}Formato de fecha{% else %}Date format{% endif %}</div>
+              <div class="ti-desc">DD/MM/YYYY {% if lang=='es' %}(estilo México){% else %}(Mexico style){% endif %}</div>
+            </div>
+            <label class="sw"><input type="checkbox" id="togDateFmt" checked onchange="savePref('dateFormat',this.checked?'dmy':'mdy')"><span class="swslider"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="ti-label">{% if lang=='es' %}Separador de miles{% else %}Thousands separator{% endif %}</div>
+              <div class="ti-desc">{% if lang=='es' %}Usar punto (.) como separador de miles{% else %}Use comma (,) as thousands separator{% endif %}</div>
+            </div>
+            <label class="sw"><input type="checkbox" id="togThousands" checked onchange="savePref('thousands',this.checked)"><span class="swslider"></span></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ SECURITY PANEL ══ -->
+      <div class="settings-panel" id="panel-security">
+
+        <!-- Security score -->
+        <div class="card">
+          <div class="card-title"><span class="ct-icon">🔐</span> {% if lang=='es' %}Estado de seguridad{% else %}Security status{% endif %}</div>
+          <div class="security-score">
+            <div class="score-ring">
+              <svg width="56" height="56" viewBox="0 0 56 56">
+                <circle cx="28" cy="28" r="22" fill="none" stroke="var(--cream-border)" stroke-width="5"/>
+                <circle cx="28" cy="28" r="22" fill="none" stroke="var(--gold)" stroke-width="5"
+                  stroke-dasharray="138.2" stroke-dashoffset="41.5" stroke-linecap="round"/>
+              </svg>
+              <div class="score-val">70</div>
+            </div>
+            <div class="score-details">
+              <div class="sd-label">{% if lang=='es' %}Seguridad Buena{% else %}Good Security{% endif %}</div>
+              <div class="sd-sub">{% if lang=='es' %}Activa 2FA para llegar a 100%{% else %}Enable 2FA to reach 100%{% endif %}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Change password -->
+        <div class="card">
+          <div class="card-title"><span class="ct-icon">🔑</span> {% if lang=='es' %}Cambiar contraseña{% else %}Change password{% endif %}</div>
+
+          <div id="pwAlertSuccess" class="alert-success">{% if lang=='es' %}✓ Contraseña actualizada correctamente.{% else %}✓ Password updated successfully.{% endif %}</div>
+          <div id="pwAlertError" class="alert-error">{% if lang=='es' %}Contraseña actual incorrecta o las nuevas no coinciden.{% else %}Current password incorrect or new passwords don't match.{% endif %}</div>
+
+          <div class="field">
+            <label class="flabel">{% if lang=='es' %}Contraseña actual{% else %}Current password{% endif %}</label>
+            <input class="finput" type="password" id="pwCurrent" placeholder="••••••••" autocomplete="current-password">
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label class="flabel">{% if lang=='es' %}Nueva contraseña{% else %}New password{% endif %}</label>
+              <input class="finput" type="password" id="pwNew" placeholder="••••••••" autocomplete="new-password" oninput="checkPwStrength(this.value)">
+            </div>
+            <div class="field">
+              <label class="flabel">{% if lang=='es' %}Confirmar nueva{% else %}Confirm new{% endif %}</label>
+              <input class="finput" type="password" id="pwConfirm" placeholder="••••••••" autocomplete="new-password">
+            </div>
+          </div>
+
+          <!-- Password strength bar -->
+          <div style="margin-top:-.3rem;margin-bottom:.8rem">
+            <div style="height:4px;background:var(--cream-border);border-radius:2px;overflow:hidden">
+              <div id="pwStrengthBar" style="height:100%;width:0%;border-radius:2px;transition:all .3s;background:var(--red)"></div>
+            </div>
+            <div id="pwStrengthLabel" style="font-size:.7rem;color:var(--ink-soft);margin-top:3px"></div>
+          </div>
+
+          <div style="font-size:.76rem;color:var(--ink-soft);margin-bottom:1rem;line-height:1.6;padding:.7rem;background:var(--surface);border-radius:8px">
+            {% if lang=='es' %}
+            ✓ Mínimo 8 caracteres &nbsp;·&nbsp; ✓ Una mayúscula &nbsp;·&nbsp; ✓ Un número &nbsp;·&nbsp; ✓ Un carácter especial
+            {% else %}
+            ✓ Minimum 8 characters &nbsp;·&nbsp; ✓ One uppercase &nbsp;·&nbsp; ✓ One number &nbsp;·&nbsp; ✓ One special character
+            {% endif %}
+          </div>
+          <div class="btn-row">
+            <button class="btn-primary" onclick="changePassword()">{% if lang=='es' %}Cambiar contraseña{% else %}Change password{% endif %}</button>
+          </div>
+        </div>
+
+        <!-- Sessions -->
+        <div class="card">
+          <div class="card-title"><span class="ct-icon">📱</span> {% if lang=='es' %}Sesiones activas{% else %}Active sessions{% endif %}</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:.75rem 0;border-bottom:1px solid var(--surface)">
+            <div>
+              <div style="font-size:.83rem;font-weight:500;color:var(--ink)">{% if lang=='es' %}Sesión actual — Navegador web{% else %}Current session — Web browser{% endif %}</div>
+              <div style="font-size:.72rem;color:var(--ink-soft);margin-top:2px">{% if lang=='es' %}Activa ahora · IP oculta{% else %}Active now · IP hidden{% endif %}</div>
+            </div>
+            <span style="font-size:.68rem;padding:.2rem .55rem;border-radius:100px;background:var(--green-light);color:#0F6E56;font-weight:500">{% if lang=='es' %}Actual{% else %}Current{% endif %}</span>
+          </div>
+          <div class="btn-row" style="margin-top:.85rem">
+            <button class="btn-danger" onclick="confirmLogoutAll()">{% if lang=='es' %}Cerrar todas las sesiones{% else %}Sign out all sessions{% endif %}</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ NOTIFICATIONS PANEL ══ -->
+      <div class="settings-panel" id="panel-notifications">
+        <div class="card">
+          <div class="card-title"><span class="ct-icon">🔔</span> {% if lang=='es' %}Preferencias de notificaciones{% else %}Notification preferences{% endif %}</div>
+          <div class="card-sub">{% if lang=='es' %}Controla qué alertas y recordatorios recibes.{% else %}Control which alerts and reminders you receive.{% endif %}</div>
+
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="ti-label">{% if lang=='es' %}Resumen semanal{% else %}Weekly summary{% endif %}</div>
+              <div class="ti-desc">{% if lang=='es' %}Resumen de ingresos, gastos y ahorro cada lunes{% else %}Income, expense and savings recap every Monday{% endif %}</div>
+            </div>
+            <label class="sw"><input type="checkbox" id="togWeekly" checked onchange="savePref('notifWeekly',this.checked)"><span class="swslider"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="ti-label">{% if lang=='es' %}Alertas de metas{% else %}Goal alerts{% endif %}</div>
+              <div class="ti-desc">{% if lang=='es' %}Te avisamos cuando estés cerca de alcanzar una meta{% else %}Alert when you are close to reaching a goal{% endif %}</div>
+            </div>
+            <label class="sw"><input type="checkbox" id="togGoals" checked onchange="savePref('notifGoals',this.checked)"><span class="swslider"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="ti-label">{% if lang=='es' %}Alertas de gasto inusual{% else %}Unusual spending alerts{% endif %}</div>
+              <div class="ti-desc">{% if lang=='es' %}Detectamos patrones de gasto fuera de lo normal{% else %}We detect spending patterns outside the norm{% endif %}</div>
+            </div>
+            <label class="sw"><input type="checkbox" id="togSpend" onchange="savePref('notifSpend',this.checked)"><span class="swslider"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="ti-label">{% if lang=='es' %}Novedades del producto{% else %}Product updates{% endif %}</div>
+              <div class="ti-desc">{% if lang=='es' %}Nuevas funciones y mejoras de WealthLens MX{% else %}New features and improvements in WealthLens MX{% endif %}</div>
+            </div>
+            <label class="sw"><input type="checkbox" id="togUpdates" checked onchange="savePref('notifUpdates',this.checked)"><span class="swslider"></span></label>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-primary" onclick="showToast('{% if lang=="es" %}✓ Preferencias de notificaciones guardadas{% else %}✓ Notification preferences saved{% endif %}')">{% if lang=='es' %}Guardar preferencias{% else %}Save preferences{% endif %}</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ PRIVACY PANEL ══ -->
+      <div class="settings-panel" id="panel-privacy">
+        <div class="card">
+          <div class="card-title"><span class="ct-icon">🛡️</span> {% if lang=='es' %}Control de datos y privacidad{% else %}Data & privacy control{% endif %}</div>
+          <div class="card-sub">{% if lang=='es' %}Gestiona cómo se usan y almacenan tus datos.{% else %}Manage how your data is used and stored.{% endif %}</div>
+
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="ti-label">{% if lang=='es' %}Ocultar valores por defecto{% else %}Hide values by default{% endif %}</div>
+              <div class="ti-desc">{% if lang=='es' %}El dashboard inicia con valores ocultos (modo privacidad){% else %}Dashboard starts with hidden values (privacy mode){% endif %}</div>
+            </div>
+            <label class="sw"><input type="checkbox" id="togHideDefault" onchange="savePref('hideDefault',this.checked)"><span class="swslider"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="ti-label">{% if lang=='es' %}Análisis anónimos{% else %}Anonymous analytics{% endif %}</div>
+              <div class="ti-desc">{% if lang=='es' %}Ayúdanos a mejorar compartiendo datos de uso anónimos{% else %}Help us improve by sharing anonymous usage data{% endif %}</div>
+            </div>
+            <label class="sw"><input type="checkbox" id="togAnalytics" checked onchange="savePref('analytics',this.checked)"><span class="swslider"></span></label>
+          </div>
+
+          <div style="margin:1.1rem 0;padding:1rem;background:var(--blue-light);border:1px solid #B5D4F4;border-radius:10px;font-size:.78rem;color:#0C447C;line-height:1.65">
+            <strong>{% if lang=='es' %}🔒 Tu privacidad es nuestra prioridad.{% else %}🔒 Your privacy is our priority.{% endif %}</strong><br>
+            {% if lang=='es' %}
+            WealthLens MX no vende ni comparte tus datos financieros. Tus credenciales se cifran con bcrypt. Los datos del Asesor IA solo se transmiten al gateway de IA que tú configures (p.ej. Groq) y no se almacenan externamente.
+            {% else %}
+            WealthLens MX never sells or shares your financial data. Your credentials are encrypted with bcrypt. AI Advisor data is only transmitted to the AI gateway you configure (e.g. Groq) and is not stored externally.
+            {% endif %}
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-outline" onclick="downloadData()">{% if lang=='es' %}⬇ Descargar mis datos (JSON){% else %}⬇ Download my data (JSON){% endif %}</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ DANGER ZONE PANEL ══ -->
+      <div class="settings-panel" id="panel-danger">
+        <div class="card">
+          <div class="card-title" style="color:var(--red)"><span class="ct-icon">⚠️</span> {% if lang=='es' %}Zona peligrosa{% else %}Danger zone{% endif %}</div>
+          <div class="card-sub">{% if lang=='es' %}Estas acciones son permanentes e irreversibles.{% else %}These actions are permanent and irreversible.{% endif %}</div>
+
+          <div class="danger-zone" style="margin-bottom:1rem">
+            <div class="danger-title">🗑️ {% if lang=='es' %}Eliminar todos los movimientos{% else %}Delete all transactions{% endif %}</div>
+            <div class="danger-desc">{% if lang=='es' %}Borra permanentemente todo el historial de movimientos importados. No afecta activos ni metas.{% else %}Permanently deletes all imported transaction history. Does not affect assets or goals.{% endif %}</div>
+            <button class="btn-danger" onclick="confirmDeleteTransactions()">{% if lang=='es' %}Eliminar movimientos{% else %}Delete transactions{% endif %}</button>
+          </div>
+
+          <div class="danger-zone" style="margin-bottom:1rem">
+            <div class="danger-title">🔄 {% if lang=='es' %}Reiniciar datos del dashboard{% else %}Reset dashboard data{% endif %}</div>
+            <div class="danger-desc">{% if lang=='es' %}Elimina activos, metas y movimientos. Conserva tu cuenta y preferencias.{% else %}Removes assets, goals and transactions. Keeps your account and preferences.{% endif %}</div>
+            <button class="btn-danger" onclick="confirmResetData()">{% if lang=='es' %}Reiniciar datos{% else %}Reset data{% endif %}</button>
+          </div>
+
+          <div class="danger-zone">
+            <div class="danger-title">❌ {% if lang=='es' %}Eliminar mi cuenta{% else %}Delete my account{% endif %}</div>
+            <div class="danger-desc">{% if lang=='es' %}Elimina permanentemente tu cuenta y todos tus datos de WealthLens MX. Esta acción no puede deshacerse.{% else %}Permanently deletes your account and all your data from WealthLens MX. This action cannot be undone.{% endif %}</div>
+            <button class="btn-danger" onclick="confirmDeleteAccount()">{% if lang=='es' %}Eliminar mi cuenta{% else %}Delete my account{% endif %}</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /panelsContainer -->
+  </div><!-- /settings-layout -->
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const LANG = '{{ lang }}';
+
+// ── PANEL SWITCHING ──────────────────────────────────────────
+function switchPanel(id, el) {
+  document.querySelectorAll('.snav-item').forEach(i => i.classList.remove('active'));
+  document.querySelectorAll('.settings-panel').forEach(p => {
+    p.classList.remove('active');
+    p.style.display = 'none';
+  });
+  el.classList.add('active');
+  const panel = document.getElementById('panel-' + id);
+  if (panel) {
+    panel.classList.add('active');
+    panel.style.display = 'flex';
+    // On mobile, scroll the panel into view
+    if (window.innerWidth <= 840) {
+      setTimeout(() => panel.scrollIntoView({behavior:'smooth', block:'start'}), 50);
+    }
+  }
+}
+
+// ── TOAST ────────────────────────────────────────────────────
+function showToast(msg, duration=2800) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
+}
+
+// ── LOAD PROFILE ─────────────────────────────────────────────
+async function loadProfile() {
+  try {
+    const r = await fetch('/api/profile');
+    const d = await r.json();
+    document.getElementById('sidebarName').textContent = d.name;
+    const initials = d.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    document.getElementById('avatarInitials').textContent = initials;
+    document.getElementById('bigAvatar').textContent = initials;
+    document.getElementById('profileNameDisplay').textContent = d.name;
+    document.getElementById('profileEmailDisplay').textContent = d.email || '';
+    document.getElementById('editName').value = d.name || '';
+    document.getElementById('editEmail').value = d.email || '';
+    if (d.city) document.getElementById('editCity').value = d.city;
+    if (d.occupation) document.getElementById('editOccupation').value = d.occupation;
+
+    // Set currency button
+    const cur = d.currency || 'MXN';
+    document.querySelectorAll('.cur-btn').forEach(b => {
+      b.classList.toggle('selected', b.dataset.cur === cur);
+    });
+  } catch(e) { console.log('Profile load error', e); }
+}
+
+// ── SAVE PROFILE ─────────────────────────────────────────────
+async function saveProfile() {
+  const name  = document.getElementById('editName').value.trim();
+  const email = document.getElementById('editEmail').value.trim();
+  const city  = document.getElementById('editCity').value.trim();
+  const occ   = document.getElementById('editOccupation').value;
+
+  if (!name || !email) {
+    showAlert('profileAlertError', true);
+    return;
+  }
+
+  try {
+    const r = await fetch('/api/profile', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({name, email, city, occupation: occ})
+    });
+    if (r.ok) {
+      showAlert('profileAlertSuccess', true);
+      document.getElementById('sidebarName').textContent = name;
+      document.getElementById('profileNameDisplay').textContent = name;
+      document.getElementById('profileEmailDisplay').textContent = email;
+      const initials = name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+      document.getElementById('avatarInitials').textContent = initials;
+      document.getElementById('bigAvatar').textContent = initials;
+      showToast(LANG==='es' ? '✓ Perfil guardado' : '✓ Profile saved');
+      setTimeout(() => showAlert('profileAlertSuccess', false), 4000);
+    } else {
+      showAlert('profileAlertError', true);
+    }
+  } catch(e) {
+    showAlert('profileAlertError', true);
+  }
+}
+
+// ── AVATAR COLOR ─────────────────────────────────────────────
+function selectAvatarColor(el) {
+  document.querySelectorAll('#avatarSwatches .swatch').forEach(s => s.classList.remove('selected'));
+  el.classList.add('selected');
+  const color = el.dataset.color;
+  document.getElementById('bigAvatar').style.background = color;
+  document.getElementById('avatarInitials').style.background = color;
+  localStorage.setItem('wl_avatarColor', color);
+  showToast(LANG==='es' ? '✓ Color de avatar actualizado' : '✓ Avatar color updated');
+}
+
+// ── THEME ─────────────────────────────────────────────────────
+function selectTheme(el, theme) {
+  document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function saveAppearance() {
+  const sel = document.querySelector('.theme-card.selected');
+  const theme = sel ? sel.dataset.theme : 'cream';
+  localStorage.setItem('wl_theme', theme);
+  showToast(LANG==='es' ? '✓ Tema aplicado' : '✓ Theme applied');
+}
+
+// ── CURRENCY ─────────────────────────────────────────────────
+function selectCurrency(el, cur) {
+  document.querySelectorAll('.cur-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+async function saveCurrency() {
+  const sel = document.querySelector('.cur-btn.selected');
+  const cur = sel ? sel.dataset.cur : 'MXN';
+  try {
+    await fetch('/api/currency', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({currency: cur})
+    });
+    showToast(LANG==='es' ? `✓ Moneda establecida: ${cur}` : `✓ Currency set to ${cur}`);
+  } catch(e) {
+    showToast(LANG==='es' ? 'Error al guardar moneda' : 'Error saving currency');
+  }
+}
+
+// ── LANGUAGE ─────────────────────────────────────────────────
+let selectedLang = LANG;
+function selectLang(el, lang) {
+  document.querySelectorAll('.lang-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedLang = lang;
+}
+
+function applyLanguage() {
+  window.location.href = '/set_lang/' + selectedLang;
+}
+
+// ── PASSWORD ─────────────────────────────────────────────────
+function checkPwStrength(pw) {
+  let score = 0;
+  if (pw.length >= 8)  score += 25;
+  if (pw.length >= 12) score += 10;
+  if (/[A-Z]/.test(pw)) score += 20;
+  if (/[0-9]/.test(pw)) score += 20;
+  if (/[^A-Za-z0-9]/.test(pw)) score += 25;
+
+  const bar = document.getElementById('pwStrengthBar');
+  const lbl = document.getElementById('pwStrengthLabel');
+  bar.style.width = score + '%';
+
+  if (score < 40) {
+    bar.style.background = 'var(--red)';
+    lbl.textContent = LANG==='es' ? 'Débil' : 'Weak';
+    lbl.style.color = 'var(--red)';
+  } else if (score < 70) {
+    bar.style.background = 'var(--gold)';
+    lbl.textContent = LANG==='es' ? 'Regular' : 'Fair';
+    lbl.style.color = 'var(--gold-dark)';
+  } else {
+    bar.style.background = 'var(--green)';
+    lbl.textContent = LANG==='es' ? 'Fuerte ✓' : 'Strong ✓';
+    lbl.style.color = 'var(--green)';
+  }
+}
+
+async function changePassword() {
+  const current = document.getElementById('pwCurrent').value;
+  const newPw   = document.getElementById('pwNew').value;
+  const confirm = document.getElementById('pwConfirm').value;
+
+  if (!current || !newPw || !confirm) {
+    showAlert('pwAlertError', true);
+    return;
+  }
+  if (newPw !== confirm) {
+    showAlert('pwAlertError', true);
+    return;
+  }
+  if (newPw.length < 6) {
+    showAlert('pwAlertError', true);
+    return;
+  }
+
+  try {
+    const r = await fetch('/api/change_password', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({current_password: current, new_password: newPw})
+    });
+    if (r.ok) {
+      showAlert('pwAlertSuccess', true);
+      document.getElementById('pwCurrent').value = '';
+      document.getElementById('pwNew').value = '';
+      document.getElementById('pwConfirm').value = '';
+      document.getElementById('pwStrengthBar').style.width = '0';
+      document.getElementById('pwStrengthLabel').textContent = '';
+      showToast(LANG==='es' ? '✓ Contraseña actualizada' : '✓ Password updated');
+      setTimeout(() => showAlert('pwAlertSuccess', false), 5000);
+    } else {
+      showAlert('pwAlertError', true);
+    }
+  } catch(e) {
+    showAlert('pwAlertError', true);
+  }
+}
+
+// ── PREFS ─────────────────────────────────────────────────────
+function savePref(key, value) {
+  localStorage.setItem('wl_pref_' + key, JSON.stringify(value));
+  showToast(LANG==='es' ? '✓ Preferencia guardada' : '✓ Preference saved');
+}
+
+function loadPrefs() {
+  const prefs = ['compact','animations','privacyDefault','dateFormat','thousands','notifWeekly','notifGoals','notifSpend','notifUpdates','analytics','hideDefault'];
+  const checkboxMap = {
+    compact:'togCompact', animations:'togAnimations', privacyDefault:'togPrivacyDefault',
+    notifWeekly:'togWeekly', notifGoals:'togGoals', notifSpend:'togSpend',
+    notifUpdates:'togUpdates', analytics:'togAnalytics', hideDefault:'togHideDefault',
+  };
+  Object.entries(checkboxMap).forEach(([k,id]) => {
+    const val = localStorage.getItem('wl_pref_' + k);
+    const el = document.getElementById(id);
+    if (el && val !== null) el.checked = JSON.parse(val);
+  });
+
+  const savedTheme = localStorage.getItem('wl_theme');
+  if (savedTheme) {
+    document.querySelectorAll('.theme-card').forEach(c => {
+      c.classList.toggle('selected', c.dataset.theme === savedTheme);
+    });
+  }
+
+  const avatarColor = localStorage.getItem('wl_avatarColor');
+  if (avatarColor) {
+    document.getElementById('bigAvatar').style.background = avatarColor;
+    document.getElementById('avatarInitials').style.background = avatarColor;
+    document.querySelectorAll('#avatarSwatches .swatch').forEach(s => {
+      s.classList.toggle('selected', s.dataset.color === avatarColor);
+    });
+  }
+}
+
+// ── DANGER ACTIONS ────────────────────────────────────────────
+function confirmLogoutAll() {
+  if (confirm(LANG==='es' ? '¿Cerrar todas las sesiones activas?' : 'Sign out of all active sessions?')) {
+    window.location.href = '/logout';
+  }
+}
+
+function confirmDeleteTransactions() {
+  const msg = LANG==='es'
+    ? '¿Eliminar permanentemente todos los movimientos? Esta acción no puede deshacerse.'
+    : 'Permanently delete all transactions? This cannot be undone.';
+  if (confirm(msg)) {
+    fetch('/api/transactions/all', {method:'DELETE'})
+      .then(() => showToast(LANG==='es' ? '✓ Movimientos eliminados' : '✓ Transactions deleted'))
+      .catch(() => showToast('Error'));
+  }
+}
+
+function confirmResetData() {
+  const msg = LANG==='es'
+    ? 'ADVERTENCIA: Esto eliminará activos, metas y movimientos. ¿Continuar?'
+    : 'WARNING: This will delete assets, goals and transactions. Continue?';
+  if (confirm(msg)) {
+    showToast(LANG==='es' ? '⚠️ Función próximamente disponible' : '⚠️ Feature coming soon');
+  }
+}
+
+function confirmDeleteAccount() {
+  const msg = LANG==='es'
+    ? 'Esta acción es PERMANENTE. ¿Seguro que deseas eliminar tu cuenta y todos tus datos?'
+    : 'This action is PERMANENT. Are you sure you want to delete your account and all data?';
+  if (confirm(msg)) {
+    const msg2 = LANG==='es' ? 'Escribe "ELIMINAR" para confirmar:' : 'Type "DELETE" to confirm:';
+    const input = prompt(msg2);
+    if (input === (LANG==='es' ? 'ELIMINAR' : 'DELETE')) {
+      fetch('/api/account', {method:'DELETE'}).then(() => window.location.href = '/logout');
+    }
+  }
+}
+
+function downloadData() {
+  fetch('/api/export_data')
+    .then(r => r.ok ? r.blob() : Promise.reject('error'))
+    .then(blob => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'wealthlens-data.json';
+      a.click(); URL.revokeObjectURL(url);
+    })
+    .catch(() => showToast(LANG==='es' ? '⚠️ Export próximamente' : '⚠️ Export coming soon'));
+}
+
+// ── ALERT HELPER ──────────────────────────────────────────────
+function showAlert(id, show) {
+  const el = document.getElementById(id);
+  if (el) el.style.display = show ? 'block' : 'none';
+}
+
+// ── INIT ─────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  loadProfile();
+  loadPrefs();
+  // Ensure the initially active panel is visible (belt-and-suspenders fix)
+  const firstPanel = document.querySelector('.settings-panel.active');
+  if (firstPanel) firstPanel.style.display = 'flex';
+});
+</script>
+</body>
+</html>

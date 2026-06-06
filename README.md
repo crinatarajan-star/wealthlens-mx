@@ -1,19 +1,14 @@
 # 💰 WealthLens MX — AI-Powered Personal Finance Dashboard
 
-<div align="center">
-
-![WealthLens Banner](https://img.shields.io/badge/WealthLens-MX-C9A84C?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iI0M5QTg0QyIgZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6Ii8+PC9zdmc+)
-![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![Flask](https://img.shields.io/badge/Flask-2.x-000000?style=for-the-badge&logo=flask&logoColor=white)
-![AI Powered](https://img.shields.io/badge/AI-Groq%20%7C%20LLaMA%203.3-FF6B35?style=for-the-badge&logo=anthropic&logoColor=white)
-![SQLite](https://img.shields.io/badge/SQLite-Database-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
+[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![Flask](https://img.shields.io/badge/Flask-2.x-000000?style=for-the-badge&logo=flask&logoColor=white)](https://flask.palletsprojects.com)
+[![AI Powered](https://img.shields.io/badge/AI-Groq%20%7C%20LLaMA%203.3-FF6B35?style=for-the-badge&logo=anthropic&logoColor=white)](https://groq.com)
+[![SQLite](https://img.shields.io/badge/SQLite-Database-003B57?style=for-the-badge&logo=sqlite&logoColor=white)](https://sqlite.org)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
 **A full-stack AI financial advisor for Mexican investors — tracks CEDEs, stocks, crypto & goals with live LLM-powered insights.**
 
-[🚀 Live Demo](#) · [📖 API Docs](#api-reference) · [🐛 Report Bug](issues) · [✨ Request Feature](issues)
-
-</div>
+[🚀 Live Demo](https://wealthlens-mx.onrender.com) · [📖 API Docs](#api-reference) · [🐛 Report Bug](https://github.com/crinatarajan/wealthlens-mx/issues) · [✨ Request Feature](https://github.com/crinatarajan/wealthlens-mx/issues)
 
 ---
 
@@ -57,21 +52,9 @@
 ![AI Chat](screenshots/05_ai_advisor.png)
 *Conversational advisor with full portfolio context, suggested questions, and quick chips*
 
-### 🔌 API Dashboard — Endpoints
+### 🔌 API Dashboard
 ![API Endpoints](screenshots/06_api_dashboard.png)
 *Interactive endpoint explorer with one-click testing and live JSON responses*
-
-### 🧪 API Playground
-![API Playground](screenshots/07_api_playground.png)
-*Custom request builder — select endpoint, edit JSON body, see response*
-
-### 🗄️ Database Schema
-![DB Schema](screenshots/08_api_schema.png)
-*Full SQLite schema viewer — all 8 tables with CREATE TABLE statements*
-
-### 📱 Mobile View
-![Mobile](screenshots/09_mobile_dashboard.png)
-*Responsive layout with hamburger nav — works on any screen size*
 
 ---
 
@@ -80,29 +63,34 @@
 ```
 wealthlens-mx/
 │
-├── app.py                  # Flask backend — all routes & AI logic
-├── wealthlens_showcase.html # Standalone HTML demo (no backend needed)
-├── wealthlens.db           # SQLite database (auto-created on first run)
-├── requirements.txt        # Python dependencies
-├── .env.example            # Environment variable template
+├── app.py                    # Flask backend — all routes & AI logic
+├── wealthlens_demo.html      # Standalone HTML demo (no backend needed)
+├── requirements.txt          # Python dependencies (pinned versions)
+├── .env.example              # Environment variable template
+├── .gitignore                # Excludes .env, *.db, uploads/, venv/
 │
 ├── templates/
-│   ├── wealthlens_demo.html # Main dashboard UI
-│   ├── api_dashboard.html   # API explorer
+│   ├── wealthlens_demo.html  # Main dashboard UI
+│   ├── api_dashboard.html    # API explorer
 │   ├── login.html
 │   └── register.html
 │
-└── uploads/                # User-uploaded CSV/Excel files
+├── tests/
+│   └── test_api.py           # Pytest suite for all API routes
+│
+└── uploads/                  # User-uploaded CSV/Excel files (gitignored)
 ```
 
 ### Tech Stack
 
-- **Backend:** Python 3.10+, Flask 2.x, SQLite (WAL mode)
-- **AI Layer:** Groq API (LLaMA 3.3 70B Versatile) — swappable to DeepSeek or Ollama
-- **Market Data:** Yahoo Finance API (stocks), CoinGecko (crypto)
-- **Auth:** Werkzeug password hashing, Flask sessions
-- **Frontend:** Vanilla JS, CSS custom properties, Playfair Display + DM Sans fonts
-- **Deployment-ready:** Environment variable config, no hardcoded secrets
+| Layer | Technology |
+|---|---|
+| **Backend** | Python 3.10+, Flask 2.x, SQLite (WAL mode) |
+| **AI Layer** | Groq API (LLaMA 3.3 70B) — swappable to DeepSeek or Ollama |
+| **Market Data** | Yahoo Finance API (stocks), CoinGecko (crypto) |
+| **Auth** | Werkzeug password hashing, Flask sessions |
+| **Frontend** | Vanilla JS, CSS custom properties, Playfair Display + DM Sans |
+| **CI** | GitHub Actions (lint + test on every push) |
 
 ---
 
@@ -111,7 +99,7 @@ wealthlens-mx/
 ### 1. Clone the repo
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/wealthlens-mx.git
+git clone https://github.com/crinatarajan/wealthlens-mx.git
 cd wealthlens-mx
 ```
 
@@ -141,15 +129,14 @@ Edit `.env`:
 # Required — get a free key at console.groq.com
 GROQ_API_KEY=gsk_your_key_here
 
+# Required — generate with: python -c "import secrets; print(secrets.token_hex(32))"
+SECRET_KEY=your-random-secret-here
+
 # Optional — override AI model
 AI_MODEL=llama-3.3-70b-versatile
 
-# Optional — use DeepSeek or another OpenAI-compatible gateway
+# Optional — swap to DeepSeek or Ollama (see AI Configuration below)
 # AI_BASE_URL=https://api.deepseek.com/v1/chat/completions
-# DEEPSEEK_API_KEY=your_key_here
-
-# Flask session security — change this in production!
-SECRET_KEY=change-me-in-production
 ```
 
 ### 5. Run the app
@@ -158,9 +145,9 @@ SECRET_KEY=change-me-in-production
 python app.py
 ```
 
-Open [http://localhost:5000](http://localhost:5000) — register an account and start tracking!
+Open http://localhost:5000 — register an account and start tracking!
 
-> **No API key?** Use `wealthlens_showcase.html` — open it directly in your browser for a fully interactive demo without any backend.
+> **No API key?** Open `wealthlens_demo.html` directly in your browser for a fully interactive demo without any backend.
 
 ---
 
@@ -180,6 +167,7 @@ All endpoints require authentication (session cookie). Base URL: `http://localho
 | `GET` | `/api/chat/history` | Stored conversation history |
 
 **Example — AI Chat:**
+
 ```bash
 curl -X POST http://localhost:5000/api/chat \
   -H "Content-Type: application/json" \
@@ -187,6 +175,7 @@ curl -X POST http://localhost:5000/api/chat \
 ```
 
 **Example Response:**
+
 ```json
 {
   "ok": true,
@@ -212,7 +201,9 @@ WealthLens uses an **OpenAI-compatible gateway** — swap providers with one `.e
 
 ## 🗄️ Database Schema
 
-```sql
+The SQLite database is **auto-created on first run** (`wealthlens.db`). It is excluded from version control via `.gitignore`.
+
+```
 users          — Auth, currency preference, language (EN/ES)
 assets         — Portfolio holdings with MXN value
 goals          — Financial goals with progress tracking
@@ -231,9 +222,9 @@ chat_history   — AI conversation history
 
 1. Push to GitHub
 2. New Web Service → connect repo
-3. Build: `pip install -r requirements.txt`
-4. Start: `gunicorn app:app`
-5. Add environment variables in the Render dashboard
+3. Build command: `pip install -r requirements.txt`
+4. Start command: `gunicorn app:app`
+5. Add environment variables (`GROQ_API_KEY`, `SECRET_KEY`) in the Render dashboard
 
 ### Railway
 
@@ -256,18 +247,6 @@ CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:8000"]
 
 ---
 
-## 📋 requirements.txt
-
-```
-flask>=2.3
-werkzeug>=2.3
-requests>=2.31
-python-dotenv>=1.0
-gunicorn>=21.0
-```
-
----
-
 ## 🗺️ Roadmap
 
 - [ ] Plaid/Belvo bank account sync (open banking)
@@ -276,12 +255,13 @@ gunicorn>=21.0
 - [ ] Multi-currency rebalancing calculator
 - [ ] Tax optimization module (ISR/SAT Mexico)
 - [ ] Mobile PWA support
+- [ ] Live FX rate fetching (replace static rates)
 
 ---
 
 ## 🤝 Contributing
 
-Pull requests are welcome! For major changes, open an issue first to discuss what you'd like to change.
+Pull requests are welcome! For major changes, please open an issue first to discuss what you'd like to change.
 
 1. Fork the repo
 2. Create your feature branch (`git checkout -b feature/amazing-feature`)
@@ -300,12 +280,11 @@ MIT License — see [LICENSE](LICENSE) for details.
 ## 👤 Author
 
 **Natarajan Narayanan**
+
 - LinkedIn: https://www.linkedin.com/in/natrajnarayan/
-- GitHub: [@crinatarajan-star](https://github.com/crinatarajan-star)
+- GitHub: [@crinatarajan](https://github.com/crinatarajan)
 - Email: crinatarajan@gmail.com
 
 ---
 
-<div align="center">
-  <sub>Built with ❤️ and ☕ · If this helped you, please ⭐ the repo!</sub>
-</div>
+Built with ❤️ and ☕ · If this helped you, please ⭐ the repo!

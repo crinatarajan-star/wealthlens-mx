@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WealthLens MX</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#C9A84C;--gold-light:#F5EFD8;--gold-dark:#8A6A1E;
+  --ink:#0E0E0E;--ink-mid:#2C2C2A;--ink-soft:#5F5E5A;
+  --cream:#FAF7F2;--cream-border:#E8E3D8;--surface:#F2EEE6;
+  --white:#FFFFFF;
+  --green:#1D9E75;--green-light:#E1F5EE;
+  --red:#D85A30;--red-light:#FAECE7;
+  --blue:#185FA5;--blue-light:#E6F1FB;
+  --purple:#534AB7;--purple-light:#EEEDFE;
+  --sidebar:220px;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--ink);display:flex;min-height:100vh;font-size:15px}
+
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sidebar);background:var(--ink);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:50;padding:0}
+.sidebar-logo{padding:1.5rem 1.25rem 1rem;border-bottom:1px solid rgba(255,255,255,.08)}
+.sidebar-logo a{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:600;color:#fff;text-decoration:none}
+.sidebar-logo a span{color:var(--gold)}
+.sidebar-user{padding:.85rem 1.25rem;border-bottom:1px solid rgba(255,255,255,.08)}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:var(--gold);display:inline-flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:600;color:var(--ink);margin-right:8px;vertical-align:middle}
+.user-name{font-size:.82rem;color:rgba(255,255,255,.75);vertical-align:middle}
+nav.sidebar-nav{flex:1;padding:1rem 0;overflow-y:auto}
+.nav-item{display:flex;align-items:center;gap:10px;padding:.65rem 1.25rem;font-size:.85rem;color:rgba(255,255,255,.55);cursor:pointer;transition:all .2s;border-left:3px solid transparent}
+.nav-item:hover{color:#fff;background:rgba(255,255,255,.05)}
+.nav-item.active{color:#fff;border-left-color:var(--gold);background:rgba(255,255,255,.07)}
+.nav-icon{width:16px;height:16px;opacity:.7;flex-shrink:0}
+.nav-item.active .nav-icon{opacity:1}
+.sidebar-bottom{padding:1rem 1.25rem;border-top:1px solid rgba(255,255,255,.08)}
+.lang-switch{display:flex;gap:6px;margin-bottom:.75rem}
+.lang-btn{flex:1;text-align:center;padding:.3rem;font-size:.72rem;border-radius:6px;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.5);text-decoration:none;transition:all .2s}
+.lang-btn.active,.lang-btn:hover{background:rgba(255,255,255,.1);color:#fff}
+.logout-btn{display:block;text-align:center;padding:.45rem;font-size:.78rem;color:rgba(255,255,255,.4);text-decoration:none;transition:color .2s}
+.logout-btn:hover{color:#fff}
+
+/* ── MAIN ── */
+.main{margin-left:var(--sidebar);flex:1;padding:1.75rem;min-height:100vh}
+.page{display:none}.page.active{display:block}
+
+/* ── TOP BAR ── */
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.75rem;flex-wrap:wrap;gap:.75rem}
+.page-title{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:600;color:var(--ink)}
+.topbar-right{display:flex;gap:.75rem;align-items:center}
+.currency-select{font-family:'DM Sans',sans-serif;font-size:.82rem;padding:.4rem .75rem;border:1px solid var(--cream-border);border-radius:8px;background:var(--white);color:var(--ink);cursor:pointer}
+.privacy-toggle{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--ink-soft);cursor:pointer;user-select:none}
+.toggle{position:relative;width:34px;height:18px}
+.toggle input{opacity:0;width:0;height:0}
+.tslider{position:absolute;inset:0;background:var(--green);border-radius:18px;cursor:pointer;transition:.3s}
+.tslider::before{content:'';position:absolute;height:12px;width:12px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s;transform:translateX(16px)}
+.toggle input:checked + .tslider::before{transform:translateX(0px)}
+.toggle input:not(:checked) + .tslider{background:var(--cream-border)}
+
+/* ── KPI CARDS ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1rem;margin-bottom:1.5rem}
+.kpi{background:var(--white);border:1px solid var(--cream-border);border-radius:14px;padding:1.25rem 1.5rem;transition:transform .2s}
+.kpi:hover{transform:translateY(-2px)}
+.kpi.featured{background:var(--ink);border-color:var(--ink)}
+.kpi-label{font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);margin-bottom:.4rem}
+.kpi.featured .kpi-label{color:rgba(255,255,255,.5)}
+.kpi-val{font-family:'Playfair Display',serif;font-size:1.65rem;font-weight:600;color:var(--ink)}
+.kpi.featured .kpi-val{color:#fff}
+.kpi-change{font-size:.75rem;margin-top:4px;display:flex;align-items:center;gap:3px}
+.kpi-change.up{color:var(--green)}.kpi-change.down{color:var(--red)}
+
+/* ── CARDS ── */
+.card{background:var(--white);border:1px solid var(--cream-border);border-radius:16px;padding:1.5rem;margin-bottom:1.25rem}
+.card-title{font-size:.875rem;font-weight:500;color:var(--ink);margin-bottom:1.25rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem}
+.card-title .sub{font-size:.75rem;color:var(--ink-soft);font-weight:400}
+
+/* ── GRID ── */
+.dash-grid{display:grid;grid-template-columns:1fr 320px;gap:1.25rem}
+@media(max-width:960px){.dash-grid{grid-template-columns:1fr}}
+
+/* ── BAR CHART ── */
+.bar-chart{display:flex;align-items:flex-end;gap:8px;height:160px;margin-bottom:.5rem}
+.bar-group{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;height:100%;justify-content:flex-end}
+.bar-wrap{width:100%;display:flex;gap:3px;align-items:flex-end;justify-content:center;height:calc(100% - 18px)}
+.bar{border-radius:4px 4px 0 0;min-width:10px;transition:opacity .2s;cursor:pointer}
+.bar:hover{opacity:.7}
+.bar.income{background:var(--green)}.bar.expense{background:var(--cream-border)}
+.bar-label{font-size:9px;color:var(--ink-soft);white-space:nowrap}
+
+/* ── ALLOC ── */
+.alloc-item{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.alloc-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.alloc-name{font-size:.83rem;color:var(--ink);flex:1}
+.alloc-bg{flex:1;height:5px;background:var(--surface);border-radius:3px;max-width:80px}
+.alloc-fill{height:100%;border-radius:3px}
+.alloc-pct{font-size:.75rem;font-weight:500;color:var(--ink);min-width:32px;text-align:right}
+
+/* ── GOALS ── */
+.goal-item{margin-bottom:1rem}
+.goal-item:last-child{margin-bottom:0}
+.goal-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.goal-name{font-size:.85rem;font-weight:500;color:var(--ink)}
+.goal-amounts{font-size:.73rem;color:var(--ink-soft)}
+.goal-bg{height:6px;background:var(--surface);border-radius:3px}
+.goal-fill{height:100%;border-radius:3px;transition:width 1s ease}
+.goal-meta{display:flex;justify-content:space-between;margin-top:3px;font-size:.7rem;color:var(--ink-soft)}
+
+/* ── ASSETS TABLE ── */
+.asset-table{width:100%;border-collapse:collapse}
+.asset-table th{font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);font-weight:500;padding:0 0 8px;border-bottom:1px solid var(--cream-border);text-align:left}
+.asset-table th:last-child,.asset-table td:last-child{text-align:right}
+.asset-table td{font-size:.85rem;padding:9px 0;border-bottom:1px solid var(--surface);color:var(--ink);vertical-align:middle}
+.asset-table tr:last-child td{border-bottom:none}
+.aicon{display:inline-flex;width:26px;height:26px;border-radius:7px;align-items:center;justify-content:center;font-size:11px;margin-right:7px;vertical-align:middle;flex-shrink:0}
+.tag{font-size:.68rem;padding:2px 7px;border-radius:100px;font-weight:500}
+.del-btn{background:none;border:none;color:var(--ink-soft);cursor:pointer;font-size:.8rem;padding:2px 6px;border-radius:5px;transition:all .2s;opacity:.5}
+.del-btn:hover{background:var(--red-light);color:var(--red);opacity:1}
+
+/* ── FORM ── */
+.add-form{display:none;flex-direction:column;gap:8px;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--cream-border)}
+.add-form.open{display:flex}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.form-row input,.form-row select,.add-form input,.add-form select{font-family:'DM Sans',sans-serif;font-size:.85rem;padding:.5rem .75rem;border:1px solid var(--cream-border);border-radius:9px;background:var(--cream);color:var(--ink);outline:none;transition:border-color .2s;width:100%}
+.form-row input:focus,.form-row select:focus,.add-form input:focus,.add-form select:focus{border-color:var(--gold)}
+.form-actions{display:flex;gap:7px}
+.btn-sm{font-family:'DM Sans',sans-serif;font-size:.8rem;padding:.42rem .9rem;border-radius:8px;border:none;cursor:pointer;font-weight:500;transition:opacity .2s}
+.btn-sm:hover{opacity:.8}
+.btn-sm.save{background:var(--ink);color:#fff}
+.btn-sm.cancel{background:var(--surface);color:var(--ink)}
+.btn-add{font-family:'DM Sans',sans-serif;font-size:.78rem;color:var(--gold-dark);background:none;border:1px solid var(--cream-border);border-radius:8px;cursor:pointer;padding:.35rem .75rem;font-weight:500;display:flex;align-items:center;gap:4px;transition:all .2s}
+.btn-add:hover{border-color:var(--gold);background:var(--gold-light)}
+
+/* ── IMPORT PAGE ── */
+.import-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:1.5rem}
+.import-card{background:var(--white);border:2px solid var(--cream-border);border-radius:14px;padding:1.25rem;text-align:center;cursor:pointer;transition:all .2s}
+.import-card:hover,.import-card.selected{border-color:var(--gold);background:var(--gold-light)}
+.import-card .bank-logo{font-size:1.6rem;margin-bottom:.5rem;display:block}
+.import-card .bank-name{font-size:.82rem;font-weight:500;color:var(--ink)}
+.import-card .bank-desc{font-size:.72rem;color:var(--ink-soft);margin-top:2px}
+.drop-zone{border:2px dashed var(--cream-border);border-radius:14px;padding:3rem 2rem;text-align:center;cursor:pointer;transition:all .3s;background:var(--white);margin-bottom:1.5rem}
+.drop-zone.drag-over,.drop-zone:hover{border-color:var(--gold);background:var(--gold-light)}
+.drop-icon{font-size:2.5rem;margin-bottom:.75rem;display:block}
+.drop-title{font-size:.95rem;font-weight:500;color:var(--ink);margin-bottom:.35rem}
+.drop-sub{font-size:.8rem;color:var(--ink-soft)}
+.drop-input{display:none}
+.import-result{display:none;padding:1rem;border-radius:10px;font-size:.85rem;margin-bottom:1rem}
+.import-result.success{background:var(--green-light);color:#0F6E56;border:1px solid #9FE1CB}
+.import-result.error{background:var(--red-light);color:#993C1D;border:1px solid #F0997B}
+
+/* ── TRANSACTIONS PAGE ── */
+.txn-filters{display:flex;gap:.75rem;margin-bottom:1rem;flex-wrap:wrap;align-items:center}
+.txn-filter-select{font-family:'DM Sans',sans-serif;font-size:.8rem;padding:.4rem .7rem;border:1px solid var(--cream-border);border-radius:8px;background:var(--white);color:var(--ink);cursor:pointer}
+.txn-table{width:100%;border-collapse:collapse}
+.txn-table th{font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);font-weight:500;padding:0 0 8px;border-bottom:1px solid var(--cream-border);text-align:left}
+.txn-table th:last-child,.txn-table td:last-child{text-align:right}
+.txn-table td{font-size:.83rem;padding:8px 0;border-bottom:1px solid var(--surface);color:var(--ink);vertical-align:middle}
+.txn-table tr:last-child td{border-bottom:none}
+.amount-positive{color:var(--green);font-weight:500}
+.amount-negative{color:var(--red);font-weight:500}
+.cat-badge{font-size:.66rem;padding:2px 7px;border-radius:100px;font-weight:500}
+.source-chip{font-size:.65rem;padding:1px 6px;border-radius:5px;background:var(--surface);color:var(--ink-soft)}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--ink);color:#fff;padding:.65rem 1.25rem;border-radius:10px;font-size:.83rem;z-index:999;opacity:0;transform:translateY(10px);transition:all .3s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.card{animation:fadeUp .4s ease both}
+
+/* ── EMPTY STATE ── */
+.empty{text-align:center;padding:2.5rem;color:var(--ink-soft)}
+.empty-icon{font-size:2rem;margin-bottom:.75rem;display:block;opacity:.4}
+.empty-text{font-size:.85rem}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <a href="#">Wealth<span>Lens</span> <span style="font-size:.65rem;color:rgba(255,255,255,.35);font-family:'DM Sans',sans-serif;font-weight:300;vertical-align:middle">MX</span></a>
+  </div>
+  <div class="sidebar-user">
+    <span class="user-avatar" id="avatarInitials">?</span>
+    <span class="user-name" id="sidebarName">...</span>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-item active" data-page="overview" onclick="showPage('overview',this)">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      <span data-es="Resumen" data-en="Overview">Resumen</span>
+    </div>
+    <div class="nav-item" data-page="assets" onclick="showPage('assets',this)">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>
+      <span data-es="Patrimonio" data-en="Assets">Patrimonio</span>
+    </div>
+    <div class="nav-item" data-page="goals" onclick="showPage('goals',this)">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+      <span data-es="Metas" data-en="Goals">Metas</span>
+    </div>
+    <div class="nav-item" data-page="transactions" onclick="showPage('transactions',this)">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+      <span data-es="Movimientos" data-en="Transactions">Movimientos</span>
+    </div>
+    <div class="nav-item" data-page="import" onclick="showPage('import',this)">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+      <span data-es="Importar" data-en="Import">Importar</span>
+    </div>
+    <div class="nav-item" style="margin-top:.5rem;border-top:1px solid rgba(255,255,255,.07);padding-top:1rem" onclick="window.location.href='/ai'">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2a10 10 0 110 20A10 10 0 0112 2zm0 0v4m0 14v-4m10-6h-4M6 12H2m15.07-7.07l-2.83 2.83M8.76 15.24l-2.83 2.83m0-12.14l2.83 2.83m6.48 6.48l2.83 2.83"/></svg>
+      <span data-es="Asesor IA" data-en="AI Advisor">Asesor IA</span>
+    </div>
+    <div class="nav-item" onclick="window.location.href='/financial-dashboard'">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3v18h18"/><path d="M18 9l-5 5-2-2-4 4"/></svg>
+      <span data-es="Dashboard IA" data-en="AI Dashboard">Dashboard IA</span>
+    </div>
+    <div class="nav-item" onclick="window.location.href='/settings'">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      <span data-es="Configuración" data-en="Settings">Configuración</span>
+    </div>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="lang-switch">
+      <a href="/set_lang/es" class="lang-btn {% if lang=='es' %}active{% endif %}">🇲🇽 ES</a>
+      <a href="/set_lang/en" class="lang-btn {% if lang=='en' %}active{% endif %}">🇺🇸 EN</a>
+    </div>
+    <a href="/logout" class="logout-btn" data-es="Cerrar sesión" data-en="Sign out">Cerrar sesión</a>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+
+  <!-- ── OVERVIEW PAGE ── -->
+  <div class="page active" id="page-overview">
+    <div class="topbar">
+      <div>
+        <div class="page-title" id="greetingText">Buenas tardes</div>
+        <div style="font-size:.8rem;color:var(--ink-soft);margin-top:2px" id="todayDate"></div>
+      </div>
+      <div class="topbar-right">
+        <select class="currency-select" onchange="setCurrency(this.value)" id="currencySelect">
+          <option value="MXN">🇲🇽 MXN</option>
+          <option value="USD">🇺🇸 USD</option>
+          <option value="EUR">🇪🇺 EUR</option>
+          <option value="CAD">🇨🇦 CAD</option>
+          <option value="GBP">🇬🇧 GBP</option>
+        </select>
+        <label class="privacy-toggle">
+          <label class="toggle"><input type="checkbox" id="privacyChk" checked onchange="togglePrivacy()"><span class="tslider"></span></label>
+          <span id="privacyLabel" data-es="Visible" data-en="Visible">Visible</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="kpi-grid">
+      <div class="kpi featured">
+        <div class="kpi-label" data-es="Patrimonio Neto" data-en="Net Worth">Patrimonio Neto</div>
+        <div class="kpi-val" id="kpiNet">...</div>
+        <div class="kpi-change" id="kpiNetChg"></div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label" data-es="Total Activos" data-en="Total Assets">Total Activos</div>
+        <div class="kpi-val" id="kpiAssets">...</div>
+        <div class="kpi-change" id="kpiAssetsChg"></div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label" data-es="Total Pasivos" data-en="Total Liabilities">Total Pasivos</div>
+        <div class="kpi-val" id="kpiLiabs">...</div>
+        <div class="kpi-change" id="kpiLiabsChg"></div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label" data-es="Flujo Mensual" data-en="Monthly Flow">Flujo Mensual <span id="kpiFlowLabel" style="font-weight:300;opacity:.6"></span></div>
+        <div class="kpi-val" id="kpiFlow">...</div>
+        <div class="kpi-change" id="kpiFlowChg"></div>
+      </div>
+    </div>
+
+    <div class="dash-grid">
+      <div>
+        <!-- Trend Chart -->
+        <div class="card">
+          <div class="card-title">
+            <span data-es="Ingresos vs Gastos" data-en="Income vs Expenses">Ingresos vs Gastos</span>
+            <span class="sub" data-es="Últimos 6 meses" data-en="Last 6 months">Últimos 6 meses</span>
+          </div>
+          <div class="bar-chart" id="barChart"><div class="empty" style="width:100%;align-self:center"><span data-es="Importa estados de cuenta para ver tu historial" data-en="Import statements to see your history">Importa estados de cuenta para ver tu historial</span></div></div>
+          <div style="display:flex;gap:1rem;margin-top:.75rem;font-size:.73rem;color:var(--ink-soft)">
+            <span style="display:flex;align-items:center;gap:5px"><span style="width:9px;height:9px;background:var(--green);border-radius:2px;display:inline-block"></span><span data-es="Ingresos" data-en="Income">Ingresos</span></span>
+            <span style="display:flex;align-items:center;gap:5px"><span style="width:9px;height:9px;background:var(--cream-border);border-radius:2px;display:inline-block"></span><span data-es="Gastos" data-en="Expenses">Gastos</span></span>
+          </div>
+        </div>
+
+        <!-- Asset table preview -->
+        <div class="card">
+          <div class="card-title">
+            <span data-es="Activos y Pasivos" data-en="Assets & Liabilities">Activos y Pasivos</span>
+            <button class="btn-add" onclick="showPage('assets',document.querySelector('[data-page=assets]'))">+ <span data-es="Agregar" data-en="Add">Agregar</span></button>
+          </div>
+          <table class="asset-table" id="overviewAssetTable">
+            <thead><tr>
+              <th data-es="Nombre" data-en="Name">Nombre</th>
+              <th data-es="Tipo" data-en="Type">Tipo</th>
+              <th data-es="Valor" data-en="Value">Valor</th>
+            </tr></thead>
+            <tbody id="overviewAssetBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div>
+        <!-- Allocation -->
+        <div class="card">
+          <div class="card-title"><span data-es="Distribución" data-en="Allocation">Distribución</span></div>
+          <div id="allocList"><div class="empty"><span class="empty-icon">📊</span><span class="empty-text" data-es="Sin activos aún" data-en="No assets yet">Sin activos aún</span></div></div>
+        </div>
+        <!-- Goals summary -->
+        <div class="card">
+          <div class="card-title">
+            <span data-es="Metas Financieras" data-en="Financial Goals">Metas Financieras</span>
+            <button class="btn-add" onclick="showPage('goals',document.querySelector('[data-page=goals]'))"><span data-es="Ver todas" data-en="See all">Ver todas</span></button>
+          </div>
+          <div id="goalsSummary"><div class="empty"><span class="empty-icon">🎯</span><span class="empty-text" data-es="Sin metas aún" data-en="No goals yet">Sin metas aún</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ASSETS PAGE ── -->
+  <div class="page" id="page-assets">
+    <div class="topbar">
+      <div class="page-title" data-es="Mi Patrimonio" data-en="My Assets">Mi Patrimonio</div>
+    </div>
+    <div class="card">
+      <div class="card-title">
+        <span data-es="Activos y Pasivos" data-en="Assets & Liabilities">Activos y Pasivos</span>
+        <button class="btn-add" onclick="toggleForm('assetForm')">+ <span data-es="Agregar" data-en="Add">Agregar</span></button>
+      </div>
+      <div class="add-form" id="assetForm">
+        <div class="form-row">
+          <input type="text" id="newName" placeholder="Nombre (ej. BBVA Ahorro)">
+          <select id="newType">
+            <option value="cash" data-es="Efectivo / Ahorro" data-en="Cash / Savings">Efectivo / Ahorro</option>
+            <option value="investments" data-es="Inversiones" data-en="Investments">Inversiones</option>
+            <option value="property" data-es="Inmuebles" data-en="Property">Inmuebles</option>
+            <option value="crypto" data-es="Criptomonedas" data-en="Crypto">Criptomonedas</option>
+            <option value="other" data-es="Otros activos" data-en="Other assets">Otros activos</option>
+            <option value="liability" data-es="Deuda / Pasivo" data-en="Debt / Liability">Deuda / Pasivo</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <input type="number" id="newValue" placeholder="Valor">
+          <input type="text" id="newNote" placeholder="Nota (opcional)">
+        </div>
+        <div class="form-actions">
+          <button class="btn-sm save" onclick="saveAsset()"><span data-es="Guardar" data-en="Save">Guardar</span></button>
+          <button class="btn-sm cancel" onclick="toggleForm('assetForm')"><span data-es="Cancelar" data-en="Cancel">Cancelar</span></button>
+        </div>
+      </div>
+      <table class="asset-table" id="fullAssetTable">
+        <thead><tr>
+          <th data-es="Activo / Pasivo" data-en="Asset / Liability">Activo / Pasivo</th>
+          <th data-es="Tipo" data-en="Type">Tipo</th>
+          <th data-es="Nota" data-en="Note">Nota</th>
+          <th data-es="Valor" data-en="Value">Valor</th>
+          <th></th>
+        </tr></thead>
+        <tbody id="fullAssetBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── GOALS PAGE ── -->
+  <div class="page" id="page-goals">
+    <div class="topbar">
+      <div class="page-title" data-es="Metas Financieras" data-en="Financial Goals">Metas Financieras</div>
+    </div>
+    <div class="card">
+      <div class="card-title">
+        <span data-es="Mis Metas" data-en="My Goals">Mis Metas</span>
+        <button class="btn-add" onclick="toggleForm('goalForm')">+ <span data-es="Nueva meta" data-en="New goal">Nueva meta</span></button>
+      </div>
+      <div class="add-form" id="goalForm">
+        <div class="form-row">
+          <input type="text" id="goalNameEs" placeholder="Nombre en español (ej. Fondo de emergencia)">
+          <input type="text" id="goalNameEn" placeholder="Name in English (e.g. Emergency fund)">
+        </div>
+        <div class="form-row">
+          <input type="number" id="goalTarget" placeholder="Monto objetivo">
+          <input type="color" id="goalColor" value="#1D9E75" style="height:38px;cursor:pointer;border-radius:9px">
+        </div>
+        <div class="form-actions">
+          <button class="btn-sm save" onclick="saveGoal()"><span data-es="Guardar" data-en="Save">Guardar</span></button>
+          <button class="btn-sm cancel" onclick="toggleForm('goalForm')"><span data-es="Cancelar" data-en="Cancel">Cancelar</span></button>
+        </div>
+      </div>
+      <div id="goalsFullList" style="margin-top:.5rem"></div>
+    </div>
+  </div>
+
+  <!-- ── TRANSACTIONS PAGE ── -->
+  <div class="page" id="page-transactions">
+    <div class="topbar">
+      <div class="page-title" data-es="Movimientos" data-en="Transactions">Movimientos</div>
+    </div>
+    <div class="card">
+      <div class="card-title">
+        <span data-es="Historial de movimientos" data-en="Transaction history">Historial de movimientos</span>
+        <button class="btn-add" onclick="showPage('import',document.querySelector('[data-page=import]'))"><span data-es="Importar" data-en="Import">Importar</span></button>
+      </div>
+      <div class="txn-filters">
+        <select class="txn-filter-select" id="filterCat" onchange="loadTransactions()">
+          <option value="" data-es="Todas las categorías" data-en="All categories">Todas las categorías</option>
+          <option value="food">🛒 <span data-es="Supermercado" data-en="Groceries">Supermercado</span></option>
+          <option value="transport">🚗 <span data-es="Transporte" data-en="Transport">Transporte</span></option>
+          <option value="utilities">⚡ Servicios</option>
+          <option value="entertainment">🎬 <span data-es="Entretenimiento" data-en="Entertainment">Entretenimiento</span></option>
+          <option value="health">🏥 <span data-es="Salud" data-en="Health">Salud</span></option>
+          <option value="income">💰 <span data-es="Ingresos" data-en="Income">Ingresos</span></option>
+          <option value="transfer">↔️ <span data-es="Transferencias" data-en="Transfers">Transferencias</span></option>
+          <option value="tax">🏛️ SAT / Impuestos</option>
+          <option value="other" data-es="Otros" data-en="Other">Otros</option>
+        </select>
+        <select class="txn-filter-select" id="filterSource" onchange="loadTransactions()">
+          <option value="" data-es="Todas las fuentes" data-en="All sources">Todas las fuentes</option>
+          <option value="bbva">BBVA</option>
+          <option value="banamex">Banamex</option>
+          <option value="santander">Santander</option>
+          <option value="banorte">Banorte</option>
+          <option value="scotiabank">Scotiabank</option>
+          <option value="sat">SAT</option>
+          <option value="fintonic">Fintonic</option>
+          <option value="klar">Klar</option>
+          <option value="albo">Albo</option>
+        </select>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="txn-table">
+          <thead><tr>
+            <th data-es="Fecha" data-en="Date">Fecha</th>
+            <th data-es="Descripción" data-en="Description">Descripción</th>
+            <th data-es="Categoría" data-en="Category">Categoría</th>
+            <th data-es="Fuente" data-en="Source">Fuente</th>
+            <th data-es="Importe" data-en="Amount">Importe</th>
+          </tr></thead>
+          <tbody id="txnBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── IMPORT PAGE ── -->
+  <div class="page" id="page-import">
+    <div class="topbar">
+      <div class="page-title" data-es="Importar Estado de Cuenta" data-en="Import Bank Statement">Importar Estado de Cuenta</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title" data-es="Selecciona tu banco o app" data-en="Select your bank or app">Selecciona tu banco o app</div>
+      <div class="import-grid">
+        <div class="import-card selected" data-source="auto">
+          <span class="bank-logo">🔍</span>
+          <div class="bank-name" data-es="Detección automática" data-en="Auto-detect">Detección automática</div>
+          <div class="bank-desc" data-es="WealthLens detecta el banco" data-en="WealthLens detects the bank">WealthLens detecta el banco</div>
+        </div>
+        <div class="import-card" data-source="bbva">
+          <span class="bank-logo">🏦</span>
+          <div class="bank-name">BBVA</div>
+          <div class="bank-desc">Bancomer · CSV/XLSX</div>
+        </div>
+        <div class="import-card" data-source="banamex">
+          <span class="bank-logo">🏛️</span>
+          <div class="bank-name">Banamex</div>
+          <div class="bank-desc">Citibanamex · CSV</div>
+        </div>
+        <div class="import-card" data-source="santander">
+          <span class="bank-logo">🔴</span>
+          <div class="bank-name">Santander</div>
+          <div class="bank-desc">CSV/XLSX</div>
+        </div>
+        <div class="import-card" data-source="banorte">
+          <span class="bank-logo">🟢</span>
+          <div class="bank-name">Banorte</div>
+          <div class="bank-desc">CSV/XLSX</div>
+        </div>
+        <div class="import-card" data-source="scotiabank">
+          <span class="bank-logo">🔶</span>
+          <div class="bank-name">Scotiabank</div>
+          <div class="bank-desc">CSV/XLSX</div>
+        </div>
+        <div class="import-card" data-source="sat">
+          <span class="bank-logo">🏛️</span>
+          <div class="bank-name">SAT</div>
+          <div class="bank-desc">CFDI · XML/CSV</div>
+        </div>
+        <div class="import-card" data-source="fintonic">
+          <span class="bank-logo">💜</span>
+          <div class="bank-name">Fintonic</div>
+          <div class="bank-desc">CSV export</div>
+        </div>
+        <div class="import-card" data-source="klar">
+          <span class="bank-logo">⚡</span>
+          <div class="bank-name">Klar</div>
+          <div class="bank-desc">CSV export</div>
+        </div>
+        <div class="import-card" data-source="albo">
+          <span class="bank-logo">💚</span>
+          <div class="bank-name">Albo</div>
+          <div class="bank-desc">CSV export</div>
+        </div>
+      </div>
+
+      <div id="importResult" class="import-result"></div>
+
+      <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="handleDrop(event)">
+        <span class="drop-icon">📂</span>
+        <div class="drop-title" data-es="Arrastra tu archivo aquí o haz clic para seleccionar" data-en="Drag your file here or click to select">Arrastra tu archivo aquí o haz clic para seleccionar</div>
+        <div class="drop-sub" data-es="Formatos soportados: CSV, XLSX, XLS, TXT" data-en="Supported formats: CSV, XLSX, XLS, TXT">Formatos soportados: CSV, XLSX, XLS, TXT</div>
+      </div>
+      <input type="file" id="fileInput" class="drop-input" accept=".csv,.xlsx,.xls,.txt,.pdf" onchange="handleFile(this.files[0])">
+
+      <div style="font-size:.78rem;color:var(--ink-soft);text-align:center;margin-top:.75rem" data-es="🔒 Tu archivo se procesa localmente. Nunca se sube a servidores externos." data-en="🔒 Your file is processed locally. Never uploaded to external servers.">
+        🔒 Tu archivo se procesa localmente. Nunca se sube a servidores externos.
+      </div>
+    </div>
+
+    <!-- Format guide -->
+    <div class="card">
+      <div class="card-title" data-es="¿Cómo exportar tu estado de cuenta?" data-en="How to export your bank statement?">¿Cómo exportar tu estado de cuenta?</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;font-size:.82rem;color:var(--ink-soft)">
+        <div><strong style="color:var(--ink);display:block;margin-bottom:.35rem">BBVA</strong><span data-es="App BBVA → Movimientos → Descargar → CSV" data-en="BBVA App → Movements → Download → CSV">App BBVA → Movimientos → Descargar → CSV</span></div>
+        <div><strong style="color:var(--ink);display:block;margin-bottom:.35rem">Banamex</strong><span data-es="Portal web → Estado de cuenta → Exportar CSV" data-en="Web portal → Statement → Export CSV">Portal web → Estado de cuenta → Exportar CSV</span></div>
+        <div><strong style="color:var(--ink);display:block;margin-bottom:.35rem">Santander</strong><span data-es="SuperMóvil → Movimientos → Excel" data-en="SuperMóvil → Movements → Excel">SuperMóvil → Movimientos → Excel</span></div>
+        <div><strong style="color:var(--ink);display:block;margin-bottom:.35rem">Banorte</strong><span data-es="Banorte Móvil → Historial → Descargar" data-en="Banorte Móvil → History → Download">Banorte Móvil → Historial → Descargar</span></div>
+        <div><strong style="color:var(--ink);display:block;margin-bottom:.35rem">SAT</strong><span data-es="Portal SAT → Buzón Tributario → Descargar CFDI" data-en="SAT Portal → Tax Mailbox → Download CFDI">Portal SAT → Buzón Tributario → Descargar CFDI</span></div>
+        <div><strong style="color:var(--ink);display:block;margin-bottom:.35rem">Fintonic / Klar / Albo</strong><span data-es="Perfil → Exportar movimientos → CSV" data-en="Profile → Export transactions → CSV">Perfil → Exportar movimientos → CSV</span></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+const LANG = '{{ lang }}';
+const FX   = {MXN:1,USD:17.15,EUR:18.60,CAD:12.60,GBP:21.70};
+const SYMS  = {MXN:'$',USD:'US$',EUR:'€',CAD:'CA$',GBP:'£'};
+const TYPE_COLORS = {cash:'#1D9E75',investments:'#185FA5',property:'#C9A84C',crypto:'#534AB7',other:'#888780',liability:'#D85A30'};
+const TYPE_ICONS  = {cash:'💵',investments:'📈',property:'🏠',crypto:'₿',other:'📦',liability:'📉'};
+const CAT_COLORS  = {food:'#1D9E75',transport:'#185FA5',utilities:'#534AB7',entertainment:'#C9A84C',health:'#D85A30',income:'#1D9E75',transfer:'#888780',tax:'#E24B4A',convenience:'#888780',other:'#888780'};
+const TYPE_LABELS = {
+  cash:        {es:'Ahorro',en:'Savings'},
+  investments: {es:'Inversión',en:'Investment'},
+  property:    {es:'Inmueble',en:'Property'},
+  crypto:      {es:'Cripto',en:'Crypto'},
+  other:       {es:'Otro',en:'Other'},
+  liability:   {es:'Deuda',en:'Debt'},
+};
+const CAT_LABELS = {
+  food:{es:'Supermercado',en:'Groceries'},transport:{es:'Transporte',en:'Transport'},
+  utilities:{es:'Servicios',en:'Utilities'},entertainment:{es:'Entretenimiento',en:'Entertainment'},
+  health:{es:'Salud',en:'Health'},income:{es:'Ingreso',en:'Income'},
+  transfer:{es:'Transferencia',en:'Transfer'},tax:{es:'Impuesto',en:'Tax'},
+  convenience:{es:'Conveniencia',en:'Convenience'},other:{es:'Otro',en:'Other'},
+};
+
+let curCurrency = 'MXN';
+let privacyOn = true;
+let summaryData = {};
+
+// ── INIT ─────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  applyLang();
+  setGreeting();
+  loadProfile();
+  loadSummary();
+  loadTransactions();
+  setDate();
+  setupImportCards();
+
+  // ── Deep-link: if the URL has a hash (e.g. /dashboard#assets),
+  //    activate that page immediately instead of defaulting to Overview ──
+  const hash = window.location.hash.replace('#', '').trim();
+  const validPages = ['overview','assets','goals','transactions','import'];
+  if (hash && validPages.includes(hash)) {
+    const navEl = document.querySelector(`.nav-item[data-page="${hash}"]`);
+    showPage(hash, navEl);
+  }
+});
+
+function t(el_or_key) {
+  if (typeof el_or_key === 'string') return el_or_key;
+}
+function applyLang() {
+  document.querySelectorAll('[data-es]').forEach(el => {
+    el.textContent = LANG === 'es' ? el.dataset.es : el.dataset.en;
+  });
+  document.querySelectorAll('[data-page]').forEach(el => {
+    const span = el.querySelector('span[data-es]');
+    if (span) span.textContent = LANG === 'es' ? span.dataset.es : span.dataset.en;
+  });
+}
+
+function setGreeting() {
+  const h = new Date().getHours();
+  const greet = h < 12 ? {es:'Buenos días',en:'Good morning'} :
+                h < 19 ? {es:'Buenas tardes',en:'Good afternoon'} :
+                         {es:'Buenas noches',en:'Good evening'};
+  const name = document.getElementById('sidebarName').textContent;
+  const el = document.getElementById('greetingText');
+  if (el) el.textContent = (LANG==='es'?greet.es:greet.en);
+}
+
+function setDate() {
+  const el = document.getElementById('todayDate');
+  if (el) {
+    const d = new Date();
+    const opts = {weekday:'long',year:'numeric',month:'long',day:'numeric'};
+    el.textContent = d.toLocaleDateString(LANG==='es'?'es-MX':'en-US', opts);
+  }
+}
+
+// ── PROFILE ──────────────────────────────────────────────────
+async function loadProfile() {
+  const r = await fetch('/api/profile');
+  const d = await r.json();
+  document.getElementById('sidebarName').textContent = d.name;
+  document.getElementById('avatarInitials').textContent = d.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  curCurrency = d.currency || 'MXN';
+  const sel = document.getElementById('currencySelect');
+  if (sel) sel.value = curCurrency;
+  setGreeting();
+}
+
+// ── SUMMARY ──────────────────────────────────────────────────
+async function loadSummary() {
+  const r = await fetch('/api/summary');
+  summaryData = await r.json();
+  curCurrency = summaryData.currency;
+  renderKPIs(summaryData);
+  renderAllocation(summaryData.allocation);
+  renderGoalsSummary(summaryData.goals);
+  loadAssets();
+  loadTrendChart();
+}
+
+function fmt(v) {
+  if (!privacyOn) return SYMS[curCurrency]+'•••••';
+  const sym = SYMS[curCurrency] || '$';
+  const n = Math.abs(v);
+  if (n >= 1000000) return sym+(v/1000000).toFixed(2)+'M';
+  if (n >= 1000)    return sym+Math.round(v).toLocaleString('es-MX');
+  return sym+v.toFixed(2);
+}
+
+function renderKPIs(d) {
+  // ── Main values ──────────────────────────────────────────────────────
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  set('kpiNet',    fmt(d.net_worth));
+  set('kpiAssets', fmt(d.assets));
+  set('kpiLiabs',  fmt(d.liabilities));
+  set('kpiFlow',   fmt(d.cash_flow));
+
+  // ── % change badges ──────────────────────────────────────────────────
+  // d.pct = { net_worth, assets, liabilities, cash_flow }
+  // each = { arrow, label, dir }   e.g. { arrow:'▲', label:'+4.2%', dir:'up' }
+  const monthLabel = LANG === 'es' ? 'vs mes anterior' : 'vs prev month';
+
+  const pctMap = {
+    kpiNetChg:    d.pct?.net_worth,
+    kpiAssetsChg: d.pct?.assets,
+    kpiLiabsChg:  d.pct?.liabilities,
+    kpiFlowChg:   d.pct?.cash_flow,
+  };
+
+  Object.entries(pctMap).forEach(([elId, p]) => {
+    const el = document.getElementById(elId);
+    if (!el) return;
+    if (!p || p.dir === 'neutral' || (!p.label && !p.value)) {
+      el.className = 'kpi-change';
+      el.innerHTML = `<span style="opacity:.5;font-size:.7rem">${LANG === 'es' ? '— sin datos previos' : '— no prior data'}</span>`;
+      return;
+    }
+    const arrow = p.arrow || (p.dir === 'up' ? '▲' : p.dir === 'down' ? '▼' : '—');
+    const label = p.label || (p.value ? (p.value > 0 ? '+' : '') + p.value.toFixed(1) + '%' : '0%');
+    el.className = `kpi-change ${p.dir}`;
+    el.innerHTML = `${arrow} ${label} <span style="opacity:.6;font-size:.68rem">${monthLabel}</span>`;
+  });
+
+  // ── Month label under Monthly Flow ───────────────────────────────────
+  if (d.cur_month) {
+    const flowLabel = document.getElementById('kpiFlowLabel');
+    if (flowLabel) {
+      const [y, m] = d.cur_month.split('-');
+      const monthNames = {
+        es: ['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+        en: ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+      };
+      const mName = monthNames[LANG][parseInt(m)];
+      flowLabel.textContent = `${mName} ${y}`;
+    }
+  }
+}
+
+function renderAllocation(alloc) {
+  const total = Object.values(alloc).reduce((s,v)=>s+v,0);
+  const list = document.getElementById('allocList');
+  if (!list) return;
+  if (!total) { list.innerHTML = '<div class="empty"><span class="empty-icon">📊</span><span class="empty-text">'+(LANG==='es'?'Sin activos aún':'No assets yet')+'</span></div>'; return; }
+  list.innerHTML = Object.entries(alloc).sort((a,b)=>b[1]-a[1]).map(([type,val])=>{
+    const pct = Math.round((val/total)*100);
+    const lbl = TYPE_LABELS[type]?.[LANG] || type;
+    return `<div class="alloc-item">
+      <div class="alloc-dot" style="background:${TYPE_COLORS[type]||'#888'}"></div>
+      <div class="alloc-name">${lbl}</div>
+      <div class="alloc-bg"><div class="alloc-fill" style="width:${pct}%;background:${TYPE_COLORS[type]||'#888'}"></div></div>
+      <div class="alloc-pct">${pct}%</div>
+    </div>`;
+  }).join('');
+}
+
+function renderGoalsSummary(goals) {
+  const el = document.getElementById('goalsSummary');
+  const full = document.getElementById('goalsFullList');
+  const assets = summaryData.assets || 0;
+  if (!goals || !goals.length) {
+    const msg = `<div class="empty"><span class="empty-icon">🎯</span><span class="empty-text">${LANG==='es'?'Sin metas aún':'No goals yet'}</span></div>`;
+    if (el) el.innerHTML = msg;
+    if (full) full.innerHTML = msg;
+    return;
+  }
+  const html = goals.map(g => {
+    const name = LANG==='es'&&g.name_es ? g.name_es : g.name;
+    // Use explicitly tracked 'current' if available, otherwise use saved_amount or 0
+    const current = (g.current !== undefined && g.current !== null) ? g.current : (g.saved_amount || 0);
+    const pct = g.target > 0 ? Math.min(100, Math.round((current/g.target)*100)) : 0;
+    return `<div class="goal-item">
+      <div class="goal-top"><span class="goal-name">${name}</span><span class="goal-amounts">${fmt(current)} / ${fmt(g.target)}</span></div>
+      <div class="goal-bg"><div class="goal-fill" style="width:${pct}%;background:${g.color}"></div></div>
+      <div class="goal-meta"><span class="goal-pct">${pct}%</span>
+        <button class="del-btn" onclick="deleteGoal(${g.id})">✕</button>
+      </div>
+    </div>`;
+  }).join('');
+  if (el) el.innerHTML = html;
+  if (full) full.innerHTML = html;
+}
+
+// ── TREND CHART ──────────────────────────────────────────────
+async function loadTrendChart() {
+  const r = await fetch('/api/transactions/stats');
+  const d = await r.json();
+  const chart = document.getElementById('barChart');
+  if (!d.monthly || !d.monthly.length) return;
+  const maxV = Math.max(...d.monthly.flatMap(m=>[m.income,m.expenses]),1);
+  chart.innerHTML = d.monthly.map(m=>{
+    const iH = Math.round((m.income/maxV)*140);
+    const eH = Math.round((m.expenses/maxV)*140);
+    const lbl = m.month.slice(5); // MM
+    const months = ['','Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+    const mName = LANG==='es' ? (months[parseInt(lbl)]||lbl) : lbl;
+    return `<div class="bar-group">
+      <div class="bar-wrap">
+        <div class="bar income" style="height:${iH}px" title="${fmt(m.income)}"></div>
+        <div class="bar expense" style="height:${eH}px" title="${fmt(m.expenses)}"></div>
+      </div>
+      <div class="bar-label">${mName}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── ASSETS ───────────────────────────────────────────────────
+async function loadAssets() {
+  const r = await fetch('/api/assets');
+  const rows = await r.json();
+  renderAssetTable('overviewAssetBody', rows, false);
+  renderAssetTable('fullAssetBody', rows, true);
+}
+
+function renderAssetTable(bodyId, rows, full) {
+  const body = document.getElementById(bodyId);
+  if (!body) return;
+  if (!rows.length) {
+    const cols = full ? 5 : 3;
+    body.innerHTML = `<tr><td colspan="${cols}" style="text-align:center;padding:1.5rem;color:var(--ink-soft);font-size:.82rem">${LANG==='es'?'Sin entradas aún. Agrega un activo.':'No entries yet. Add an asset.'}</td></tr>`;
+    return;
+  }
+  body.innerHTML = rows.map(r => {
+    const isLiab = r.type === 'liability';
+    const color = isLiab ? 'var(--red)' : 'var(--ink)';
+    const lbl = TYPE_LABELS[r.type]?.[LANG] || r.type;
+    const prefix = isLiab ? '−' : '';
+    const del = full ? `<td><button class="del-btn" onclick="deleteAsset(${r.id})">✕</button></td>` : '';
+    const note = full ? `<td style="color:var(--ink-soft);font-size:.78rem">${r.note||'—'}</td>` : '';
+    return `<tr>
+      <td><span class="aicon" style="background:${TYPE_COLORS[r.type]||'#888'}20">${TYPE_ICONS[r.type]||'📦'}</span>${r.name}</td>
+      <td><span class="tag" style="background:${TYPE_COLORS[r.type]||'#888'}20;color:${TYPE_COLORS[r.type]||'#888'}">${lbl}</span></td>
+      ${note}
+      <td style="color:${color};font-weight:500">${prefix}${fmt(Math.abs(r.value))}</td>
+      ${del}
+    </tr>`;
+  }).join('');
+}
+
+async function saveAsset() {
+  const name  = document.getElementById('newName').value.trim();
+  const type  = document.getElementById('newType').value;
+  const value = parseFloat(document.getElementById('newValue').value);
+  const note  = document.getElementById('newNote').value.trim();
+  if (!name || isNaN(value)) { showToast(LANG==='es'?'Completa nombre y valor':'Fill in name and value'); return; }
+  await fetch('/api/assets', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,type,value,note})});
+  document.getElementById('newName').value='';
+  document.getElementById('newValue').value='';
+  document.getElementById('newNote').value='';
+  toggleForm('assetForm');
+  loadSummary();
+  showToast(LANG==='es'?'✓ Activo guardado':'✓ Asset saved');
+}
+
+async function deleteAsset(id) {
+  if (!confirm(LANG==='es'?'¿Eliminar este activo?':'Delete this asset?')) return;
+  await fetch(`/api/assets/${id}`,{method:'DELETE'});
+  loadSummary();
+  showToast(LANG==='es'?'Eliminado':'Deleted');
+}
+
+// ── GOALS ────────────────────────────────────────────────────
+async function saveGoal() {
+  const name    = document.getElementById('goalNameEn').value.trim() || document.getElementById('goalNameEs').value.trim();
+  const name_es = document.getElementById('goalNameEs').value.trim();
+  const target  = parseFloat(document.getElementById('goalTarget').value);
+  const color   = document.getElementById('goalColor').value;
+  if (!name || isNaN(target)) { showToast(LANG==='es'?'Completa los campos':'Fill in the fields'); return; }
+  await fetch('/api/goals',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,name_es,target,color})});
+  toggleForm('goalForm');
+  loadSummary();
+  showToast(LANG==='es'?'✓ Meta guardada':'✓ Goal saved');
+}
+
+async function deleteGoal(id) {
+  if (!confirm(LANG==='es'?'¿Eliminar esta meta?':'Delete this goal?')) return;
+  await fetch(`/api/goals/${id}`,{method:'DELETE'});
+  loadSummary();
+}
+
+// ── TRANSACTIONS ─────────────────────────────────────────────
+async function loadTransactions() {
+  const cat = document.getElementById('filterCat')?.value||'';
+  const src = document.getElementById('filterSource')?.value||'';
+  let url = '/api/transactions?limit=100';
+  if (cat) url += `&category=${cat}`;
+  if (src) url += `&source=${src}`;
+  const r = await fetch(url);
+  const rows = await r.json();
+  const body = document.getElementById('txnBody');
+  if (!body) return;
+  if (!rows.length) {
+    body.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--ink-soft);font-size:.82rem">${LANG==='es'?'Sin movimientos. Importa un estado de cuenta.':'No transactions. Import a statement.'}</td></tr>`;
+    return;
+  }
+  body.innerHTML = rows.map(r => {
+    const cls = r.amount >= 0 ? 'amount-positive' : 'amount-negative';
+    const prefix = r.amount >= 0 ? '+' : '';
+    const catLbl = CAT_LABELS[r.category]?.[LANG] || r.category;
+    const catColor = CAT_COLORS[r.category] || '#888';
+    return `<tr>
+      <td style="color:var(--ink-soft)">${r.date}</td>
+      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.description}</td>
+      <td><span class="cat-badge" style="background:${catColor}20;color:${catColor}">${catLbl}</span></td>
+      <td><span class="source-chip">${r.source}</span></td>
+      <td class="${cls}">${prefix}${fmt(r.amount)}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ── IMPORT ───────────────────────────────────────────────────
+function setupImportCards() {
+  document.querySelectorAll('.import-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.import-card').forEach(c=>c.classList.remove('selected'));
+      card.classList.add('selected');
+    });
+  });
+}
+function dragOver(e) { e.preventDefault(); document.getElementById('dropZone').classList.add('drag-over'); }
+function dragLeave(e) { document.getElementById('dropZone').classList.remove('drag-over'); }
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('dropZone').classList.remove('drag-over');
+  const f = e.dataTransfer.files[0];
+  if (f) handleFile(f);
+}
+async function handleFile(file) {
+  if (!file) return;
+  const resultEl = document.getElementById('importResult');
+  resultEl.style.display='block';
+  resultEl.className='import-result';
+  resultEl.textContent = LANG==='es'?'⏳ Procesando archivo...':'⏳ Processing file...';
+  const fd = new FormData();
+  fd.append('file', file);
+  try {
+    const r = await fetch('/api/import', {method:'POST', body:fd});
+    const d = await r.json();
+    if (d.ok) {
+      resultEl.className='import-result success';
+      resultEl.textContent = LANG==='es'
+        ? `✅ ${d.count} movimientos importados desde ${d.source.toUpperCase()}`
+        : `✅ ${d.count} transactions imported from ${d.source.toUpperCase()}`;
+      loadTransactions();
+      loadTrendChart();
+    } else {
+      resultEl.className='import-result error';
+      resultEl.textContent = LANG==='es'
+        ? `❌ No se pudieron leer movimientos. Verifica el formato del archivo.`
+        : `❌ Could not read transactions. Check the file format.`;
+    }
+  } catch(e) {
+    resultEl.className='import-result error';
+    resultEl.textContent = LANG==='es'?'❌ Error al procesar el archivo.':'❌ Error processing file.';
+  }
+}
+
+// ── CURRENCY ─────────────────────────────────────────────────
+async function setCurrency(cur) {
+  curCurrency = cur;
+  await fetch('/api/currency',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({currency:cur})});
+  loadSummary();
+}
+
+// ── PRIVACY ──────────────────────────────────────────────────
+function togglePrivacy() {
+  privacyOn = document.getElementById('privacyChk').checked;
+  document.getElementById('privacyLabel').textContent = privacyOn
+    ? (LANG==='es'?'Visible':'Visible')
+    : (LANG==='es'?'Oculto':'Hidden');
+  renderKPIs(summaryData);
+  loadAssets();
+  loadTransactions();
+}
+
+// ── NAVIGATION ───────────────────────────────────────────────
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item[data-page]').forEach(n=>n.classList.remove('active'));
+  const pg = document.getElementById('page-'+id);
+  if (pg) pg.classList.add('active');
+  if (el) el.classList.add('active');
+  if (id==='transactions') loadTransactions();
+  if (id==='goals') { loadSummary(); }
+  // Keep the URL hash in sync so back-navigation and deep-links work
+  history.replaceState(null, '', '#' + id);
+}
+
+function toggleForm(id) {
+  const f = document.getElementById(id);
+  if (f) f.classList.toggle('open');
+}
+
+// ── TOAST ────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2800);
+}
+</script>
+</body>
+</html>

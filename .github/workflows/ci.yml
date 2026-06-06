@@ -1,30 +1,36 @@
 name: CI
+
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
+
 jobs:
   test:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-python@v6
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Install deps
-        run: pip install flask werkzeug python-dotenv requests gunicorn pytest pytest-flask
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pytest flake8
+
+      - name: Lint with flake8
+        run: |
+          # Stop on syntax errors or undefined names; ignore line-length
+          flake8 app.py --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 app.py --count --max-line-length=120 --statistics
+
       - name: Run tests
         env:
-          SECRET_KEY: test-secret-key-ci
+          SECRET_KEY: test-secret-key-for-ci
           GROQ_API_KEY: ""
-        run: pytest test_app.py -v --tb=short
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-python@v6
-        with:
-          python-version: "3.11"
-      - run: pip install flake8
-      - run: flake8 app.py --max-line-length=120 --ignore=E501,W503,E302,E303,W291,W293,W292,E265,E266
+        run: pytest tests/ -v

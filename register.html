@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WealthLens MX — {% if lang=='es' %}Registro{% else %}Register{% endif %}</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--gold:#C9A84C;--gold-light:#F5EFD8;--ink:#0E0E0E;--ink-soft:#5F5E5A;--cream:#FAF7F2;--cream-border:#E8E3D8;--green:#1D9E75;--red:#D85A30;--white:#fff}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1rem}
+.lang-bar{position:fixed;top:1rem;right:1.5rem;display:flex;gap:.5rem}
+.lang-btn{font-size:.75rem;padding:.3rem .7rem;border-radius:100px;border:1px solid var(--cream-border);background:var(--white);color:var(--ink-soft);cursor:pointer;text-decoration:none;transition:all .2s}
+.lang-btn.active,.lang-btn:hover{background:var(--ink);color:var(--white);border-color:var(--ink)}
+.card{background:var(--white);border:1px solid var(--cream-border);border-radius:20px;padding:2.5rem;width:100%;max-width:420px;animation:fadeUp .5s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.logo{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:600;text-align:center;margin-bottom:.25rem;color:var(--ink)}
+.logo span{color:var(--gold)}
+.tagline{text-align:center;font-size:.8rem;color:var(--ink-soft);margin-bottom:2rem;font-weight:300}
+h2{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:600;color:var(--ink);margin-bottom:1.5rem}
+.field{margin-bottom:1rem}
+label{display:block;font-size:.8rem;color:var(--ink-soft);margin-bottom:.35rem}
+input,select{width:100%;padding:.65rem .85rem;border:1px solid var(--cream-border);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.9rem;color:var(--ink);background:var(--cream);outline:none;transition:border-color .2s;appearance:none}
+input:focus,select:focus{border-color:var(--gold)}
+.btn{width:100%;padding:.75rem;background:var(--ink);color:var(--white);border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:500;cursor:pointer;transition:opacity .2s;margin-top:.5rem}
+.btn:hover{opacity:.85}
+.link-row{text-align:center;margin-top:1.25rem;font-size:.85rem;color:var(--ink-soft)}
+.link-row a{color:var(--gold);font-weight:500;text-decoration:none}
+.alert{background:#FAECE7;color:#993C1D;border:1px solid #F0997B;border-radius:8px;padding:.6rem 1rem;font-size:.82rem;margin-bottom:1rem}
+.hint{font-size:.75rem;color:var(--ink-soft);margin-top:.3rem}
+</style>
+</head>
+<body>
+<div class="lang-bar">
+  <a href="{{ url_for('register', lang='es') }}" class="lang-btn {% if lang=='es' %}active{% endif %}">🇲🇽 ES</a>
+  <a href="{{ url_for('register', lang='en') }}" class="lang-btn {% if lang=='en' %}active{% endif %}">🇺🇸 EN</a>
+</div>
+
+<div class="card">
+  <div class="logo">Wealth<span>Lens</span></div>
+  <div class="tagline">{% if lang=='es' %}Crea tu cuenta gratuita{% else %}Create your free account{% endif %}</div>
+
+  {% with msgs = get_flashed_messages() %}
+  {% if msgs %}
+    <div class="alert">
+      {% if 'email_exists' in msgs %}
+        {% if lang=='es' %}Este correo ya está registrado.{% else %}This email is already registered.{% endif %}
+      {% elif 'fields_required' in msgs %}
+        {% if lang=='es' %}Por favor completa todos los campos.{% else %}Please fill in all fields.{% endif %}
+      {% endif %}
+    </div>
+  {% endif %}
+  {% endwith %}
+
+  <h2>{% if lang=='es' %}Registro{% else %}Register{% endif %}</h2>
+
+  <form method="POST" action="{{ url_for('register') }}?lang={{ lang }}">
+    <input type="hidden" name="lang" value="{{ lang }}">
+    <div class="field">
+      <label>{% if lang=='es' %}Nombre completo{% else %}Full name{% endif %}</label>
+      <input type="text" name="name" required placeholder="{% if lang=='es' %}Tu nombre{% else %}Your name{% endif %}">
+    </div>
+    <div class="field">
+      <label>{% if lang=='es' %}Correo electrónico{% else %}Email{% endif %}</label>
+      <input type="email" name="email" required placeholder="correo@ejemplo.com">
+    </div>
+    <div class="field">
+      <label>{% if lang=='es' %}Contraseña{% else %}Password{% endif %}</label>
+      <input type="password" name="password" required minlength="6" placeholder="••••••••">
+      <div class="hint">{% if lang=='es' %}Mínimo 6 caracteres{% else %}Minimum 6 characters{% endif %}</div>
+    </div>
+    <button type="submit" class="btn">
+      {% if lang=='es' %}Crear cuenta{% else %}Create account{% endif %}
+    </button>
+  </form>
+
+  <div class="link-row">
+    {% if lang=='es' %}
+      ¿Ya tienes cuenta? <a href="{{ url_for('login', lang='es') }}">Iniciar sesión</a>
+    {% else %}
+      Already have an account? <a href="{{ url_for('login', lang='en') }}">Sign in</a>
+    {% endif %}
+  </div>
+</div>
+</body>
+</html>

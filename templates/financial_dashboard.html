@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WealthLens MX — Financial Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#C9A84C;--gold-light:#F5EFD8;--gold-dark:#8A6A1E;
+  --ink:#0E0E0E;--ink-mid:#2C2C2A;--ink-soft:#5F5E5A;
+  --cream:#FAF7F2;--cream-border:#E8E3D8;--surface:#F2EEE6;
+  --white:#FFFFFF;
+  --green:#1D9E75;--green-light:#E1F5EE;
+  --red:#D85A30;--red-light:#FAECE7;
+  --blue:#185FA5;--blue-light:#E6F1FB;
+  --purple:#534AB7;--purple-light:#EEEDFE;
+  --sidebar:220px;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--ink);display:flex;min-height:100vh;font-size:15px}
+
+/* ── SIDEBAR (shared) ── */
+.sidebar{width:var(--sidebar);background:var(--ink);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:50}
+.sidebar-logo{padding:1.5rem 1.25rem 1rem;border-bottom:1px solid rgba(255,255,255,.08)}
+.sidebar-logo a{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:600;color:#fff;text-decoration:none}
+.sidebar-logo a span{color:var(--gold)}
+.sidebar-user{padding:.85rem 1.25rem;border-bottom:1px solid rgba(255,255,255,.08)}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:var(--gold);display:inline-flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:600;color:var(--ink);margin-right:8px;vertical-align:middle}
+.user-name{font-size:.82rem;color:rgba(255,255,255,.75);vertical-align:middle}
+nav.sidebar-nav{flex:1;padding:1rem 0;overflow-y:auto}
+.nav-item{display:flex;align-items:center;gap:10px;padding:.65rem 1.25rem;font-size:.85rem;color:rgba(255,255,255,.55);text-decoration:none;border-left:3px solid transparent;transition:all .2s}
+.nav-item:hover{color:#fff;background:rgba(255,255,255,.05)}
+.nav-item.active{color:#fff;border-left-color:var(--gold);background:rgba(255,255,255,.07)}
+.nav-icon{width:16px;height:16px;opacity:.7;flex-shrink:0}
+.nav-item.active .nav-icon{opacity:1}
+.sidebar-bottom{padding:1rem 1.25rem;border-top:1px solid rgba(255,255,255,.08)}
+.lang-switch{display:flex;gap:6px;margin-bottom:.75rem}
+.lang-btn{flex:1;text-align:center;padding:.3rem;font-size:.72rem;border-radius:6px;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.5);text-decoration:none;transition:all .2s}
+.lang-btn.active,.lang-btn:hover{background:rgba(255,255,255,.1);color:#fff}
+.logout-btn{display:block;text-align:center;padding:.45rem;font-size:.78rem;color:rgba(255,255,255,.4);text-decoration:none;transition:color .2s}
+.logout-btn:hover{color:#fff}
+
+/* ── MAIN ── */
+.main{margin-left:var(--sidebar);flex:1;padding:1.75rem;min-height:100vh;max-width:1200px}
+
+/* ── TOPBAR ── */
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.75rem;flex-wrap:wrap;gap:.75rem}
+.page-title{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:600;color:var(--ink)}
+.topbar-right{display:flex;gap:.75rem;align-items:center;flex-wrap:wrap}
+.date-input{font-family:'DM Sans',sans-serif;font-size:.82rem;padding:.42rem .75rem;border:1px solid var(--cream-border);border-radius:9px;background:var(--white);color:var(--ink);outline:none;transition:border-color .2s}
+.date-input:focus{border-color:var(--gold)}
+.gen-btn{font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:500;padding:.48rem 1.2rem;border-radius:10px;border:none;cursor:pointer;background:var(--ink);color:#fff;transition:opacity .2s;display:flex;align-items:center;gap:6px}
+.gen-btn:hover{opacity:.85}
+.gen-btn:disabled{opacity:.5;cursor:not-allowed}
+.badge{font-size:.7rem;padding:.25rem .65rem;border-radius:100px;background:var(--purple-light);color:var(--purple);font-weight:500}
+
+/* ── CONTROL BAR ── */
+.control-bar{background:var(--white);border:1px solid var(--cream-border);border-radius:14px;padding:1rem 1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-bottom:1.25rem}
+.ctrl-label{font-size:.78rem;color:var(--ink-soft)}
+.ctrl-input{font-family:'DM Sans',sans-serif;font-size:.82rem;padding:.4rem .75rem;border:1px solid var(--cream-border);border-radius:8px;background:var(--cream);color:var(--ink);outline:none;transition:border-color .2s}
+.ctrl-input:focus{border-color:var(--gold)}
+.ctrl-divider{width:1px;height:24px;background:var(--cream-border)}
+
+/* ── LOADING STATE ── */
+.loading-pane{background:var(--white);border:1px solid var(--cream-border);border-radius:16px;padding:4rem 2rem;text-align:center}
+.loading-spinner{display:inline-block;width:40px;height:40px;border:3px solid var(--cream-border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:1.25rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── EMPTY STATE ── */
+.empty-pane{background:var(--white);border:2px dashed var(--cream-border);border-radius:16px;padding:4rem 2rem;text-align:center;color:var(--ink-soft)}
+.empty-icon{font-size:3rem;margin-bottom:1rem;opacity:.35}
+
+/* ── EXECUTIVE SUMMARY ── */
+.summary-card{background:var(--white);border:1px solid var(--cream-border);border-radius:16px;padding:1.5rem;margin-bottom:1.25rem;display:flex;justify-content:space-between;align-items:flex-start;gap:1.5rem;flex-wrap:wrap}
+.summary-left{flex:1;min-width:280px}
+.summary-badge-wrap{display:flex;flex-direction:column;align-items:center;flex-shrink:0}
+.health-ring{width:90px;height:90px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;border:3px solid var(--gold)}
+.health-score{font-family:'Playfair Display',serif;font-size:1.75rem;font-weight:600;color:var(--ink)}
+.health-lbl{font-size:.62rem;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft)}
+.section-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-soft);margin-bottom:.4rem}
+
+/* ── KPI CARDS ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:.85rem;margin-bottom:1.25rem}
+.kpi-card{background:var(--white);border:1px solid var(--cream-border);border-radius:14px;padding:1.1rem 1.25rem;transition:transform .18s}
+.kpi-card:hover{transform:translateY(-2px)}
+.kpi-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);margin-bottom:.3rem}
+.kpi-val{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:600;color:var(--ink)}
+.kpi-change{font-size:.74rem;margin-top:3px;display:flex;align-items:center;gap:3px}
+
+/* ── CHART CARDS ── */
+.charts-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:1.1rem;margin-bottom:1.25rem}
+@media(max-width:860px){.charts-grid{grid-template-columns:1fr}}
+.chart-card{background:var(--white);border:1px solid var(--cream-border);border-radius:14px;padding:1.25rem}
+.chart-title{font-size:.8rem;font-weight:500;color:var(--ink);margin-bottom:.9rem}
+
+/* ── ANALYSIS GRID ── */
+.analysis-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem;margin-bottom:1.25rem}
+@media(max-width:720px){.analysis-grid{grid-template-columns:1fr}}
+.analysis-card{background:var(--white);border:1px solid var(--cream-border);border-radius:14px;padding:1.25rem}
+.analysis-title{font-size:.8rem;font-weight:500;color:var(--ink);margin-bottom:.75rem}
+.insight-item{background:var(--surface);border-radius:10px;padding:.75rem 1rem;margin-bottom:.55rem;border-left:3px solid transparent}
+.insight-item.positive{background:var(--green-light);border-left-color:var(--green)}
+.insight-item.warning{background:#FFF8E6;border-left-color:#E5A800}
+.insight-item.info{background:var(--blue-light);border-left-color:var(--blue)}
+.insight-title{font-size:.8rem;font-weight:500;margin-bottom:.2rem}
+.insight-body{font-size:.75rem;color:var(--ink-soft);line-height:1.55}
+.rec-item{background:var(--surface);border-radius:10px;padding:.75rem 1rem;margin-bottom:.55rem;display:flex;gap:.75rem;align-items:flex-start}
+.rec-num{width:22px;height:22px;min-width:22px;background:var(--ink);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:600;margin-top:1px}
+.rec-content{}
+.rec-title{font-size:.8rem;font-weight:500;margin-bottom:.2rem}
+.rec-detail{font-size:.75rem;color:var(--ink-soft);line-height:1.5}
+.rec-impact{font-size:.68rem;color:var(--gold-dark);margin-top:.2rem}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:.6rem 1.5rem;border-radius:100px;font-size:.82rem;opacity:0;transition:all .3s;pointer-events:none;z-index:999}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media print{.sidebar,.control-bar,.topbar-right{display:none!important}.main{margin-left:0!important}}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <a href="/dashboard">Wealth<span>Lens</span> <span style="font-size:.65rem;color:rgba(255,255,255,.35);font-family:'DM Sans',sans-serif;font-weight:300;vertical-align:middle">MX</span></a>
+  </div>
+  <div class="sidebar-user">
+    <span class="user-avatar" id="avatarInitials">?</span>
+    <span class="user-name" id="sidebarName">...</span>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="/dashboard" class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      <span>{% if lang=='es' %}Resumen{% else %}Overview{% endif %}</span>
+    </a>
+    <a href="/dashboard#assets" class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>
+      <span>{% if lang=='es' %}Patrimonio{% else %}Assets{% endif %}</span>
+    </a>
+    <a href="/dashboard#goals" class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+      <span>{% if lang=='es' %}Metas{% else %}Goals{% endif %}</span>
+    </a>
+    <a href="/dashboard#transactions" class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+      <span>{% if lang=='es' %}Movimientos{% else %}Transactions{% endif %}</span>
+    </a>
+    <a href="/dashboard#import" class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+      <span>{% if lang=='es' %}Importar{% else %}Import{% endif %}</span>
+    </a>
+    <a href="/ai" class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2a10 10 0 110 20A10 10 0 0112 2zm0 0v4m0 14v-4m10-6h-4M6 12H2m15.07-7.07l-2.83 2.83M8.76 15.24l-2.83 2.83m0-12.14l2.83 2.83m6.48 6.48l2.83 2.83"/></svg>
+      <span>{% if lang=='es' %}Asesor IA{% else %}AI Advisor{% endif %}</span>
+    </a>
+    <a href="/financial-dashboard" class="nav-item active">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3v18h18"/><path d="M18 9l-5 5-2-2-4 4"/></svg>
+      <span>{% if lang=='es' %}Dashboard IA{% else %}AI Dashboard{% endif %}</span>
+    </a>
+    <a href="/settings" class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      <span>{% if lang=='es' %}Configuración{% else %}Settings{% endif %}</span>
+    </a>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="lang-switch">
+      <a href="/set_lang/es" class="lang-btn {% if lang=='es' %}active{% endif %}">🇲🇽 ES</a>
+      <a href="/set_lang/en" class="lang-btn {% if lang=='en' %}active{% endif %}">🇺🇸 EN</a>
+    </div>
+    <a href="/logout" class="logout-btn">{% if lang=='es' %}Cerrar sesión{% else %}Sign out{% endif %}</a>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+  <div class="topbar">
+    <div>
+      <div class="page-title">📈 {% if lang=='es' %}Dashboard Financiero IA{% else %}AI Financial Dashboard{% endif %}</div>
+      <div style="font-size:.8rem;color:var(--ink-soft);margin-top:2px" id="dashSubtitle">
+        {% if lang=='es' %}Selecciona un período y haz clic en Generar{% else %}Select a period and click Generate{% endif %}
+      </div>
+    </div>
+    <div class="topbar-right">
+      <span class="badge" id="modelBadge">AI Analysis</span>
+      <button onclick="printDashboard()" style="font-family:'DM Sans',sans-serif;font-size:.78rem;padding:.4rem .9rem;border-radius:8px;border:1px solid var(--cream-border);background:var(--white);color:var(--ink-soft);cursor:pointer">🖨 {% if lang=='es' %}Imprimir{% else %}Print{% endif %}</button>
+    </div>
+  </div>
+
+  <!-- Control bar -->
+  <div class="control-bar">
+    <span class="ctrl-label">{% if lang=='es' %}Desde{% else %}From{% endif %}</span>
+    <input type="date" class="ctrl-input" id="dateFrom">
+    <span class="ctrl-label">{% if lang=='es' %}Hasta{% else %}To{% endif %}</span>
+    <input type="date" class="ctrl-input" id="dateTo">
+    <div class="ctrl-divider"></div>
+    <input type="text" class="ctrl-input" id="promptInput" style="width:280px"
+      placeholder="{% if lang=='es' %}Instrucción adicional (opcional)…{% else %}Additional instruction (optional)…{% endif %}">
+    <button class="gen-btn" id="genBtn" onclick="generateDashboard()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2a10 10 0 110 20A10 10 0 0112 2zm0 0v4m0 14v-4m10-6h-4M6 12H2"/></svg>
+      {% if lang=='es' %}Generar Dashboard{% else %}Generate Dashboard{% endif %}
+    </button>
+  </div>
+
+  <!-- Dashboard content area -->
+  <div id="dashboardArea">
+    <!-- Empty state (shown by default) -->
+    <div class="empty-pane" id="emptyPane">
+      <div class="empty-icon">📊</div>
+      <div style="font-weight:500;color:var(--ink);margin-bottom:.4rem">
+        {% if lang=='es' %}Tu dashboard aparecerá aquí{% else %}Your dashboard will appear here{% endif %}
+      </div>
+      <div style="font-size:.85rem;max-width:340px;margin:0 auto;line-height:1.6">
+        {% if lang=='es' %}
+          Selecciona un período de análisis y haz clic en <strong>Generar Dashboard</strong>. La IA analizará tus datos financieros reales y creará un reporte visual completo.
+        {% else %}
+          Select an analysis period and click <strong>Generate Dashboard</strong>. The AI will analyse your real financial data and build a full visual report.
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Loading (hidden by default) -->
+    <div class="loading-pane" id="loadingPane" style="display:none">
+      <div class="loading-spinner"></div>
+      <div style="font-weight:500;margin-bottom:.35rem">
+        {% if lang=='es' %}Generando tu dashboard…{% else %}Generating your dashboard…{% endif %}
+      </div>
+      <div style="font-size:.82rem;color:var(--ink-soft)">
+        {% if lang=='es' %}La IA está analizando tus datos financieros{% else %}The AI is analysing your financial data{% endif %}
+      </div>
+    </div>
+
+    <!-- Generated content (hidden by default) -->
+    <div id="dashContent" style="display:none">
+
+      <!-- Executive summary -->
+      <div class="summary-card" id="summaryCard">
+        <div class="summary-left">
+          <div class="section-label">{% if lang=='es' %}Resumen Ejecutivo{% else %}Executive Summary{% endif %}</div>
+          <p style="font-size:.92rem;line-height:1.75;color:var(--ink);margin-top:.1rem" id="dashSummary"></p>
+          <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.85rem" id="dashTags"></div>
+        </div>
+        <div class="summary-badge-wrap">
+          <div class="health-ring" id="healthRing">
+            <div class="health-score" id="healthScore">—</div>
+            <div class="health-lbl">{% if lang=='es' %}salud{% else %}health{% endif %}</div>
+          </div>
+          <div style="font-size:.7rem;color:var(--ink-soft);margin-top:.4rem;text-align:center" id="healthLabel"></div>
+        </div>
+      </div>
+
+      <!-- KPIs -->
+      <div class="kpi-grid" id="dashKpis"></div>
+
+      <!-- Charts -->
+      <div class="charts-grid">
+        <div class="chart-card">
+          <div class="chart-title">📊 {% if lang=='es' %}Tendencia Mensual — Ingresos vs Gastos{% else %}Monthly Trend — Income vs Expenses{% endif %}</div>
+          <canvas id="trendChart"></canvas>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">🍩 {% if lang=='es' %}Distribución de Gastos por Categoría{% else %}Expense Distribution by Category{% endif %}</div>
+          <canvas id="catChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Savings rate area chart -->
+      <div class="chart-card" style="margin-bottom:1.25rem">
+        <div class="chart-title">💰 {% if lang=='es' %}Flujo Neto Mensual (Ingresos − Gastos){% else %}Monthly Net Cash Flow (Income − Expenses){% endif %}</div>
+        <canvas id="netChart" height="80"></canvas>
+      </div>
+
+      <!-- Insights + Recommendations -->
+      <div class="analysis-grid">
+        <div class="analysis-card">
+          <div class="analysis-title">💡 {% if lang=='es' %}Insights Clave{% else %}Key Insights{% endif %}</div>
+          <div id="dashInsights"></div>
+        </div>
+        <div class="analysis-card">
+          <div class="analysis-title">🎯 {% if lang=='es' %}Recomendaciones Prioritarias{% else %}Priority Recommendations{% endif %}</div>
+          <div id="dashRecs"></div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div style="text-align:center;padding:1rem 0;font-size:.75rem;color:var(--ink-soft)">
+        {% if lang=='es' %}Dashboard generado por IA el{% else %}Dashboard generated by AI on{% endif %}
+        <span id="genDate"></span> &nbsp;·&nbsp;
+        <a href="/ai" style="color:var(--gold-dark);text-decoration:none">{% if lang=='es' %}Ir al Asesor IA{% else %}Go to AI Advisor{% endif %}</a>
+      </div>
+
+    </div><!-- /dashContent -->
+  </div>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const LANG = '{{ lang }}';
+let trendChartInst = null;
+let catChartInst   = null;
+let netChartInst   = null;
+
+// ── INIT ──────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  loadProfile();
+  setDefaultDates();
+  // Auto-generate on load if URL has ?auto=1
+  if (new URLSearchParams(location.search).get('auto') === '1') {
+    generateDashboard();
+  }
+});
+
+function loadProfile() {
+  fetch('/api/profile').then(r=>r.json()).then(d=>{
+    document.getElementById('sidebarName').textContent = d.name;
+    const initials = d.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    document.getElementById('avatarInitials').textContent = initials;
+  }).catch(()=>{});
+}
+
+function setDefaultDates() {
+  const today = new Date();
+  const first = new Date(today.getFullYear(), today.getMonth() - 2, 1);
+  document.getElementById('dateTo').value   = today.toISOString().slice(0,10);
+  document.getElementById('dateFrom').value = first.toISOString().slice(0,10);
+}
+
+// ── GENERATE ──────────────────────────────────────────────────
+async function generateDashboard() {
+  const dateFrom = document.getElementById('dateFrom').value;
+  const dateTo   = document.getElementById('dateTo').value;
+  const prompt   = document.getElementById('promptInput').value.trim();
+  const btn      = document.getElementById('genBtn');
+
+  btn.disabled = true;
+  showState('loading');
+
+  try {
+    const resp = await fetch('/api/ai/dashboard', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({date_from: dateFrom||null, date_to: dateTo||null, prompt}),
+    });
+    const data = await resp.json();
+    if (!data.ok) throw new Error(data.error || 'Unknown error');
+    if (data.demo) showToast(LANG==='es'?'⚠️ Modo demo — configura el gateway en app.py':'⚠️ Demo mode — configure gateway in app.py');
+    renderDashboard(data.dashboard);
+  } catch(err) {
+    showState('empty');
+    showToast('❌ ' + err.message);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+// ── RENDER ────────────────────────────────────────────────────
+function renderDashboard(d) {
+  // Subtitle
+  document.getElementById('dashSubtitle').textContent = d.period || '';
+  document.getElementById('genDate').textContent = new Date().toLocaleDateString(LANG==='es'?'es-MX':'en-US');
+
+  // Summary
+  document.getElementById('dashSummary').textContent = d.executive_summary || '';
+
+  // Health ring
+  const score = d.health_score ?? 0;
+  document.getElementById('healthScore').textContent = score;
+  document.getElementById('healthLabel').textContent = d.health_label || '';
+  const ring = document.getElementById('healthRing');
+  ring.style.borderColor = score >= 80 ? 'var(--green)' : score >= 60 ? 'var(--gold)' : 'var(--red)';
+  ring.style.background  = score >= 80 ? 'var(--green-light)' : score >= 60 ? 'var(--gold-light)' : 'var(--red-light)';
+
+  // Tags: extract a few key labels
+  const tags = [];
+  if (d.health_label) tags.push({t: d.health_label, c: score>=80?'var(--green)':score>=60?'var(--gold)':'var(--red)'});
+  (d.kpis||[]).slice(0,2).forEach(k => tags.push({t: k.label, c: 'var(--ink-soft)'}));
+  document.getElementById('dashTags').innerHTML = tags.map(t =>
+    `<span style="font-size:.7rem;padding:.25rem .7rem;border-radius:100px;border:1px solid ${t.c}40;color:${t.c};background:${t.c}12">${escHtml(t.t)}</span>`
+  ).join('');
+
+  // KPIs
+  const colorMap = {green:'var(--green)',red:'var(--red)',blue:'var(--blue)',gold:'var(--gold)',neutral:'var(--ink-soft)'};
+  document.getElementById('dashKpis').innerHTML = (d.kpis||[]).map(k => {
+    const col = colorMap[k.color] || 'var(--ink-soft)';
+    const arrow = k.trend==='up'?'↑':k.trend==='down'?'↓':'—';
+    return `<div class="kpi-card">
+      <div class="kpi-label">${escHtml(k.label)}</div>
+      <div class="kpi-val">${escHtml(k.value)}</div>
+      <div class="kpi-change" style="color:${col}">${arrow} ${escHtml(k.change)}</div>
+    </div>`;
+  }).join('');
+
+  // Chart: Monthly Trend (bar)
+  if (trendChartInst) { trendChartInst.destroy(); trendChartInst=null; }
+  const trend = d.monthly_trend || [];
+  if (trend.length) {
+    trendChartInst = new Chart(document.getElementById('trendChart'), {
+      type: 'bar',
+      data: {
+        labels: trend.map(m=>m.month),
+        datasets: [
+          {label:LANG==='es'?'Ingresos':'Income',  data:trend.map(m=>m.income),   backgroundColor:'rgba(29,158,117,.75)',  borderRadius:4},
+          {label:LANG==='es'?'Gastos':'Expenses',  data:trend.map(m=>m.expenses), backgroundColor:'rgba(216,90,48,.65)',   borderRadius:4},
+        ]
+      },
+      options:{responsive:true,plugins:{legend:{labels:{font:{size:11}}}},scales:{y:{ticks:{font:{size:10}},grid:{color:'rgba(0,0,0,.05)'}},x:{ticks:{font:{size:10}}}}}
+    });
+  }
+
+  // Chart: Category doughnut
+  if (catChartInst) { catChartInst.destroy(); catChartInst=null; }
+  const cats = d.category_breakdown || [];
+  if (cats.length) {
+    const palette = ['#1D9E75','#C9A84C','#185FA5','#D85A30','#534AB7','#5F5E5A','#8A6A1E','#0E6652'];
+    catChartInst = new Chart(document.getElementById('catChart'), {
+      type: 'doughnut',
+      data: {
+        labels: cats.map(c=>c.category),
+        datasets: [{data:cats.map(c=>c.amount), backgroundColor:palette.slice(0,cats.length), borderWidth:2, borderColor:'#fff'}]
+      },
+      options:{responsive:true,plugins:{legend:{position:'right',labels:{font:{size:10},boxWidth:11,padding:8}}}}
+    });
+  }
+
+  // Chart: Net cash flow line
+  if (netChartInst) { netChartInst.destroy(); netChartInst=null; }
+  if (trend.length) {
+    const netData = trend.map(m => +(m.income - m.expenses).toFixed(2));
+    const posColor = 'rgba(29,158,117,.18)';
+    const negColor = 'rgba(216,90,48,.15)';
+    netChartInst = new Chart(document.getElementById('netChart'), {
+      type: 'line',
+      data: {
+        labels: trend.map(m=>m.month),
+        datasets: [{
+          label: LANG==='es'?'Flujo Neto':'Net Flow',
+          data: netData,
+          borderColor: 'var(--ink)',
+          backgroundColor: (ctx) => {
+            const g = ctx.chart.ctx.createLinearGradient(0,0,0,ctx.chart.height);
+            g.addColorStop(0, posColor); g.addColorStop(1, 'transparent');
+            return g;
+          },
+          fill: true, tension: 0.35, pointRadius: 4, pointBackgroundColor: netData.map(v=>v>=0?'#1D9E75':'#D85A30'),
+          borderWidth: 2,
+        }]
+      },
+      options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{ticks:{font:{size:10}},grid:{color:'rgba(0,0,0,.05)'}},x:{ticks:{font:{size:10}}}}}
+    });
+  }
+
+  // Insights
+  const insightConf = {
+    positive:{bg:'var(--green-light)',bdr:'#A6DFCE',icon:'✅'},
+    warning: {bg:'#FFF8E6',         bdr:'#F5D07A',icon:'⚠️'},
+    info:    {bg:'var(--blue-light)',bdr:'#B5D4F4',icon:'ℹ️'},
+  };
+  document.getElementById('dashInsights').innerHTML = (d.insights||[]).map(i => {
+    const c = insightConf[i.type] || insightConf.info;
+    return `<div class="insight-item ${i.type}" style="background:${c.bg};border-left-color:${c.bdr}">
+      <div class="insight-title">${c.icon} ${escHtml(i.title)}</div>
+      <div class="insight-body">${escHtml(i.body)}</div>
+    </div>`;
+  }).join('') || `<div style="font-size:.82rem;color:var(--ink-soft)">${LANG==='es'?'Sin insights disponibles.':'No insights available.'}</div>`;
+
+  // Recommendations
+  document.getElementById('dashRecs').innerHTML = (d.recommendations||[]).map((r,idx) =>
+    `<div class="rec-item">
+      <div class="rec-num">${r.priority||idx+1}</div>
+      <div class="rec-content">
+        <div class="rec-title">${escHtml(r.title)}</div>
+        <div class="rec-detail">${escHtml(r.detail)}</div>
+        ${r.impact?`<div class="rec-impact">Impact: ${escHtml(r.impact)}</div>`:''}
+      </div>
+    </div>`
+  ).join('') || `<div style="font-size:.82rem;color:var(--ink-soft)">${LANG==='es'?'Sin recomendaciones.':'No recommendations.'}</div>`;
+
+  showState('content');
+}
+
+// ── HELPERS ───────────────────────────────────────────────────
+function showState(state) {
+  document.getElementById('emptyPane').style.display   = state==='empty'   ? '' : 'none';
+  document.getElementById('loadingPane').style.display = state==='loading' ? '' : 'none';
+  document.getElementById('dashContent').style.display = state==='content' ? '' : 'none';
+}
+
+function printDashboard() { window.print(); }
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3000);
+}
+
+function escHtml(s) {
+  if (!s && s !== 0) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+</script>
+</body>
+</html>

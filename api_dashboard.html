@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WealthLens MX — API Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#C9A84C;--gold-light:#F5EFD8;
+  --ink:#0E0E0E;--ink-soft:#5F5E5A;
+  --cream:#FAF7F2;--cream-border:#E8E3D8;--surface:#F2EEE6;
+  --white:#FFFFFF;
+  --green:#1D9E75;--red:#D85A30;--blue:#185FA5;
+  --sidebar:220px;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--ink);display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar);background:var(--ink);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:50;padding:0}
+.sidebar-logo{padding:1.5rem 1.25rem;border-bottom:1px solid rgba(255,255,255,.08)}
+.sidebar-logo a{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:600;color:#fff;text-decoration:none}
+.sidebar-logo a span{color:var(--gold)}
+nav.sidebar-nav{flex:1;padding:1rem 0;overflow-y:auto}
+.nav-item{display:flex;align-items:center;gap:10px;padding:.65rem 1.25rem;font-size:.85rem;color:rgba(255,255,255,.55);cursor:pointer;transition:all .2s;border-left:3px solid transparent}
+.nav-item:hover{color:#fff;background:rgba(255,255,255,.05)}
+.nav-item.active{color:#fff;border-left-color:var(--gold);background:rgba(255,255,255,.07)}
+.nav-icon{width:16px;height:16px;opacity:.7;flex-shrink:0}
+.main{margin-left:var(--sidebar);flex:1;padding:1.75rem;min-height:100vh}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.75rem;flex-wrap:wrap}
+.page-title{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:600}
+.status-badge{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;padding:.4rem .8rem;border-radius:100px;background:var(--green-light);color:var(--green);font-weight:500}
+.status-badge.off{background:#fee;color:var(--red)}
+.status-dot{width:8px;height:8px;border-radius:50%;background:currentColor}
+.container{max-width:1200px;margin:0 auto}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem}
+@media(max-width:768px){.grid-2,.grid-3{grid-template-columns:1fr}}
+.card{background:var(--white);border:1px solid var(--cream-border);border-radius:16px;padding:1.5rem}
+.card-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:600;margin-bottom:1rem;border-bottom:2px solid var(--gold-light);padding-bottom:.75rem}
+.api-endpoint{background:var(--cream);border-radius:12px;padding:1rem;margin-bottom:1rem;border-left:4px solid var(--blue)}
+.method{display:inline-block;font-size:.7rem;font-weight:600;text-transform:uppercase;padding:.25rem .6rem;border-radius:4px;margin-right:.5rem}
+.method.get{background:#E3F2FD;color:var(--blue)}
+.method.post{background:#FCE4EC;color:#C2185B}
+.method.put{background:#FFF3E0;color:#F57C00}
+.method.delete{background:#FFEBEE;color:var(--red)}
+.endpoint-path{font-family:'Monaco','Courier',monospace;font-size:.8rem;color:var(--ink);margin:.5rem 0;word-break:break-all}
+.params-list{font-size:.75rem;color:var(--ink-soft);line-height:1.5}
+.param-item{margin:.3rem 0;padding:.3rem 0}
+.param-type{background:var(--surface);padding:2px 6px;border-radius:3px;font-family:monospace}
+.btn{display:inline-block;padding:.65rem 1.25rem;background:var(--ink);color:var(--white);border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:500;cursor:pointer;transition:all .2s}
+.btn:hover{opacity:.85;transform:translateY(-1px)}
+.btn-primary{background:var(--blue)}
+.btn-secondary{background:var(--green)}
+.btn-outline{background:transparent;border:1px solid var(--cream-border);color:var(--ink)}
+.test-panel{background:var(--cream);border-radius:12px;padding:1rem;margin-top:1rem}
+.test-panel h4{font-size:.9rem;margin-bottom:.75rem;color:var(--ink-soft)}
+.form-group{margin-bottom:.75rem}
+.form-group label{display:block;font-size:.8rem;color:var(--ink-soft);margin-bottom:.25rem;font-weight:500}
+.form-group input,.form-group textarea{width:100%;padding:.5rem;border:1px solid var(--cream-border);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:.85rem}
+.form-group textarea{min-height:100px;resize:vertical;font-family:'Monaco',monospace}
+.response-box{background:#f5f5f5;border:1px solid var(--cream-border);border-radius:8px;padding:1rem;margin-top:.75rem;max-height:300px;overflow-y:auto;font-family:'Monaco',monospace;font-size:.75rem}
+.response-box.success{border-color:var(--green);background:#f1f8f5}
+.response-box.error{border-color:var(--red);background:#fef5f1}
+.chat-container{display:flex;flex-direction:column;height:500px;border-radius:12px;overflow:hidden;background:var(--white);border:1px solid var(--cream-border)}
+.chat-messages{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.75rem}
+.chat-message{display:flex;gap:.5rem;animation:slideIn .3s ease}
+@keyframes slideIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.chat-message.user{justify-content:flex-end}
+.chat-bubble{max-width:70%;padding:.75rem 1rem;border-radius:12px;font-size:.85rem;line-height:1.4}
+.chat-bubble.ai{background:var(--cream);color:var(--ink);border-left:3px solid var(--gold)}
+.chat-bubble.user{background:var(--blue);color:white}
+.chat-input-area{padding:1rem;border-top:1px solid var(--cream-border);display:flex;gap:.5rem}
+.chat-input-area input{flex:1;padding:.65rem;border:1px solid var(--cream-border);border-radius:8px;font-family:'DM Sans',sans-serif}
+.chat-input-area button{padding:.65rem 1rem;background:var(--blue);color:white;border:none;border-radius:8px;font-weight:500;cursor:pointer;transition:all .2s}
+.chat-input-area button:hover{opacity:.85}
+.loading{opacity:.5;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:.5}50%{opacity:1}}
+.stat-card{text-align:center}
+.stat-value{font-family:'Playfair Display',serif;font-size:2rem;font-weight:600;color:var(--gold)}
+.stat-label{font-size:.75rem;color:var(--ink-soft);margin-top:.25rem;text-transform:uppercase;letter-spacing:.05em}
+.tabs{display:flex;gap:.5rem;border-bottom:2px solid var(--cream-border);margin-bottom:1rem}
+.tab{padding:.75rem 1.25rem;cursor:pointer;border-bottom:2px solid transparent;color:var(--ink-soft);transition:all .2s}
+.tab.active{color:var(--ink);border-bottom-color:var(--gold)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.code-block{background:var(--ink);color:#00FF00;padding:1rem;border-radius:8px;font-family:'Monaco',monospace;font-size:.75rem;overflow-x:auto;margin:.75rem 0}
+</style>
+</head>
+<body>
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <a href="/dashboard">Wealth<span>Lens</span></a>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-item active" onclick="showTab('overview')">
+      <span class="nav-icon">📊</span>
+      <span>Overview</span>
+    </div>
+    <div class="nav-item" onclick="showTab('endpoints')">
+      <span class="nav-icon">🔌</span>
+      <span>Endpoints</span>
+    </div>
+    <div class="nav-item" onclick="showTab('testing')">
+      <span class="nav-icon">⚙️</span>
+      <span>Testing</span>
+    </div>
+    <div class="nav-item" onclick="showTab('chatbot')">
+      <span class="nav-icon">💬</span>
+      <span>Chatbot</span>
+    </div>
+  </nav>
+  <div style="padding:1rem;border-top:1px solid rgba(255,255,255,.08)">
+    <a href="/logout" style="color:rgba(255,255,255,.55);text-decoration:none;font-size:.85rem">Logout</a>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <h1 class="page-title">API Dashboard</h1>
+    <div id="statusBadge" class="status-badge">
+      <span class="status-dot"></span>
+      <span>API Online</span>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- OVERVIEW TAB -->
+    <div id="overview" class="tab-content active">
+      <div class="card" style="margin-bottom:1.5rem">
+        <div class="card-title">System Status</div>
+        <div class="grid-3">
+          <div class="stat-card">
+            <div class="stat-value">✓</div>
+            <div class="stat-label">API Server</div>
+          </div>
+          <div class="stat-card">
+            <div id="aiStatus" class="stat-value">⚙️</div>
+            <div class="stat-label">AI Gateway</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">2.0.1</div>
+            <div class="stat-label">Version</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">📚 Documentation</div>
+          <p style="font-size:.9rem;line-height:1.6;color:var(--ink-soft)">
+            WealthLens provides a comprehensive REST API for financial data management, AI-powered insights, and market analysis. All endpoints require authentication.
+          </p>
+          <button class="btn btn-primary" style="margin-top:1rem;width:100%" onclick="showTab('endpoints')">View Endpoints</button>
+        </div>
+        <div class="card">
+          <div class="card-title">🤖 AI Chatbot</div>
+          <p style="font-size:.9rem;line-height:1.6;color:var(--ink-soft)">
+            Get personalized financial advice from our AI assistant. Ask questions about your wealth, goals, and financial planning.
+          </p>
+          <button class="btn btn-secondary" style="margin-top:1rem;width:100%" onclick="showTab('chatbot')">Open Chat</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🎯 Available Features</div>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:1rem">
+          <div style="font-size:.9rem">
+            <div style="margin-bottom:.5rem">✓ <strong>User Authentication</strong></div>
+            <div style="margin-bottom:.5rem">✓ <strong>Wealth Tracking</strong></div>
+            <div style="margin-bottom:.5rem">✓ <strong>Goal Management</strong></div>
+            <div>✓ <strong>Transaction Import</strong></div>
+          </div>
+          <div style="font-size:.9rem">
+            <div style="margin-bottom:.5rem">✓ <strong>AI Dashboard</strong></div>
+            <div style="margin-bottom:.5rem">✓ <strong>Market Data</strong></div>
+            <div style="margin-bottom:.5rem">✓ <strong>Chat Support</strong></div>
+            <div>✓ <strong>Budget Planning</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ENDPOINTS TAB -->
+    <div id="endpoints" class="tab-content">
+      <div class="card">
+        <div class="card-title">API Endpoints Reference</div>
+        
+        <div style="margin-bottom:1.5rem">
+          <h3 style="font-size:1rem;margin-bottom:.75rem">📊 Wealth & Financial Data</h3>
+          
+          <div class="api-endpoint">
+            <div>
+              <span class="method get">GET</span>
+              <span class="endpoint-path">/api/wealth/summary</span>
+            </div>
+            <div style="margin-top:.5rem;font-size:.85rem;color:var(--ink-soft)">Get user's wealth summary including total assets, goals, and recent transactions.</div>
+            <div class="params-list">
+              <strong>Returns:</strong> wealth object, goals object, recent_30_days object
+            </div>
+          </div>
+
+          <div class="api-endpoint">
+            <div>
+              <span class="method post">POST</span>
+              <span class="endpoint-path">/api/ai/dashboard</span>
+            </div>
+            <div style="margin-top:.5rem;font-size:.85rem;color:var(--ink-soft)">Generate AI-powered financial dashboard with KPIs and insights.</div>
+            <div class="params-list">
+              <strong>Body:</strong> { date_from, date_to, prompt }<br>
+              <strong>Returns:</strong> dashboard object with health_score, KPIs, insights, recommendations
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-bottom:1.5rem">
+          <h3 style="font-size:1rem;margin-bottom:.75rem">💹 Market Data</h3>
+          
+          <div class="api-endpoint">
+            <div>
+              <span class="method get">GET</span>
+              <span class="endpoint-path">/api/market/deposits</span>
+            </div>
+            <div style="margin-top:.5rem;font-size:.85rem;color:var(--ink-soft)">Get current deposit rates from Mexican banks.</div>
+            <div class="params-list">
+              <strong>Returns:</strong> rates array with bank, rate, term, type
+            </div>
+          </div>
+
+          <div class="api-endpoint">
+            <div>
+              <span class="method get">GET</span>
+              <span class="endpoint-path">/api/market/stocks?symbols=AMXL.MX,SPY,QQQ</span>
+            </div>
+            <div style="margin-top:.5rem;font-size:.85rem;color:var(--ink-soft)">Get stock market data from Yahoo Finance.</div>
+            <div class="params-list">
+              <strong>Query:</strong> symbols (comma-separated)<br>
+              <strong>Returns:</strong> quoteResponse with price, change, currency
+            </div>
+          </div>
+
+          <div class="api-endpoint">
+            <div>
+              <span class="method get">GET</span>
+              <span class="endpoint-path">/api/market/crypto?ids=bitcoin,ethereum,solana</span>
+            </div>
+            <div style="margin-top:.5rem;font-size:.85rem;color:var(--ink-soft)">Get cryptocurrency market data from CoinGecko.</div>
+            <div class="params-list">
+              <strong>Query:</strong> ids (comma-separated crypto IDs)<br>
+              <strong>Returns:</strong> price data with 24hr change and market cap
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-bottom:1.5rem">
+          <h3 style="font-size:1rem;margin-bottom:.75rem">🤖 AI Chat & Support</h3>
+          
+          <div class="api-endpoint">
+            <div>
+              <span class="method post">POST</span>
+              <span class="endpoint-path">/api/chat</span>
+            </div>
+            <div style="margin-top:.5rem;font-size:.85rem;color:var(--ink-soft)">Get financial advice from AI chatbot.</div>
+            <div class="params-list">
+              <strong>Body:</strong> { question: string }<br>
+              <strong>Returns:</strong> { ok: boolean, answer: string }
+            </div>
+          </div>
+
+          <div class="api-endpoint">
+            <div>
+              <span class="method get">GET</span>
+              <span class="endpoint-path">/api/chat/history</span>
+            </div>
+            <div style="margin-top:.5rem;font-size:.85rem;color:var(--ink-soft)">Get chat conversation history (last 20 messages).</div>
+            <div class="params-list">
+              <strong>Returns:</strong> array of { question, answer, created_at }
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h3 style="font-size:1rem;margin-bottom:.75rem">ℹ️ System</h3>
+          
+          <div class="api-endpoint">
+            <div>
+              <span class="method get">GET</span>
+              <span class="endpoint-path">/api/status</span>
+            </div>
+            <div style="margin-top:.5rem;font-size:.85rem;color:var(--ink-soft)">Check API and AI gateway status.</div>
+            <div class="params-list">
+              <strong>Returns:</strong> { ok, ai_configured, ai_model, version, features }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TESTING TAB -->
+    <div id="testing" class="tab-content">
+      <div class="card">
+        <div class="card-title">🧪 API Testing Playground</div>
+        
+        <div class="tabs" style="margin-bottom:1.5rem">
+          <div class="tab active" onclick="switchTest('wealth')">Wealth Summary</div>
+          <div class="tab" onclick="switchTest('deposits')">Deposit Rates</div>
+          <div class="tab" onclick="switchTest('stocks')">Stock Market</div>
+          <div class="tab" onclick="switchTest('dashboard')">AI Dashboard</div>
+        </div>
+
+        <!-- Wealth Test -->
+        <div id="test-wealth" class="tab-content active">
+          <div class="test-panel">
+            <h4>Wealth Summary Test</h4>
+            <p style="font-size:.8rem;color:var(--ink-soft);margin-bottom:.75rem">Fetch your wealth summary data.</p>
+            <button class="btn btn-primary" onclick="testWealth()">Test Endpoint</button>
+            <div id="wealth-response" class="response-box" style="display:none"></div>
+          </div>
+        </div>
+
+        <!-- Deposits Test -->
+        <div id="test-deposits" class="tab-content">
+          <div class="test-panel">
+            <h4>Deposit Rates Test</h4>
+            <p style="font-size:.8rem;color:var(--ink-soft);margin-bottom:.75rem">Fetch current deposit rates from Mexican banks.</p>
+            <button class="btn btn-primary" onclick="testDeposits()">Test Endpoint</button>
+            <div id="deposits-response" class="response-box" style="display:none"></div>
+          </div>
+        </div>
+
+        <!-- Stocks Test -->
+        <div id="test-stocks" class="tab-content">
+          <div class="test-panel">
+            <h4>Stock Market Data Test</h4>
+            <div class="form-group">
+              <label>Stock Symbols (comma-separated):</label>
+              <input type="text" id="stockSymbols" placeholder="AMXL.MX,SPY,QQQ" value="AMXL.MX,SPY,QQQ">
+            </div>
+            <button class="btn btn-primary" onclick="testStocks()">Test Endpoint</button>
+            <div id="stocks-response" class="response-box" style="display:none"></div>
+          </div>
+        </div>
+
+        <!-- Dashboard Test -->
+        <div id="test-dashboard" class="tab-content">
+          <div class="test-panel">
+            <h4>AI Dashboard Test</h4>
+            <div class="form-group">
+              <label>Custom Prompt (optional):</label>
+              <textarea id="dashboardPrompt" placeholder="Leave empty for default analysis or enter a custom prompt"></textarea>
+            </div>
+            <button class="btn btn-primary" onclick="testDashboard()">Generate Dashboard</button>
+            <div id="dashboard-response" class="response-box" style="display:none"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHATBOT TAB -->
+    <div id="chatbot" class="tab-content">
+      <div class="card">
+        <div class="card-title">💬 Financial Advice Chatbot</div>
+        <p style="font-size:.9rem;color:var(--ink-soft);margin-bottom:1rem">Ask questions about your finances, budgeting strategies, investment advice, or goal planning. The AI will provide personalized recommendations.</p>
+        
+        <div class="chat-container">
+          <div class="chat-messages" id="chatMessages">
+            <div class="chat-message">
+              <div class="chat-bubble ai">
+                👋 Hello! I'm your WealthLens financial advisor. Ask me anything about managing your wealth, achieving your goals, or improving your financial health.
+              </div>
+            </div>
+          </div>
+          <div class="chat-input-area">
+            <input 
+              type="text" 
+              id="chatInput" 
+              placeholder="Ask a financial question..." 
+              onkeypress="if(event.key==='Enter') sendChatMessage()"
+            >
+            <button onclick="sendChatMessage()">Send</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API_BASE = '';
+
+// Tabs
+function showTab(tabName) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.getElementById(tabName).classList.add('active');
+  
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  event.target.closest('.nav-item').classList.add('active');
+}
+
+function switchTest(testName) {
+  document.querySelectorAll('#testing .tab-content').forEach(el => el.classList.remove('active'));
+  document.getElementById('test-' + testName).classList.add('active');
+  
+  document.querySelectorAll('#testing .tab').forEach(el => el.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
+// API Status
+async function checkAPIStatus() {
+  try {
+    const resp = await fetch(`${API_BASE}/api/status`);
+    const data = await resp.json();
+    
+    const aiStatus = data.ai_configured ? '✓' : '⚠️';
+    document.getElementById('aiStatus').textContent = aiStatus;
+  } catch (e) {
+    document.getElementById('statusBadge').classList.add('off');
+    document.getElementById('statusBadge').innerHTML = '<span class="status-dot"></span><span>API Offline</span>';
+  }
+}
+
+// Testing Functions
+async function testWealth() {
+  const respBox = document.getElementById('wealth-response');
+  respBox.innerHTML = '<div class="loading">Loading...</div>';
+  respBox.style.display = 'block';
+  
+  try {
+    const resp = await fetch(`${API_BASE}/api/wealth/summary`);
+    const data = await resp.json();
+    respBox.classList.add('success');
+    respBox.textContent = JSON.stringify(data, null, 2);
+  } catch (e) {
+    respBox.classList.add('error');
+    respBox.textContent = `Error: ${e.message}`;
+  }
+}
+
+async function testDeposits() {
+  const respBox = document.getElementById('deposits-response');
+  respBox.innerHTML = '<div class="loading">Loading...</div>';
+  respBox.style.display = 'block';
+  
+  try {
+    const resp = await fetch(`${API_BASE}/api/market/deposits`);
+    const data = await resp.json();
+    respBox.classList.add('success');
+    respBox.textContent = JSON.stringify(data, null, 2);
+  } catch (e) {
+    respBox.classList.add('error');
+    respBox.textContent = `Error: ${e.message}`;
+  }
+}
+
+async function testStocks() {
+  const symbols = document.getElementById('stockSymbols').value || 'AMXL.MX,SPY,QQQ';
+  const respBox = document.getElementById('stocks-response');
+  respBox.innerHTML = '<div class="loading">Loading...</div>';
+  respBox.style.display = 'block';
+  
+  try {
+    const resp = await fetch(`${API_BASE}/api/market/stocks?symbols=${encodeURIComponent(symbols)}`);
+    const data = await resp.json();
+    respBox.classList.add('success');
+    respBox.textContent = JSON.stringify(data, null, 2);
+  } catch (e) {
+    respBox.classList.add('error');
+    respBox.textContent = `Error: ${e.message}`;
+  }
+}
+
+async function testDashboard() {
+  const prompt = document.getElementById('dashboardPrompt').value;
+  const respBox = document.getElementById('dashboard-response');
+  respBox.innerHTML = '<div class="loading">Generating AI dashboard...</div>';
+  respBox.style.display = 'block';
+  respBox.classList.remove('error');
+  respBox.classList.add('success');
+  
+  try {
+    const resp = await fetch(`${API_BASE}/api/ai/dashboard`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt })
+    });
+    const data = await resp.json();
+    
+    if (data.ok) {
+      respBox.textContent = JSON.stringify(data.dashboard, null, 2);
+    } else {
+      respBox.classList.add('error');
+      respBox.textContent = `Error: ${data.error}`;
+    }
+  } catch (e) {
+    respBox.classList.add('error');
+    respBox.textContent = `Error: ${e.message}`;
+  }
+}
+
+// Chat Functions
+async function sendChatMessage() {
+  const input = document.getElementById('chatInput');
+  const question = input.value.trim();
+  
+  if (!question) return;
+  
+  // Add user message
+  const chatMessages = document.getElementById('chatMessages');
+  const userBubble = document.createElement('div');
+  userBubble.className = 'chat-message user';
+  userBubble.innerHTML = `<div class="chat-bubble user">${escapeHtml(question)}</div>`;
+  chatMessages.appendChild(userBubble);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+  
+  input.value = '';
+  
+  // Get AI response
+  try {
+    const resp = await fetch(`${API_BASE}/api/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question })
+    });
+    const data = await resp.json();
+    
+    const aiBubble = document.createElement('div');
+    aiBubble.className = 'chat-message';
+    aiBubble.innerHTML = `<div class="chat-bubble ai">${escapeHtml(data.answer || 'Sorry, I couldn\'t generate a response.')}</div>`;
+    chatMessages.appendChild(aiBubble);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  } catch (e) {
+    const errorBubble = document.createElement('div');
+    errorBubble.className = 'chat-message';
+    errorBubble.innerHTML = `<div class="chat-bubble ai" style="color:var(--red)">⚠️ Error: ${escapeHtml(e.message)}</div>`;
+    chatMessages.appendChild(errorBubble);
+  }
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+// Initialize on load
+window.addEventListener('load', () => {
+  checkAPIStatus();
+  setInterval(checkAPIStatus, 30000);
+});
+</script>
+</body>
+</html>
