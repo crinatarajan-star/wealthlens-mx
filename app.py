@@ -1,4 +1,4 @@
-import os, sqlite3, json, csv, io, re, urllib.request, urllib.error, urllib.parse
+﻿import os, sqlite3, json, csv, io, re, urllib.request, urllib.error, urllib.parse
 from datetime import datetime, date
 from functools import wraps
 from flask import (Flask, render_template, request, redirect, url_for,
@@ -6,16 +6,16 @@ from flask import (Flask, render_template, request, redirect, url_for,
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 
-# ── Load .env FIRST — must happen before reading any os.environ keys ──────────
+# â”€â”€ Load .env FIRST â€” must happen before reading any os.environ keys â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 try:
     from dotenv import load_dotenv
     load_dotenv(override=True)   # override=True ensures .env beats pre-existing env vars
 except ImportError:
     pass
 
-# ── AI CONFIGURATION — read AFTER dotenv is loaded ────────────────────────────
+# â”€â”€ AI CONFIGURATION â€” read AFTER dotenv is loaded â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 AI_BASE_URL = os.environ.get('AI_BASE_URL', 'https://api.groq.com/openai/v1/chat/completions')
-AI_API_KEY  = os.environ.get('GROQ_API_KEY', '')   # Set in .env — do NOT hardcode keys here
+AI_API_KEY  = os.environ.get('GROQ_API_KEY', '')   # Set in .env â€” do NOT hardcode keys here
 AI_MODEL    = os.environ.get('AI_MODEL', 'llama-3.3-70b-versatile')
 
 DEEPSEEK_API_KEY     = os.environ.get('DEEPSEEK_API_KEY', '')
@@ -40,7 +40,7 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 DB_PATH = os.path.join(os.path.dirname(__file__), 'wealthlens.db')
 ALLOWED_EXTENSIONS = {'csv', 'xlsx', 'xls', 'pdf', 'txt'}
 
-# ─── DB ───────────────────────────────────────────────────────────────────────
+# â”€â”€â”€ DB â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 def get_db():
     if 'db' not in g:
         g.db = sqlite3.connect(DB_PATH)
@@ -166,7 +166,7 @@ def init_db():
     db.commit()
     db.close()
 
-# ─── Auth ─────────────────────────────────────────────────────────────────────
+# â”€â”€â”€ Auth â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 def login_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -181,9 +181,9 @@ def current_user():
     db = get_db()
     return db.execute("SELECT * FROM users WHERE id=?", (session['user_id'],)).fetchone()
 
-# ─── FX ───────────────────────────────────────────────────────────────────────
+# â”€â”€â”€ FX â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 FX = {'MXN':1,'USD':17.15,'EUR':18.60,'CAD':12.60,'GBP':21.70}
-SYMBOLS = {'MXN':'$','USD':'US$','EUR':'€','CAD':'CA$','GBP':'£'}
+SYMBOLS = {'MXN':'$','USD':'US$','EUR':'â‚¬','CAD':'CA$','GBP':'Â£'}
 
 def mxn_to(amount_mxn, currency):
     rate = FX.get(currency, 1)
@@ -193,7 +193,7 @@ def to_mxn(amount, currency):
     rate = FX.get(currency, 1)
     return amount * rate
 
-# ─── AI UTILITIES ─────────────────────────────────────────────────────────────
+# â”€â”€â”€ AI UTILITIES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 def _is_ai_configured():
     """Check if AI gateway is properly configured."""
     return bool(AI_API_KEY and AI_API_KEY.strip())
@@ -216,11 +216,11 @@ def call_ai_gateway(messages, stream=False, max_tokens=1000):
         "stream": stream,
     }
     
-    resp = requests.post(AI_BASE_URL, json=payload, headers=headers, timeout=30)
+    resp = requests.post(AI_BASE_URL, json=payload, headers=headers, timeout=60)
     resp.raise_for_status()
     return resp
 
-# ─── CATEGORY / IMPORT PARSERS ────────────────────────────────────────────────
+# â”€â”€â”€ CATEGORY / IMPORT PARSERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 def detect_bank(filename, text_sample):
     fn = filename.lower()
     sample = text_sample.lower()
@@ -251,8 +251,8 @@ def parse_csv_transactions(data, bank='generic', user_id=None):
                     desc = row.get('Concepto', '').strip()
                     amount = float(row.get('Monto', 0))
                 elif bank == 'santander':
-                    date_str = row.get('Fecha de operación', '').strip()
-                    desc = row.get('Descripción', '').strip()
+                    date_str = row.get('Fecha de operaciÃ³n', '').strip()
+                    desc = row.get('DescripciÃ³n', '').strip()
                     amount = float(row.get('Importe', 0))
                 else:  # Generic CSV
                     date_str = row.get('date', row.get('Date', '')).strip()
@@ -334,9 +334,9 @@ Total de activos: ${assets['total']:,.0f} MXN
 
 METAS:
 Metas activas: {goals['count']}
-Dinero aún por ahorrar: ${goals['remaining']:,.0f} MXN
+Dinero aÃºn por ahorrar: ${goals['remaining']:,.0f} MXN
 
-ÚLTIMOS 30 DÍAS:
+ÃšLTIMOS 30 DÃAS:
 Ingresos: ${recent['income']:,.0f} MXN
 Gastos: ${recent['expenses']:,.0f} MXN
 Flujo neto: ${(recent['income'] - recent['expenses']):,.0f} MXN
@@ -361,25 +361,25 @@ Net cash flow: ${(recent['income'] - recent['expenses']):,.0f} MXN
     
     return ctx
 
-# ─── DEPOSIT RATES (demo fallback) ─────────────────────────────────────────────
+# â”€â”€â”€ DEPOSIT RATES (demo fallback) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 _DEPOSIT_RATES_CACHE = {
     'rates': [
-        {'bank': 'Banregio',       'rate': 12.10, 'term': '28 días',  'type': 'CEDE'},
-        {'bank': 'Inbursa',        'rate': 11.80, 'term': '28 días',  'type': 'CEDE'},
-        {'bank': 'BBVA México',    'rate': 11.50, 'term': '28 días',  'type': 'CEDE'},
-        {'bank': 'Banbajío',       'rate': 11.20, 'term': '28 días',  'type': 'CEDE'},
-        {'bank': 'Scotiabank MX',  'rate': 11.25, 'term': '28 días',  'type': 'CEDE'},
-        {'bank': 'Citibanamex',    'rate': 11.00, 'term': '28 días',  'type': 'CEDE'},
-        {'bank': 'Banorte',        'rate': 10.75, 'term': '28 días',  'type': 'CEDE'},
-        {'bank': 'Santander MX',   'rate': 10.50, 'term': '28 días',  'type': 'CEDE'},
-        {'bank': 'HSBC México',    'rate': 10.50, 'term': '28 días',  'type': 'DPF'},
+        {'bank': 'Banregio',       'rate': 12.10, 'term': '28 dÃ­as',  'type': 'CEDE'},
+        {'bank': 'Inbursa',        'rate': 11.80, 'term': '28 dÃ­as',  'type': 'CEDE'},
+        {'bank': 'BBVA MÃ©xico',    'rate': 11.50, 'term': '28 dÃ­as',  'type': 'CEDE'},
+        {'bank': 'BanbajÃ­o',       'rate': 11.20, 'term': '28 dÃ­as',  'type': 'CEDE'},
+        {'bank': 'Scotiabank MX',  'rate': 11.25, 'term': '28 dÃ­as',  'type': 'CEDE'},
+        {'bank': 'Citibanamex',    'rate': 11.00, 'term': '28 dÃ­as',  'type': 'CEDE'},
+        {'bank': 'Banorte',        'rate': 10.75, 'term': '28 dÃ­as',  'type': 'CEDE'},
+        {'bank': 'Santander MX',   'rate': 10.50, 'term': '28 dÃ­as',  'type': 'CEDE'},
+        {'bank': 'HSBC MÃ©xico',    'rate': 10.50, 'term': '28 dÃ­as',  'type': 'DPF'},
     ],
     'source':    'static_fallback',
     'reference': 'Banxico TIIE ~10.5% base rate (Apr 2026). GAT approximate.',
     'updated':   '2026-04',
 }
 
-# ─── ROUTES ───────────────────────────────────────────────────────────────────
+# â”€â”€â”€ ROUTES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 @app.route('/')
 def index():
@@ -477,7 +477,7 @@ def api_status():
         ]
     })
 
-# ─── FINANCIAL DATA APIs ──────────────────────────────────────────────────────
+# â”€â”€â”€ FINANCIAL DATA APIs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 @app.route('/api/wealth/summary')
 @login_required
@@ -664,35 +664,35 @@ TOP EXPENSE CATEGORIES (all time, MXN):
 def _demo_dashboard_payload(monthly_data, cat_data, lang):
     if lang == 'es':
         return {
-            "report_title": "Dashboard Financiero — Demo",
-            "period": "Período seleccionado",
-            "executive_summary": "⚠️ El gateway de IA no está configurado. Este es un dashboard de demostración. Establece GROQ_API_KEY en tu archivo .env para obtener análisis real.",
+            "report_title": "Dashboard Financiero â€” Demo",
+            "period": "PerÃ­odo seleccionado",
+            "executive_summary": "âš ï¸ El gateway de IA no estÃ¡ configurado. Este es un dashboard de demostraciÃ³n. Establece GROQ_API_KEY en tu archivo .env para obtener anÃ¡lisis real.",
             "health_score": 72, "health_label": "Bueno",
             "kpis": [
                 {"label": "Ingresos", "value": "Ver datos", "change": "+0%", "trend": "neutral", "color": "green"},
                 {"label": "Gastos", "value": "Ver datos", "change": "+0%", "trend": "neutral", "color": "red"},
                 {"label": "Flujo neto", "value": "Ver datos", "change": "0%", "trend": "neutral", "color": "blue"},
-                {"label": "Tasa de ahorro", "value": "N/A", "change": "—", "trend": "neutral", "color": "gold"},
+                {"label": "Tasa de ahorro", "value": "N/A", "change": "â€”", "trend": "neutral", "color": "gold"},
             ],
-            "insights": [{"type": "info", "title": "Sin configurar", "body": "Abre .env y establece GROQ_API_KEY para activar el análisis real."}],
+            "insights": [{"type": "info", "title": "Sin configurar", "body": "Abre .env y establece GROQ_API_KEY para activar el anÃ¡lisis real."}],
             "recommendations": [{"priority": 1, "title": "Configura tu clave API", "detail": "Necesitas GROQ_API_KEY en .env.", "impact": "Alto"}],
         }
     return {
-        "report_title": "Financial Dashboard — Demo",
+        "report_title": "Financial Dashboard â€” Demo",
         "period": "Selected period",
-        "executive_summary": "⚠️ AI gateway not configured. Set GROQ_API_KEY in .env to get real analysis.",
+        "executive_summary": "âš ï¸ AI gateway not configured. Set GROQ_API_KEY in .env to get real analysis.",
         "health_score": 72, "health_label": "Good",
         "kpis": [
             {"label": "Income", "value": "See data", "change": "+0%", "trend": "neutral", "color": "green"},
             {"label": "Expenses", "value": "See data", "change": "+0%", "trend": "neutral", "color": "red"},
             {"label": "Net Cash Flow", "value": "See data", "change": "0%", "trend": "neutral", "color": "blue"},
-            {"label": "Savings Rate", "value": "N/A", "change": "—", "trend": "neutral", "color": "gold"},
+            {"label": "Savings Rate", "value": "N/A", "change": "â€”", "trend": "neutral", "color": "gold"},
         ],
         "insights": [{"type": "info", "title": "Not configured", "body": "Open .env and set GROQ_API_KEY to enable real AI analysis."}],
         "recommendations": [{"priority": 1, "title": "Configure your API key", "detail": "You need GROQ_API_KEY in .env.", "impact": "High"}],
     }
 
-# ─── CHATBOT API ──────────────────────────────────────────────────────────────
+# â”€â”€â”€ CHATBOT API â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 @app.route('/api/chat', methods=['POST'])
 @login_required
@@ -726,10 +726,10 @@ def api_chat():
         # Demo response
         demo_responses = {
             'es': {
-                'savings': "Recomiendo ahorrar al menos el 20% de tus ingresos mensuales. Basado en tus datos, podrías aumentar tu tasa de ahorro.",
-                'expenses': "Tus gastos parecen estar dentro de lo esperado. Intenta categorizar mejor tus gastos para identificar áreas de mejora.",
-                'goals': "Excelente que tengas metas claras. Mantén el enfoque y revisa tu progreso mensualmente.",
-                'default': "Soy tu asesor financiero de WealthLens. ¿Cómo puedo ayudarte a mejorar tu salud financiera?"
+                'savings': "Recomiendo ahorrar al menos el 20% de tus ingresos mensuales. Basado en tus datos, podrÃ­as aumentar tu tasa de ahorro.",
+                'expenses': "Tus gastos parecen estar dentro de lo esperado. Intenta categorizar mejor tus gastos para identificar Ã¡reas de mejora.",
+                'goals': "Excelente que tengas metas claras. MantÃ©n el enfoque y revisa tu progreso mensualmente.",
+                'default': "Soy tu asesor financiero de WealthLens. Â¿CÃ³mo puedo ayudarte a mejorar tu salud financiera?"
             },
             'en': {
                 'savings': "I recommend saving at least 20% of your monthly income. Based on your data, you could increase your savings rate.",
@@ -802,13 +802,20 @@ def api_chat_history():
 
 init_db()
 
+@app.route('/ping')
+def ping():
+    return 'pong', 200
 
-# ─── DEMO ROUTE ───────────────────────────────────────────────────────────────
-# Paste this block into app.py just ABOVE the line: if __name__ == '__main__':
+# â”€â”€â”€ DEMO ROUTE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# Paste this block into app.py just ABOVE the line: @app.route('/ping')
+def ping():
+    return 'pong', 200
+
+if __name__ == '__main__':
 
 @app.route('/demo')
 def demo_login():
-    """Auto-login with a demo account — no registration needed."""
+    """Auto-login with a demo account â€” no registration needed."""
     DEMO_EMAIL = 'demo@wealthlens.mx'
     DEMO_PASSWORD = 'WealthLens2026!'
     DEMO_NAME = 'Demo User'
@@ -831,7 +838,7 @@ def demo_login():
     if asset_count == 0:
         demo_assets = [
             (existing['id'], 'CEDE Banregio 28d', 'cede', 150000, 'MXN', '12.10% GAT'),
-            (existing['id'], 'AMXL.MX — América Móvil', 'stock', 85000, 'MXN', '340 acciones'),
+            (existing['id'], 'AMXL.MX â€” AmÃ©rica MÃ³vil', 'stock', 85000, 'MXN', '340 acciones'),
             (existing['id'], 'Bitcoin (BTC)', 'crypto', 62000, 'MXN', '0.035 BTC'),
             (existing['id'], 'Ethereum (ETH)', 'crypto', 28000, 'MXN', '0.5 ETH'),
             (existing['id'], 'FIBRA UNO (FUNO11)', 'fibra', 45000, 'MXN', '1,500 certificados'),
@@ -844,7 +851,7 @@ def demo_login():
 
         demo_goals = [
             (existing['id'], 'Fondo de Retiro', 'Retirement Fund', 2000000, 420000, '2045-12-31', 1, '#1D9E75'),
-            (existing['id'], 'Viaje a Japón', 'Trip to Japan', 80000, 35000, '2026-12-31', 2, '#378ADD'),
+            (existing['id'], 'Viaje a JapÃ³n', 'Trip to Japan', 80000, 35000, '2026-12-31', 2, '#378ADD'),
             (existing['id'], 'Enganche Casa', 'House Down Payment', 500000, 150000, '2028-06-30', 1, '#EF9F27'),
         ]
         db.executemany(
@@ -861,7 +868,7 @@ def demo_login():
             demo_transactions.append((
                 existing['id'],
                 f'2026-0{i+1}-05',
-                'Nómina mensual',
+                'NÃ³mina mensual',
                 amounts_income[i],
                 'income', 'manual', 'BBVA'
             ))
@@ -886,7 +893,12 @@ def demo_login():
     return redirect(url_for('dashboard'))
 
 
+@app.route('/ping')
+def ping():
+    return 'pong', 200
+
 if __name__ == '__main__':
     init_db()
-    print("\n✅ WealthLens MX running at http://localhost:5000\n")
+    print("\nâœ… WealthLens MX running at http://localhost:5000\n")
     app.run(debug=True, port=5000)
+
