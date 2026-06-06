@@ -930,28 +930,23 @@ async function sendChat(){
   chatHistory.push({role:'user',content:q});
   const typingId=appendTyping();
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
+    const res=await fetch('/api/chat',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:1000,
-        system:systemPrompt,
-        messages:chatHistory
-      })
+      body:JSON.stringify({question:q})
     });
     const data=await res.json();
-          if (!data.ok) {
-            appendMessage('advisor', '⚠️ ' + (data.error || 'Could not reach the server. Please try again.'));
-            return;
-          }
     removeTyping(typingId);
-    const answer=data.content?.[0]?.text||'Sorry, I couldn\'t generate a response. Please try again.';
-    appendMsg('ai',answer);
-    chatHistory.push({role:'assistant',content:answer});
+    if(!data.ok){
+      appendMsg('ai','⚠️ '+(data.error||'Could not reach the server. Please try again.'));
+    } else {
+      const answer=data.answer||'Sorry, I could not generate a response.';
+      appendMsg('ai',answer);
+      chatHistory.push({role:'assistant',content:answer});
+    }
   }catch(e){
     removeTyping(typingId);
-    appendMsg('ai','âš ï¸ Connection issue. In production, this connects to Claude via the WealthLens backend. Demo mode: I\'d recommend reviewing your CEDE allocation given your savings goal progress.');
+    appendMsg('ai','⚠️ Connection error: '+e.message);
   }
   document.getElementById('sendBtn').disabled=false;
 }
@@ -1097,5 +1092,4 @@ window.addEventListener('DOMContentLoaded',()=>{
 </script>
 </body>
 </html>
-
 
