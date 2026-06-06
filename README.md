@@ -299,10 +299,10 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 ## 👤 Author
 
-**Your Name**
-- LinkedIn: [linkedin.com/in/yourprofile](https://linkedin.com/in/yourprofile)
-- GitHub: [@yourusername](https://github.com/yourusername)
-- Email: your@email.com
+**Natarajan Narayanan**
+- LinkedIn: https://www.linkedin.com/in/natrajnarayan/
+- GitHub: [@crinatarajan-star](https://github.com/crinatarajan-star)
+- Email: crinatarajan@gmail.com
 
 ---
 
