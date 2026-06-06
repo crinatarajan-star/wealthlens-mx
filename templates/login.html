@@ -22,64 +22,32 @@
     width: 100%;
     max-width: 400px;
   }
-  .logo {
-    text-align: center;
-    margin-bottom: 1.75rem;
-  }
-  .logo h1 {
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: #1D9E75;
-  }
+  .logo { text-align: center; margin-bottom: 1.75rem; }
+  .logo h1 { font-size: 1.6rem; font-weight: 700; color: #1D9E75; }
   .logo p { color: #888; font-size: 0.9rem; margin-top: 4px; }
-  label {
-    display: block;
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: #444;
-    margin-bottom: 4px;
-    margin-top: 1rem;
-  }
-  input {
-    width: 100%;
-    padding: 10px 14px;
-    border: 1.5px solid #e0e0e0;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    outline: none;
-    transition: border 0.2s;
-  }
+  label { display: block; font-size: 0.85rem; font-weight: 500; color: #444; margin-bottom: 4px; margin-top: 1rem; }
+  input { width: 100%; padding: 10px 14px; border: 1.5px solid #e0e0e0; border-radius: 8px; font-size: 0.95rem; outline: none; transition: border 0.2s; }
   input:focus { border-color: #1D9E75; }
   .btn {
-    width: 100%;
-    padding: 11px;
-    background: #1D9E75;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    margin-top: 1.5rem;
-    transition: background 0.2s;
+    width: 100%; padding: 11px; background: #1D9E75; color: #fff;
+    border: none; border-radius: 8px; font-size: 1rem; font-weight: 600;
+    cursor: pointer; margin-top: 1.5rem; transition: background 0.2s;
   }
   .btn:hover { background: #17866A; }
-  .footer {
-    text-align: center;
-    margin-top: 1.25rem;
-    font-size: 0.875rem;
-    color: #888;
+  .btn-demo {
+    width: 100%; padding: 11px; background: #fff; color: #1D9E75;
+    border: 2px solid #1D9E75; border-radius: 8px; font-size: 1rem;
+    font-weight: 600; cursor: pointer; margin-top: 0.75rem;
+    transition: all 0.2s; display: block; text-align: center;
+    text-decoration: none;
   }
+  .btn-demo:hover { background: #f0fdf8; }
+  .divider { display: flex; align-items: center; gap: 10px; margin: 1.25rem 0 0; color: #bbb; font-size: 13px; }
+  .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: #e0e0e0; }
+  .footer { text-align: center; margin-top: 1.25rem; font-size: 0.875rem; color: #888; }
   .footer a { color: #1D9E75; text-decoration: none; font-weight: 500; }
-  .alert {
-    background: #fff3cd;
-    color: #856404;
-    border: 1px solid #ffc107;
-    border-radius: 8px;
-    padding: 10px 14px;
-    font-size: 0.875rem;
-    margin-bottom: 1rem;
-  }
+  .alert { background: #fff3cd; color: #856404; border: 1px solid #ffc107; border-radius: 8px; padding: 10px 14px; font-size: 0.875rem; margin-bottom: 1rem; }
+  .demo-badge { background: #E1F5EE; color: #085041; font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 500; margin-left: 6px; }
 </style>
 </head>
 <body>
@@ -98,14 +66,18 @@
   <form method="POST" action="/login">
     <label>Email address</label>
     <input type="email" name="email" placeholder="you@example.com" required autofocus>
-
     <label>Password</label>
     <input type="password" name="password" placeholder="••••••••" required>
-
     <button type="submit" class="btn">Sign In</button>
   </form>
 
-  <div class="footer">
+  <div class="divider">or</div>
+
+  <a href="/demo" class="btn-demo">
+    ⚡ Try Demo Account <span class="demo-badge">no signup needed</span>
+  </a>
+
+  <div class="footer" style="margin-top:1rem">
     Don't have an account? <a href="/register">Register here</a>
   </div>
 </div>
