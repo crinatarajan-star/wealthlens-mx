@@ -948,6 +948,35 @@ def ai_chat_proxy():
         return jsonify({"ok": False, "error": str(e)}), 500
 
 
+@app.route('/demo')
+def demo_login():
+    """Auto-login with demo account — for live demo showcase link."""
+    DEMO_EMAIL    = 'demo@wealthlens.mx'
+    DEMO_PASSWORD = 'WealthLens2026!'
+    DEMO_NAME     = 'Natarajan Demo'
+
+    db = get_db()
+
+    # Create demo account if it doesn't exist yet
+    existing = db.execute("SELECT * FROM users WHERE email=?", (DEMO_EMAIL,)).fetchone()
+    if not existing:
+        db.execute(
+            "INSERT INTO users (email, password_hash, name, lang, currency) VALUES (?, ?, ?, ?, ?)",
+            (DEMO_EMAIL, generate_password_hash(DEMO_PASSWORD), DEMO_NAME, 'en', 'MXN')
+        )
+        db.commit()
+
+    # Log in as demo user
+    user = db.execute("SELECT * FROM users WHERE email=?", (DEMO_EMAIL,)).fetchone()
+    if user:
+        session['user_id'] = user['id']
+        session['lang']    = user['lang']
+        return redirect(url_for('dashboard'))
+
+    # Fallback — send to login page
+    return redirect(url_for('login'))
+
+
 @app.route('/ping')
 def ping():
     """Keep-alive endpoint for Render free tier"""
