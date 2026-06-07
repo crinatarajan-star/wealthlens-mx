@@ -1,29 +1,28 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WealthLens MX â€” Live Portfolio Demo</title>
+<title>WealthLens MX — Live Portfolio Demo</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --gold:#C9A84C;--gold-dim:#8A6A1E;--gold-bg:#F9F3E4;
-  --ink:#0C0C0B;--ink-mid:#2C2B28;--ink-soft:#6B6A65;
-  --cream:#FAF8F3;--cream-border:#E6E0D4;--surface:#F3EFE6;
-  --white:#FFFFFF;
-  --green:#17916A;--green-bg:#E4F6EF;
-  --red:#C94A28;--red-bg:#FDECE6;
-  --blue:#1A5DB3;--blue-bg:#E4EEFF;
-  --purple:#5B47C2;--purple-bg:#EEECFC;
-  --teal:#0E8A7B;--teal-bg:#E0F4F1;
-  --sidebar:230px;
-  --radius:14px;
+--gold:#C9A84C;--gold-dim:#8A6A1E;--gold-bg:#F9F3E4;
+--ink:#0C0C0B;--ink-mid:#2C2B28;--ink-soft:#6B6A65;
+--cream:#FAF8F3;--cream-border:#E6E0D4;--surface:#F3EFE6;
+--white:#FFFFFF;
+--green:#17916A;--green-bg:#E4F6EF;
+--red:#C94A28;--red-bg:#FDECE6;
+--blue:#1A5DB3;--blue-bg:#E4EEFF;
+--purple:#5B47C2;--purple-bg:#EEECFC;
+--teal:#0E8A7B;--teal-bg:#E0F4F1;
+--sidebar:230px;
+--radius:14px;
 }
 html{scroll-behavior:smooth}
 body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--ink);display:flex;min-height:100vh;font-size:14.5px;line-height:1.5}
-
-/* â”€â”€ SIDEBAR â”€â”€ */
+/* SIDEBAR */
 .sidebar{width:var(--sidebar);background:var(--ink);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;transition:transform .3s}
 .sidebar-logo{padding:1.5rem 1.3rem 1.1rem;border-bottom:1px solid rgba(255,255,255,.07)}
 .logo-mark{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:600;color:#fff;letter-spacing:-.01em}
@@ -49,14 +48,12 @@ nav.sidebar-nav{flex:1;padding:.75rem 0;overflow-y:auto}
 .github-link:hover{color:#fff}
 .linkedin-link{display:flex;align-items:center;gap:.5rem;font-size:.78rem;color:rgba(255,255,255,.45);text-decoration:none;padding:.4rem 0;transition:color .2s;margin-top:.25rem}
 .linkedin-link:hover{color:#0A66C2}
-
-/* â”€â”€ MAIN â”€â”€ */
+/* MAIN */
 .main{margin-left:var(--sidebar);flex:1;min-height:100vh;overflow:hidden}
 .page{display:none;padding:1.75rem;animation:fadeIn .3s ease}
 .page.active{display:block}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-
-/* â”€â”€ TOPBAR â”€â”€ */
+/* TOPBAR */
 .topbar{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.75rem;flex-wrap:wrap;gap:.75rem}
 .page-title{font-family:'Playfair Display',serif;font-size:1.55rem;font-weight:600;color:var(--ink);line-height:1.2}
 .page-subtitle{font-size:.78rem;color:var(--ink-soft);margin-top:2px}
@@ -68,15 +65,13 @@ nav.sidebar-nav{flex:1;padding:.75rem 0;overflow-y:auto}
 .pill-gold{background:var(--gold-bg);color:var(--gold-dim)}
 .pill-dot{width:5px;height:5px;border-radius:50%;background:currentColor;animation:blink 2s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-
-/* â”€â”€ CARDS â”€â”€ */
+/* CARDS */
 .card{background:var(--white);border:1px solid var(--cream-border);border-radius:var(--radius);padding:1.5rem;margin-bottom:1.25rem;transition:box-shadow .2s}
 .card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:.5rem}
 .card-title{font-size:.88rem;font-weight:600;color:var(--ink);display:flex;align-items:center;gap:.4rem}
 .card-sub{font-size:.72rem;color:var(--ink-soft);font-weight:400}
 .card-action{font-size:.75rem;color:var(--blue);cursor:pointer;font-weight:500;border:none;background:none;padding:0}
-
-/* â”€â”€ KPI GRID â”€â”€ */
+/* KPI GRID */
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:1.25rem}
 .kpi{background:var(--white);border:1px solid var(--cream-border);border-radius:var(--radius);padding:1.2rem 1.4rem;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s}
 .kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--radius) var(--radius) 0 0}
@@ -91,8 +86,7 @@ nav.sidebar-nav{flex:1;padding:.75rem 0;overflow-y:auto}
 .kpi-val{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:600;color:var(--ink);line-height:1}
 .kpi-change{font-size:.72rem;margin-top:.3rem;display:flex;align-items:center;gap:3px}
 .up{color:var(--green)}.down{color:var(--red)}.neutral{color:var(--ink-soft)}
-
-/* â”€â”€ CHARTS â”€â”€ */
+/* CHARTS */
 .chart-grid{display:grid;grid-template-columns:3fr 2fr;gap:1.25rem;margin-bottom:1.25rem}
 @media(max-width:900px){.chart-grid{grid-template-columns:1fr}}
 .bar-chart-wrap{display:flex;align-items:flex-end;gap:6px;height:150px;margin:.5rem 0}
@@ -106,7 +100,6 @@ nav.sidebar-nav{flex:1;padding:.75rem 0;overflow-y:auto}
 .legend{display:flex;gap:1rem;font-size:.7rem;color:var(--ink-soft);margin-top:.5rem}
 .leg{display:flex;align-items:center;gap:4px}
 .leg-dot{width:8px;height:8px;border-radius:2px}
-
 /* donut */
 .donut-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%}
 .donut-svg{width:130px;height:130px}
@@ -115,13 +108,11 @@ nav.sidebar-nav{flex:1;padding:.75rem 0;overflow-y:auto}
 .alloc-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 .alloc-name{font-size:.75rem;color:var(--ink);flex:1}
 .alloc-pct{font-size:.75rem;font-weight:600;color:var(--ink)}
-
-/* â”€â”€ API DASHBOARD TABS (scoped) â”€â”€ */
+/* API DASHBOARD TABS */
 #page-api .tabs{margin-bottom:1.25rem}
 #page-api .tab-pane{display:none}
 #page-api .tab-pane.active{display:block;animation:fadeIn .2s}
 #page-api .api-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.25rem;margin-bottom:1.25rem}
-
 .endpoint-card{background:var(--white);border:1px solid var(--cream-border);border-radius:var(--radius);overflow:hidden}
 .endpoint-header{padding:.9rem 1.2rem;background:var(--cream);border-bottom:1px solid var(--cream-border);display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
 .method-badge{font-size:.6rem;font-weight:700;text-transform:uppercase;padding:.2rem .55rem;border-radius:4px;letter-spacing:.04em}
@@ -136,7 +127,6 @@ nav.sidebar-nav{flex:1;padding:.75rem 0;overflow-y:auto}
 .response-preview.show{display:block;animation:fadeIn .2s}
 .loading-dots::after{content:'.';animation:dots 1.2s steps(4) infinite}
 @keyframes dots{0%{content:'.'}25%{content:'..'}50%{content:'...'}75%{content:'....'}100%{content:'.'}}
-
 /* status row */
 .status-row{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1.25rem}
 .status-item{background:var(--white);border:1px solid var(--cream-border);border-radius:10px;padding:.75rem 1.1rem;display:flex;align-items:center;gap:.5rem;flex:1;min-width:180px}
@@ -146,8 +136,7 @@ nav.sidebar-nav{flex:1;padding:.75rem 0;overflow-y:auto}
 .status-indicator.demo{background:var(--gold);box-shadow:0 0 6px var(--gold)}
 .status-label{font-size:.78rem;color:var(--ink);font-weight:500}
 .status-val{font-size:.68rem;color:var(--ink-soft);margin-left:auto}
-
-/* â”€â”€ ANALYSIS PAGE â”€â”€ */
+/* ANALYSIS PAGE */
 .analysis-header{background:linear-gradient(135deg,var(--ink) 0%,#1a1a28 100%);border-radius:var(--radius);padding:1.75rem;margin-bottom:1.25rem;color:#fff;position:relative;overflow:hidden}
 .analysis-header::after{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;background:rgba(201,168,76,.1);pointer-events:none}
 .analysis-header::before{content:'';position:absolute;bottom:-60px;left:100px;width:260px;height:260px;border-radius:50%;background:rgba(91,71,194,.08);pointer-events:none}
@@ -159,14 +148,12 @@ nav.sidebar-nav{flex:1;padding:.75rem 0;overflow-y:auto}
 .health-bar-track{height:6px;background:rgba(255,255,255,.15);border-radius:3px;overflow:hidden}
 .health-bar-fill{height:100%;background:linear-gradient(90deg,var(--gold),#4ade80);border-radius:3px;transition:width 1s ease}
 .health-label{font-size:.7rem;color:rgba(255,255,255,.5);margin-top:.3rem}
-
 .insight-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem;margin-bottom:1.25rem}
 .insight-card{background:var(--white);border:1px solid var(--cream-border);border-radius:var(--radius);padding:1.1rem 1.3rem;border-left:3px solid var(--gold);transition:transform .2s}
 .insight-card:hover{transform:translateY(-1px)}
 .insight-icon{font-size:1.1rem;margin-bottom:.3rem}
 .insight-title{font-size:.82rem;font-weight:600;color:var(--ink);margin-bottom:.25rem}
 .insight-text{font-size:.75rem;color:var(--ink-soft);line-height:1.5}
-
 .rec-list{display:flex;flex-direction:column;gap:.75rem}
 .rec-item{display:flex;align-items:flex-start;gap:.75rem;padding:.9rem 1.1rem;background:var(--cream);border-radius:10px;border:1px solid var(--cream-border)}
 .rec-num{width:22px;height:22px;border-radius:50%;background:var(--ink);color:#fff;font-size:.65rem;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
@@ -177,8 +164,7 @@ nav.sidebar-nav{flex:1;padding:.75rem 0;overflow-y:auto}
 .impact-high{background:var(--green-bg);color:var(--green)}
 .impact-med{background:var(--gold-bg);color:var(--gold-dim)}
 .impact-low{background:var(--blue-bg);color:var(--blue)}
-
-/* â”€â”€ CHATBOT â”€â”€ */
+/* CHATBOT */
 .chat-page{height:calc(100vh - 3.5rem);gap:0;padding:0}
 .chat-page.active{display:flex;flex-direction:column}
 .chat-topbar{padding:1.25rem 1.75rem;border-bottom:1px solid var(--cream-border);background:var(--white);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem}
@@ -214,13 +200,11 @@ nav.sidebar-nav{flex:1;padding:.75rem 0;overflow-y:auto}
 .send-btn:hover{opacity:.8}
 .send-btn:disabled{opacity:.4;cursor:not-allowed}
 .send-icon{color:#fff;font-size:14px}
-
-/* â”€â”€ BOTTOM CHIPS â”€â”€ */
+/* BOTTOM CHIPS */
 .quick-chips{display:flex;gap:.5rem;flex-wrap:wrap;padding:.75rem 1.5rem;background:var(--white);border-top:1px solid var(--cream-border)}
 .q-chip{font-size:.7rem;padding:.3rem .75rem;border-radius:100px;border:1px solid var(--cream-border);color:var(--ink-soft);cursor:pointer;background:var(--cream);transition:all .18s;white-space:nowrap}
 .q-chip:hover{background:var(--gold-bg);border-color:var(--gold);color:var(--ink)}
-
-/* â”€â”€ MARKET DATA â”€â”€ */
+/* MARKET DATA */
 .market-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-bottom:1.25rem}
 .market-card{background:var(--white);border:1px solid var(--cream-border);border-radius:var(--radius);padding:1.1rem 1.3rem;transition:transform .2s}
 .market-card:hover{transform:translateY(-1px)}
@@ -229,20 +213,17 @@ nav.sidebar-nav{flex:1;padding:.75rem 0;overflow-y:auto}
 .market-price{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:600;color:var(--ink)}
 .market-change{font-size:.73rem;margin-top:.25rem}
 .market-change.up{color:var(--green)}.market-change.down{color:var(--red)}
-
-/* â”€â”€ CODE BLOCK â”€â”€ */
+/* CODE BLOCK */
 .code-block{background:var(--ink);color:#7FE8A2;padding:1rem 1.25rem;border-radius:10px;font-family:'DM Mono',monospace;font-size:.7rem;overflow-x:auto;line-height:1.7;white-space:pre;margin-top:.75rem}
 .code-block .key{color:#93C5FD}.code-block .str{color:#FDE68A}.code-block .num{color:#A5F3FC}.code-block .cm{color:#6B7280}
-
-/* â”€â”€ TABS â”€â”€ */
+/* TABS */
 .tabs{display:flex;gap:0;border-bottom:2px solid var(--cream-border);margin-bottom:1.25rem;overflow-x:auto}
 .tab-btn{padding:.7rem 1.1rem;font-size:.8rem;color:var(--ink-soft);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .18s;white-space:nowrap;font-family:'DM Sans',sans-serif;font-weight:500}
 .tab-btn.active{color:var(--ink);border-bottom-color:var(--gold)}
 .tab-btn:hover:not(.active){color:var(--ink)}
 .tab-pane{display:none}
 .tab-pane.active{display:block;animation:fadeIn .2s}
-
-/* â”€â”€ PORTFOLIO TABLE â”€â”€ */
+/* PORTFOLIO TABLE */
 table{width:100%;border-collapse:collapse}
 th{font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);padding:.6rem .75rem;text-align:left;border-bottom:2px solid var(--cream-border)}
 td{font-size:.8rem;padding:.75rem .75rem;border-bottom:1px solid var(--surface);color:var(--ink);vertical-align:middle}
@@ -253,27 +234,29 @@ tr:hover td{background:var(--cream)}
 .type-stock{background:var(--blue-bg);color:var(--blue)}
 .type-crypto{background:var(--purple-bg);color:var(--purple)}
 .type-cede{background:var(--gold-bg);color:var(--gold-dim)}
-
-/* â”€â”€ MOBILE HAMBURGER â”€â”€ */
+/* MOBILE HAMBURGER */
 .hamburger{display:none;position:fixed;top:1rem;left:1rem;z-index:200;background:var(--ink);border:none;color:#fff;width:36px;height:36px;border-radius:8px;font-size:16px;cursor:pointer;align-items:center;justify-content:center}
 @media(max-width:700px){
-  .hamburger{display:flex}
-  .sidebar{transform:translateX(-100%)}
-  .sidebar.open{transform:translateX(0)}
-  .main{margin-left:0}
-  .chart-grid{grid-template-columns:1fr}
-  .analysis-header{padding:1.25rem}
+.hamburger{display:flex}
+.sidebar{transform:translateX(-100%)}
+.sidebar.open{transform:translateX(0)}
+.main{margin-left:0}
+.chart-grid{grid-template-columns:1fr}
+.analysis-header{padding:1.25rem}
 }
-
-/* â”€â”€ SCROLLBAR â”€â”€ */
+/* SCROLLBAR */
 ::-webkit-scrollbar{width:4px;height:4px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--cream-border);border-radius:10px}
+/* API KEY BANNER */
+.api-key-banner{background:var(--gold-bg);border:1px solid var(--gold);border-radius:10px;padding:.75rem 1rem;margin-bottom:1rem;display:flex;align-items:center;gap:.6rem;font-size:.78rem;color:var(--ink-mid)}
+.api-key-input{flex:1;border:1px solid var(--cream-border);border-radius:7px;padding:.4rem .7rem;font-family:'DM Mono',monospace;font-size:.75rem;background:var(--white);outline:none;color:var(--ink)}
+.api-key-input:focus{border-color:var(--gold)}
+.api-key-save-btn{padding:.4rem .8rem;background:var(--gold);color:var(--ink);border:none;border-radius:7px;font-size:.72rem;font-weight:600;cursor:pointer;white-space:nowrap}
 </style>
 </head>
 <body>
-
-<button class="hamburger" onclick="toggleSidebar()">â˜°</button>
+<button class="hamburger" onclick="toggleSidebar()">&#9776;</button>
 
 <!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
@@ -283,46 +266,46 @@ tr:hover td{background:var(--cream)}
   </div>
   <div class="sidebar-badge">
     <div class="sidebar-badge-dot"></div>
-    <span class="sidebar-badge-text">Live AI â€” Claude Sonnet</span>
+    <span class="sidebar-badge-text">Live AI &mdash; Claude Sonnet</span>
   </div>
   <div class="sidebar-user">
-    <div class="user-avatar">ND</div>
+    <div class="user-avatar">JD</div>
     <div class="user-info">
-      <div class="user-name">Natarajan Demo</div>
-      <div class="user-role">Premium · MXN</div>
+      <div class="user-name">Juan Demo</div>
+      <div class="user-role">Premium &middot; MXN</div>
     </div>
   </div>
   <nav class="sidebar-nav">
     <div class="nav-section">Overview</div>
-    <div class="nav-item active" onclick="showPage('dashboard')">
-      <span class="nav-icon">&#x1F4CA;</span>Dashboard
+    <div class="nav-item active" onclick="showPage('dashboard',this)">
+      <span class="nav-icon">&#128202;</span>Dashboard
     </div>
-    <div class="nav-item" onclick="showPage('portfolio')">
-      <span class="nav-icon">&#x1F4BC;</span>Portfolio
+    <div class="nav-item" onclick="showPage('portfolio',this)">
+      <span class="nav-icon">&#128188;</span>Portfolio
     </div>
-    <div class="nav-item" onclick="showPage('market')">
-      <span class="nav-icon">&#x1F4C8;</span>Market Data
+    <div class="nav-item" onclick="showPage('market',this)">
+      <span class="nav-icon">&#128200;</span>Market Data
     </div>
     <div class="nav-section">AI Tools</div>
-    <div class="nav-item" onclick="showPage('analysis')">
-      <span class="nav-icon">&#x1F9E0;</span>AI Analysis
+    <div class="nav-item" onclick="showPage('analysis',this)">
+      <span class="nav-icon">&#129504;</span>AI Analysis
     </div>
-    <div class="nav-item" onclick="showPage('chat')">
-      <span class="nav-icon">&#x1F4AC;</span>AI Advisor
+    <div class="nav-item" onclick="showPage('chat',this)">
+      <span class="nav-icon">&#128172;</span>AI Advisor
     </div>
     <div class="nav-section">Developer</div>
-    <div class="nav-item" onclick="showPage('api')">
-      <span class="nav-icon">&#x1F50C;</span>API Dashboard
+    <div class="nav-item" onclick="showPage('api',this)">
+      <span class="nav-icon">&#128268;</span>API Dashboard
     </div>
   </nav>
   <div class="sidebar-bottom">
-    <a href="https://github.com" target="_blank" class="github-link">
+    <a href="https://github.com/crinatarajan" target="_blank" class="github-link">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-      View on GitHub
+      @crinatarajan
     </a>
-    <a href="https://linkedin.com" target="_blank" class="linkedin-link">
+    <a href="https://www.linkedin.com/in/natrajnarayan/" target="_blank" class="linkedin-link">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="#0A66C2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-      LinkedIn Profile
+      Natarajan Narayanan
     </a>
   </div>
 </aside>
@@ -330,600 +313,507 @@ tr:hover td{background:var(--cream)}
 <!-- MAIN CONTENT -->
 <main class="main">
 
-  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• DASHBOARD PAGE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-  <div class="page active" id="page-dashboard">
-    <div class="topbar">
-      <div>
-        <div class="page-title">Financial Dashboard</div>
-        <div class="page-subtitle">June 2026 · Snapshot Overview</div>
-      </div>
-      <div class="topbar-pills">
-        <span class="pill pill-green"><span class="pill-dot"></span>Live</span>
-        <span class="pill pill-gold">MXN</span>
-        <span class="pill pill-purple">Q2 2026</span>
-      </div>
+<!-- DASHBOARD PAGE -->
+<div class="page active" id="page-dashboard">
+  <div class="topbar">
+    <div>
+      <div class="page-title">Financial Dashboard</div>
+      <div class="page-subtitle">June 2026 &middot; Snapshot Overview</div>
     </div>
-
-    <div class="kpi-grid">
-      <div class="kpi gold">
-        <div class="kpi-icon">&#x1F3E6;</div>
-        <div class="kpi-label">Total Assets</div>
-        <div class="kpi-val">$847K</div>
-        <div class="kpi-change up">▲ 12.4% this quarter</div>
-      </div>
-      <div class="kpi green">
-        <div class="kpi-icon">µ</div>
-        <div class="kpi-label">Net Worth</div>
-        <div class="kpi-val">$612K</div>
-        <div class="kpi-change up">▲ 8.1% YoY</div>
-      </div>
-      <div class="kpi blue">
-        <div class="kpi-icon">¥</div>
-        <div class="kpi-label">Monthly Income</div>
-        <div class="kpi-val">$52K</div>
-        <div class="kpi-change neutral">â€” Salary + dividends</div>
-      </div>
-      <div class="kpi purple">
-        <div class="kpi-icon">&#x1F3AF;</div>
-        <div class="kpi-label">Savings Rate</div>
-        <div class="kpi-val">34%</div>
-        <div class="kpi-change up">▲ 6pp from Jan</div>
-      </div>
-      <div class="kpi red">
-        <div class="kpi-icon">¤</div>
-        <div class="kpi-label">Monthly Expenses</div>
-        <div class="kpi-val">$18.5K</div>
-        <div class="kpi-change down">▼ 3.2% MoM</div>
-      </div>
+    <div class="topbar-pills">
+      <span class="pill pill-green"><span class="pill-dot"></span>Live</span>
+      <span class="pill pill-gold">MXN</span>
+      <span class="pill pill-purple">Q2 2026</span>
     </div>
-
-    <div class="chart-grid">
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title">¹ Income vs Expenses <span class="card-sub">â€” Last 6 months</span></span>
-        </div>
-        <div class="bar-chart-wrap" id="incomeChart"></div>
-        <div class="legend">
-          <div class="leg"><div class="leg-dot" style="background:var(--green)"></div>Income</div>
-          <div class="leg"><div class="leg-dot" style="background:var(--cream-border)"></div>Expenses</div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title">&#x1F4B0; Asset Allocation</span>
-        </div>
-        <div class="donut-wrap">
-          <svg class="donut-svg" viewBox="0 0 42 42" id="donutChart"></svg>
-          <div class="donut-allocs" id="donutLegend"></div>
-        </div>
-      </div>
+  </div>
+  <div class="kpi-grid">
+    <div class="kpi gold">
+      <div class="kpi-icon">&#127968;</div>
+      <div class="kpi-label">Total Assets</div>
+      <div class="kpi-val">$847K</div>
+      <div class="kpi-change up">&#9650; 12.4% this quarter</div>
     </div>
-
+    <div class="kpi green">
+      <div class="kpi-icon">&#128181;</div>
+      <div class="kpi-label">Net Worth</div>
+      <div class="kpi-val">$612K</div>
+      <div class="kpi-change up">&#9650; 8.1% YoY</div>
+    </div>
+    <div class="kpi blue">
+      <div class="kpi-icon">&#128229;</div>
+      <div class="kpi-label">Monthly Income</div>
+      <div class="kpi-val">$52K</div>
+      <div class="kpi-change neutral">&mdash; Salary + dividends</div>
+    </div>
+    <div class="kpi purple">
+      <div class="kpi-icon">&#127919;</div>
+      <div class="kpi-label">Savings Rate</div>
+      <div class="kpi-val">34%</div>
+      <div class="kpi-change up">&#9650; 6pp from Jan</div>
+    </div>
+    <div class="kpi red">
+      <div class="kpi-icon">&#128228;</div>
+      <div class="kpi-label">Monthly Expenses</div>
+      <div class="kpi-val">$18.5K</div>
+      <div class="kpi-change down">&#9660; 3.2% MoM</div>
+    </div>
+  </div>
+  <div class="chart-grid">
     <div class="card">
       <div class="card-header">
-        <span class="card-title">&#x1F4C0; Recent Transactions</span>
-        <button class="card-action">View all â†’</button>
+        <span class="card-title">&#128185; Income vs Expenses <span class="card-sub">&mdash; Last 6 months</span></span>
       </div>
-      <table>
-        <thead><tr><th>Date</th><th>Description</th><th>Category</th><th>Amount</th></tr></thead>
-        <tbody>
-          <tr><td>Jun 3</td><td>Salary deposit</td><td><span class="asset-type type-cash">Income</span></td><td class="up">+$42,000</td></tr>
-          <tr><td>Jun 2</td><td>Banregio CEDE interest</td><td><span class="asset-type type-cede">Investment</span></td><td class="up">+$1,850</td></tr>
-          <tr><td>Jun 1</td><td>Supermarket / groceries</td><td><span class="asset-type type-cash">Food</span></td><td class="down">-$2,340</td></tr>
-          <tr><td>May 31</td><td>Amazon MX Prime</td><td><span class="asset-type type-cash">Subscriptions</span></td><td class="down">-$289</td></tr>
-          <tr><td>May 30</td><td>Dividend â€” AMXL.MX</td><td><span class="asset-type type-stock">Stock</span></td><td class="up">+$3,200</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• PORTFOLIO PAGE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-  <div class="page" id="page-portfolio">
-    <div class="topbar">
-      <div>
-        <div class="page-title">Portfolio</div>
-        <div class="page-subtitle">Asset breakdown across all classes</div>
+      <div class="bar-chart-wrap" id="incomeChart"></div>
+      <div class="legend">
+        <div class="leg"><div class="leg-dot" style="background:var(--green)"></div>Income</div>
+        <div class="leg"><div class="leg-dot" style="background:var(--cream-border)"></div>Expenses</div>
       </div>
-    </div>
-    <div class="kpi-grid">
-      <div class="kpi green"><div class="kpi-label">Cash & CEDE</div><div class="kpi-val">$320K</div><div class="kpi-change up">37.8% of portfolio</div></div>
-      <div class="kpi blue"><div class="kpi-label">Stocks (MX + US)</div><div class="kpi-val">$285K</div><div class="kpi-change up">33.7% of portfolio</div></div>
-      <div class="kpi purple"><div class="kpi-label">Crypto</div><div class="kpi-val">$142K</div><div class="kpi-change down">16.8% of portfolio</div></div>
-      <div class="kpi gold"><div class="kpi-label">Real Estate Fund</div><div class="kpi-val">$100K</div><div class="kpi-change neutral">11.8% of portfolio</div></div>
     </div>
     <div class="card">
-      <div class="card-header"><span class="card-title">&#x1F3E6; All Assets</span></div>
-      <table>
-        <thead><tr><th>Asset</th><th>Type</th><th>Value (MXN)</th><th>Return</th><th>Weight</th></tr></thead>
-        <tbody>
-          <tr><td>Banregio CEDE 28d</td><td><span class="asset-type type-cede">CEDE</span></td><td>$180,000</td><td class="up">12.10% APR</td><td>21.3%</td></tr>
-          <tr><td>Inbursa CEDE 90d</td><td><span class="asset-type type-cede">CEDE</span></td><td>$140,000</td><td class="up">11.80% APR</td><td>16.5%</td></tr>
-          <tr><td>AMXL.MX (América Móvil)</td><td><span class="asset-type type-stock">Stock</span></td><td>$115,000</td><td class="up">+14.2%</td><td>13.6%</td></tr>
-          <tr><td>S&P 500 ETF (SPY)</td><td><span class="asset-type type-stock">Stock</span></td><td>$96,000</td><td class="up">+8.7%</td><td>11.3%</td></tr>
-          <tr><td>Nasdaq ETF (QQQ)</td><td><span class="asset-type type-stock">Stock</span></td><td>$74,000</td><td class="up">+11.2%</td><td>8.7%</td></tr>
-          <tr><td>Bitcoin (BTC)</td><td><span class="asset-type type-crypto">Crypto</span></td><td>$95,000</td><td class="up">+23.1%</td><td>11.2%</td></tr>
-          <tr><td>Ethereum (ETH)</td><td><span class="asset-type type-crypto">Crypto</span></td><td>$47,000</td><td class="down">-5.4%</td><td>5.6%</td></tr>
-          <tr><td>FIBRA Uno (FUNO11)</td><td><span class="asset-type type-cede">FIBRA</span></td><td>$100,000</td><td class="up">+9.3%</td><td>11.8%</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• MARKET DATA PAGE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-  <div class="page" id="page-market">
-    <div class="topbar">
-      <div>
-        <div class="page-title">Market Data</div>
-        <div class="page-subtitle">Stocks · Crypto · Mexican Bank Rates</div>
+      <div class="card-header">
+        <span class="card-title">&#129695; Asset Allocation</span>
       </div>
-      <div class="topbar-pills">
-        <span class="pill pill-green"><span class="pill-dot"></span>Live demo</span>
-      </div>
-    </div>
-    <div class="card" style="margin-bottom:1.25rem">
-      <div class="card-header"><span class="card-title">&#x1F3E6; Mexican Bank Deposit Rates (CEDE)</span><span class="card-sub">Source: Banxico TIIE ~10.5%</span></div>
-      <table>
-        <thead><tr><th>Bank</th><th>Rate</th><th>Term</th><th>Type</th><th>Min. Amount</th></tr></thead>
-        <tbody>
-          <tr><td><strong>Banregio</strong></td><td class="up">12.10%</td><td>28 días</td><td><span class="asset-type type-cede">CEDE</span></td><td>$1,000 MXN</td></tr>
-          <tr><td><strong>Inbursa</strong></td><td class="up">11.80%</td><td>90 días</td><td><span class="asset-type type-cede">CEDE</span></td><td>$5,000 MXN</td></tr>
-          <tr><td><strong>Banbajío</strong></td><td class="up">11.50%</td><td>180 días</td><td><span class="asset-type type-cede">CEDE</span></td><td>$10,000 MXN</td></tr>
-          <tr><td><strong>HSBC MX</strong></td><td class="up">10.90%</td><td>28 días</td><td><span class="asset-type type-cede">CEDE</span></td><td>$50,000 MXN</td></tr>
-          <tr><td><strong>Santander MX</strong></td><td>10.50%</td><td>28 días</td><td><span class="asset-type type-cede">CEDE</span></td><td>$100 MXN</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.25rem">
-      <div class="card">
-        <div class="card-header"><span class="card-title">&#x1F4CA; Stocks</span></div>
-        <div class="market-grid" style="grid-template-columns:1fr 1fr">
-          <div class="market-card"><div class="market-ticker">AMXL.MX</div><div class="market-name">América Móvil</div><div class="market-price">$17.82</div><div class="market-change up">▲ +2.4% today</div></div>
-          <div class="market-card"><div class="market-ticker">SPY</div><div class="market-name">S&P 500 ETF</div><div class="market-price">$541.30</div><div class="market-change up">▲ +0.8%</div></div>
-          <div class="market-card"><div class="market-ticker">QQQ</div><div class="market-name">Nasdaq ETF</div><div class="market-price">$468.15</div><div class="market-change up">▲ +1.1%</div></div>
-          <div class="market-card"><div class="market-ticker">FEMSAUBD</div><div class="market-name">FEMSA UBD</div><div class="market-price">$183.40</div><div class="market-change down">▼ -0.3%</div></div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-header"><span class="card-title">&#x1FA99; Crypto</span><span class="card-sub" id="cryptoUpdated">Loading live prices&hellip;</span></div>
-        <div class="market-grid" style="grid-template-columns:1fr 1fr" id="cryptoGrid">
-          <div class="market-card"><div class="market-ticker">BTC</div><div class="market-name">Bitcoin</div><div class="market-price" id="btcPrice">&hellip;</div><div class="market-change neutral" id="btcChange">&mdash;</div></div>
-          <div class="market-card"><div class="market-ticker">ETH</div><div class="market-name">Ethereum</div><div class="market-price" id="ethPrice">&hellip;</div><div class="market-change neutral" id="ethChange">&mdash;</div></div>
-          <div class="market-card"><div class="market-ticker">SOL</div><div class="market-name">Solana</div><div class="market-price" id="solPrice">&hellip;</div><div class="market-change neutral" id="solChange">&mdash;</div></div>
-          <div class="market-card"><div class="market-ticker">XRP</div><div class="market-name">Ripple</div><div class="market-price" id="xrpPrice">&hellip;</div><div class="market-change neutral" id="xrpChange">&mdash;</div></div>
-        </div>
+      <div class="donut-wrap">
+        <svg class="donut-svg" viewBox="0 0 42 42" id="donutChart"></svg>
+        <div class="donut-allocs" id="donutLegend"></div>
       </div>
     </div>
   </div>
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">&#128203; Recent Transactions</span>
+      <button class="card-action">View all &rarr;</button>
+    </div>
+    <table>
+      <thead><tr><th>Date</th><th>Description</th><th>Category</th><th>Amount</th></tr></thead>
+      <tbody>
+        <tr><td>Jun 3</td><td>Salary deposit</td><td><span class="asset-type type-cash">Income</span></td><td class="up">+$42,000</td></tr>
+        <tr><td>Jun 2</td><td>Banregio CEDE interest</td><td><span class="asset-type type-cede">Investment</span></td><td class="up">+$1,850</td></tr>
+        <tr><td>Jun 1</td><td>Supermarket / groceries</td><td><span class="asset-type type-cash">Food</span></td><td class="down">-$2,340</td></tr>
+        <tr><td>May 31</td><td>Amazon MX Prime</td><td><span class="asset-type type-cash">Subscriptions</span></td><td class="down">-$289</td></tr>
+        <tr><td>May 30</td><td>Dividend &mdash; AMXL.MX</td><td><span class="asset-type type-stock">Stock</span></td><td class="up">+$3,200</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 
-  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• AI ANALYSIS PAGE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-  <div class="page" id="page-analysis">
-    <div class="topbar">
-      <div>
-        <div class="page-title">AI Financial Analysis</div>
-        <div class="page-subtitle">Powered by Groq Sonnet â€” Real-time report generation</div>
-      </div>
-      <div class="topbar-pills">
-        <span class="pill pill-purple"><span class="pill-dot"></span>AI Active</span>
-        <span class="pill pill-gold">Q2 2026</span>
+<!-- PORTFOLIO PAGE -->
+<div class="page" id="page-portfolio">
+  <div class="topbar">
+    <div>
+      <div class="page-title">Portfolio</div>
+      <div class="page-subtitle">Asset breakdown across all classes</div>
+    </div>
+  </div>
+  <div class="kpi-grid">
+    <div class="kpi green"><div class="kpi-label">Cash &amp; CEDE</div><div class="kpi-val">$320K</div><div class="kpi-change up">37.8% of portfolio</div></div>
+    <div class="kpi blue"><div class="kpi-label">Stocks (MX + US)</div><div class="kpi-val">$285K</div><div class="kpi-change up">33.7% of portfolio</div></div>
+    <div class="kpi purple"><div class="kpi-label">Crypto</div><div class="kpi-val">$142K</div><div class="kpi-change down">16.8% of portfolio</div></div>
+    <div class="kpi gold"><div class="kpi-label">Real Estate Fund</div><div class="kpi-val">$100K</div><div class="kpi-change neutral">11.8% of portfolio</div></div>
+  </div>
+  <div class="card">
+    <div class="card-header"><span class="card-title">&#127968; All Assets</span></div>
+    <table>
+      <thead><tr><th>Asset</th><th>Type</th><th>Value (MXN)</th><th>Return</th><th>Weight</th></tr></thead>
+      <tbody>
+        <tr><td>Banregio CEDE 28d</td><td><span class="asset-type type-cede">CEDE</span></td><td>$180,000</td><td class="up">12.10% APR</td><td>21.3%</td></tr>
+        <tr><td>Inbursa CEDE 90d</td><td><span class="asset-type type-cede">CEDE</span></td><td>$140,000</td><td class="up">11.80% APR</td><td>16.5%</td></tr>
+        <tr><td>AMXL.MX (Am&eacute;rica M&oacute;vil)</td><td><span class="asset-type type-stock">Stock</span></td><td>$115,000</td><td class="up">+14.2%</td><td>13.6%</td></tr>
+        <tr><td>S&amp;P 500 ETF (SPY)</td><td><span class="asset-type type-stock">Stock</span></td><td>$96,000</td><td class="up">+8.7%</td><td>11.3%</td></tr>
+        <tr><td>Nasdaq ETF (QQQ)</td><td><span class="asset-type type-stock">Stock</span></td><td>$74,000</td><td class="up">+11.2%</td><td>8.7%</td></tr>
+        <tr><td>Bitcoin (BTC)</td><td><span class="asset-type type-crypto">Crypto</span></td><td>$95,000</td><td class="up">+23.1%</td><td>11.2%</td></tr>
+        <tr><td>Ethereum (ETH)</td><td><span class="asset-type type-crypto">Crypto</span></td><td>$47,000</td><td class="down">-5.4%</td><td>5.6%</td></tr>
+        <tr><td>FIBRA Uno (FUNO11)</td><td><span class="asset-type type-cede">FIBRA</span></td><td>$100,000</td><td class="up">+9.3%</td><td>11.8%</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- MARKET DATA PAGE -->
+<div class="page" id="page-market">
+  <div class="topbar">
+    <div>
+      <div class="page-title">Market Data</div>
+      <div class="page-subtitle">Stocks &middot; Crypto &middot; Mexican Bank Rates</div>
+    </div>
+    <div class="topbar-pills">
+      <span class="pill pill-green"><span class="pill-dot"></span>Live demo</span>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:1.25rem">
+    <div class="card-header"><span class="card-title">&#127968; Mexican Bank Deposit Rates (CEDE)</span><span class="card-sub">Source: Banxico TIIE ~10.5%</span></div>
+    <table>
+      <thead><tr><th>Bank</th><th>Rate</th><th>Term</th><th>Type</th><th>Min. Amount</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Banregio</strong></td><td class="up">12.10%</td><td>28 d&iacute;as</td><td><span class="asset-type type-cede">CEDE</span></td><td>$1,000 MXN</td></tr>
+        <tr><td><strong>Inbursa</strong></td><td class="up">11.80%</td><td>90 d&iacute;as</td><td><span class="asset-type type-cede">CEDE</span></td><td>$5,000 MXN</td></tr>
+        <tr><td><strong>Banbaj&iacute;o</strong></td><td class="up">11.50%</td><td>180 d&iacute;as</td><td><span class="asset-type type-cede">CEDE</span></td><td>$10,000 MXN</td></tr>
+        <tr><td><strong>HSBC MX</strong></td><td class="up">10.90%</td><td>28 d&iacute;as</td><td><span class="asset-type type-cede">CEDE</span></td><td>$50,000 MXN</td></tr>
+        <tr><td><strong>Santander MX</strong></td><td>10.50%</td><td>28 d&iacute;as</td><td><span class="asset-type type-cede">CEDE</span></td><td>$100 MXN</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.25rem">
+    <div class="card">
+      <div class="card-header"><span class="card-title">&#128202; Stocks</span></div>
+      <div class="market-grid" style="grid-template-columns:1fr 1fr">
+        <div class="market-card"><div class="market-ticker">AMXL.MX</div><div class="market-name">Am&eacute;rica M&oacute;vil</div><div class="market-price">$17.82</div><div class="market-change up">&#9650; +2.4% today</div></div>
+        <div class="market-card"><div class="market-ticker">SPY</div><div class="market-name">S&amp;P 500 ETF</div><div class="market-price">$541.30</div><div class="market-change up">&#9650; +0.8%</div></div>
+        <div class="market-card"><div class="market-ticker">QQQ</div><div class="market-name">Nasdaq ETF</div><div class="market-price">$468.15</div><div class="market-change up">&#9650; +1.1%</div></div>
+        <div class="market-card"><div class="market-ticker">FEMSAUBD</div><div class="market-name">FEMSA UBD</div><div class="market-price">$183.40</div><div class="market-change down">&#9660; -0.3%</div></div>
       </div>
     </div>
-
-    <div id="analysisLoading" style="text-align:center;padding:3rem;display:none">
-      <div style="font-size:2rem;margin-bottom:.75rem">&#x1F9E0;</div>
-      <div style="font-size:.9rem;color:var(--ink-soft);margin-bottom:.5rem">Analyzing your financial data…</div>
-      <div style="font-size:.75rem;color:var(--ink-soft)" class="loading-dots">Running AI report</div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">&#129689; Crypto</span></div>
+      <div class="market-grid" style="grid-template-columns:1fr 1fr">
+        <div class="market-card"><div class="market-ticker">BTC</div><div class="market-name">Bitcoin</div><div class="market-price">$105,240</div><div class="market-change up">&#9650; +3.2% 24h</div></div>
+        <div class="market-card"><div class="market-ticker">ETH</div><div class="market-name">Ethereum</div><div class="market-price">$3,812</div><div class="market-change down">&#9660; -1.1% 24h</div></div>
+        <div class="market-card"><div class="market-ticker">SOL</div><div class="market-name">Solana</div><div class="market-price">$178.50</div><div class="market-change up">&#9650; +4.7% 24h</div></div>
+        <div class="market-card"><div class="market-ticker">USDT</div><div class="market-name">Tether</div><div class="market-price">$1.00</div><div class="market-change neutral">&mdash; Stable</div></div>
+      </div>
     </div>
+  </div>
+</div>
 
-    <div id="analysisContent">
-      <div class="analysis-header" id="analysisHeader">
-        <div class="analysis-title">Q2 2026 Financial Health Report</div>
-        <div style="font-size:.78rem;color:rgba(255,255,255,.55);margin-top:.15rem">Generated by Claude Sonnet · Updated June 5, 2026</div>
-        <div class="health-score-wrap">
-          <div class="health-score" id="healthScore">72</div>
-          <div class="health-bar-wrap">
-            <div class="health-bar-track"><div class="health-bar-fill" id="healthBar" style="width:72%"></div></div>
-            <div class="health-label" id="healthLabel">Good â€” Room to optimize</div>
+<!-- AI ANALYSIS PAGE -->
+<div class="page" id="page-analysis">
+  <div class="topbar">
+    <div>
+      <div class="page-title">AI Financial Analysis</div>
+      <div class="page-subtitle">Powered by Claude Sonnet &mdash; Real-time report generation</div>
+    </div>
+    <div class="topbar-pills">
+      <span class="pill pill-purple"><span class="pill-dot"></span>AI Active</span>
+      <span class="pill pill-gold">Q2 2026</span>
+    </div>
+  </div>
+
+  <!-- API Key input for AI features -->
+  <div class="api-key-banner" id="apiKeyBanner">
+    <span>&#128273;</span>
+    <span style="flex-shrink:0">Anthropic API Key:</span>
+    <input type="password" class="api-key-input" id="apiKeyInput" placeholder="sk-ant-..." />
+    <button class="api-key-save-btn" onclick="saveApiKey()">Save &amp; Enable AI</button>
+    <span id="apiKeyStatus" style="font-size:.72rem;color:var(--green);display:none">&#10003; Saved</span>
+  </div>
+
+  <div id="analysisLoading" style="text-align:center;padding:3rem;display:none">
+    <div style="font-size:2rem;margin-bottom:.75rem">&#129504;</div>
+    <div style="font-size:.9rem;color:var(--ink-soft);margin-bottom:.5rem">Analyzing your financial data&hellip;</div>
+    <div style="font-size:.75rem;color:var(--ink-soft)" class="loading-dots">Running AI report</div>
+  </div>
+  <div id="analysisContent">
+    <div class="analysis-header" id="analysisHeader">
+      <div class="analysis-title">Q2 2026 Financial Health Report</div>
+      <div style="font-size:.78rem;color:rgba(255,255,255,.55);margin-top:.15rem">Generated by Claude Sonnet &middot; Updated June 5, 2026</div>
+      <div class="health-score-wrap">
+        <div class="health-score" id="healthScore">72</div>
+        <div class="health-bar-wrap">
+          <div class="health-bar-track"><div class="health-bar-fill" id="healthBar" style="width:72%"></div></div>
+          <div class="health-label" id="healthLabel">Good &mdash; Room to optimize</div>
+        </div>
+      </div>
+      <div class="analysis-meta">
+        <span>&#128197; Jan&ndash;Jun 2026</span>
+        <span>&#128176; $847K total assets</span>
+        <span>&#128202; 5 asset classes</span>
+        <span>&#127919; 3 active goals</span>
+      </div>
+    </div>
+    <div style="margin-bottom:1.25rem;display:flex;gap:.75rem;flex-wrap:wrap;align-items:center">
+      <button onclick="generateAIAnalysis()" style="padding:.6rem 1.2rem;background:var(--ink);color:#fff;border:none;border-radius:9px;font-size:.82rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity .2s;display:flex;align-items:center;gap:.4rem" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">
+        &#129504; Regenerate AI Report
+      </button>
+      <span style="font-size:.73rem;color:var(--ink-soft)">Click to get fresh AI insights from Claude</span>
+    </div>
+    <div class="insight-grid" id="insightGrid">
+      <div class="insight-card">
+        <div class="insight-icon">&#10003;</div>
+        <div class="insight-title">Strong Savings Rate</div>
+        <div class="insight-text">Your 34% savings rate is well above the recommended 20%. This discipline is building wealth consistently.</div>
+      </div>
+      <div class="insight-card" style="border-left-color:var(--red)">
+        <div class="insight-icon">&#9888;&#65039;</div>
+        <div class="insight-title">Crypto Concentration Risk</div>
+        <div class="insight-text">Crypto represents 16.8% of portfolio. High volatility could significantly impact net worth in a downturn.</div>
+      </div>
+      <div class="insight-card" style="border-left-color:var(--blue)">
+        <div class="insight-icon">&#128200;</div>
+        <div class="insight-title">CEDE Rates Opportunity</div>
+        <div class="insight-text">Banregio at 12.1% APR is outperforming inflation. Laddering short/mid CEDEs could boost cash yield by ~1.5%.</div>
+      </div>
+      <div class="insight-card" style="border-left-color:var(--green)">
+        <div class="insight-icon">&#127758;</div>
+        <div class="insight-title">Good Geographic Diversification</div>
+        <div class="insight-text">Mix of Mexican (AMXL, FIBRAs) and US (SPY, QQQ) assets reduces single-market risk effectively.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">&#127919; AI Recommendations</span><span class="card-sub">Personalized to your portfolio</span></div>
+      <div class="rec-list" id="recList">
+        <div class="rec-item"><div class="rec-num">1</div><div class="rec-content"><div class="rec-title">Build a 6-month Emergency Fund</div><div class="rec-text">With $18.5K/mo expenses, target $111K in liquid CEDE. Currently at ~$60K liquid. Prioritize closing this gap before new crypto exposure.</div><span class="rec-impact impact-high">High Impact</span></div></div>
+        <div class="rec-item"><div class="rec-num">2</div><div class="rec-content"><div class="rec-title">Reduce Crypto to 10% Max</div><div class="rec-text">Consider rebalancing $57K from crypto to lower-volatility assets. ETH's underperformance (-5.4%) is a signal to reassess allocation.</div><span class="rec-impact impact-high">High Impact</span></div></div>
+        <div class="rec-item"><div class="rec-num">3</div><div class="rec-content"><div class="rec-title">Maximize CEDE Laddering Strategy</div><div class="rec-text">Stagger your CEDE maturities (28d / 90d / 180d) to capture higher rates while maintaining monthly liquidity.</div><span class="rec-impact impact-med">Medium Impact</span></div></div>
+        <div class="rec-item"><div class="rec-num">4</div><div class="rec-content"><div class="rec-title">Add International Bonds Exposure</div><div class="rec-text">With US ETFs already in the portfolio, consider adding a bond ETF (BND or AGG) for income stability &mdash; 5&ndash;8% allocation recommended.</div><span class="rec-impact impact-low">Low Impact</span></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CHAT PAGE -->
+<div class="page chat-page" id="page-chat">
+  <div class="chat-topbar">
+    <div>
+      <div class="page-title" style="font-size:1.2rem">&#128172; AI Financial Advisor</div>
+      <div class="page-subtitle">Ask anything about your portfolio &middot; Powered by Claude</div>
+    </div>
+    <span class="pill pill-green" id="chatStatusPill"><span class="pill-dot"></span>Ready</span>
+  </div>
+  <div class="chat-layout">
+    <div class="chat-sidebar">
+      <div class="chat-sidebar-title">&#128161; Suggested Questions</div>
+      <div class="suggestions-list" id="suggestionsList"></div>
+    </div>
+    <div class="chat-main">
+      <div id="chatApiKeyBar" style="padding:.75rem 1.5rem;background:var(--gold-bg);border-bottom:1px solid var(--gold);display:flex;align-items:center;gap:.6rem;flex-wrap:wrap">
+        <span style="font-size:.75rem;color:var(--ink-mid)">&#128273; API Key for AI chat:</span>
+        <input type="password" id="chatApiKeyInput" placeholder="sk-ant-..." style="flex:1;min-width:200px;border:1px solid var(--cream-border);border-radius:7px;padding:.35rem .7rem;font-family:'DM Mono',monospace;font-size:.73rem;background:var(--white);outline:none;color:var(--ink)" />
+        <button onclick="saveChatApiKey()" style="padding:.35rem .8rem;background:var(--gold);color:var(--ink);border:none;border-radius:7px;font-size:.72rem;font-weight:600;cursor:pointer">Enable AI</button>
+        <span id="chatKeyStatus" style="font-size:.72rem;color:var(--green);display:none">&#10003; AI Active</span>
+      </div>
+      <div class="chat-messages" id="chatMessages">
+        <div class="chat-msg">
+          <div class="msg-avatar ai-avatar">W</div>
+          <div>
+            <div class="msg-bubble ai-bubble">Hola! I'm your WealthLens AI Advisor, powered by Claude. I have full context on your portfolio ($847K in assets, 34% savings rate, MXN base). Ask me anything &mdash; from CEDE strategy to crypto risk, budget optimization, or goal planning. <strong>&iquest;En qu&eacute; puedo ayudarte hoy?</strong></div>
+            <div class="msg-time">Today, just now</div>
           </div>
         </div>
-        <div class="analysis-meta">
-          <span>&#x1F4C0; Janâ€“Jun 2026</span>
-          <span>° $847K total assets</span>
-          <span>&#x1F4CA; 5 asset classes</span>
-          <span>&#x1F3AF; 3 active goals</span>
-        </div>
       </div>
-
-      <div style="margin-bottom:1.25rem;display:flex;gap:.75rem;flex-wrap:wrap;align-items:center">
-        <button onclick="generateAIAnalysis()" style="padding:.6rem 1.2rem;background:var(--ink);color:#fff;border:none;border-radius:9px;font-size:.82rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity .2s;display:flex;align-items:center;gap:.4rem" onmouseover="this.style.opacity='.8'" onmouseout="this.style.opacity='1'">
-          &#x1F9E0; Regenerate AI Report
+      <div class="quick-chips" id="quickChips"></div>
+      <div class="chat-input-bar">
+        <textarea class="chat-input" id="chatInput" placeholder="Ask about your portfolio, savings, investments&hellip;" rows="1" onkeydown="handleChatKey(event)" oninput="autoResize(this)"></textarea>
+        <button class="send-btn" id="sendBtn" onclick="sendChat()">
+          <span class="send-icon">&#9654;</span>
         </button>
-        <span style="font-size:.73rem;color:var(--ink-soft)">Click to get fresh AI insights from Claude</span>
-      </div>
-
-      <div class="insight-grid" id="insightGrid">
-        <div class="insight-card">
-          <div class="insight-icon">âœ…</div>
-          <div class="insight-title">Strong Savings Rate</div>
-          <div class="insight-text">Your 34% savings rate is well above the recommended 20%. This discipline is building wealth consistently.</div>
-        </div>
-        <div class="insight-card" style="border-left-color:var(--red)">
-          <div class="insight-icon">âš ï¸</div>
-          <div class="insight-title">Crypto Concentration Risk</div>
-          <div class="insight-text">Crypto represents 16.8% of portfolio. High volatility could significantly impact net worth in a downturn.</div>
-        </div>
-        <div class="insight-card" style="border-left-color:var(--blue)">
-          <div class="insight-icon">&#x1F4C8;</div>
-          <div class="insight-title">CEDE Rates Opportunity</div>
-          <div class="insight-text">Banregio at 12.1% APR is outperforming inflation. Laddering short/mid CEDEs could boost cash yield by ~1.5%.</div>
-        </div>
-        <div class="insight-card" style="border-left-color:var(--green)">
-          <div class="insight-icon">Ž</div>
-          <div class="insight-title">Good Geographic Diversification</div>
-          <div class="insight-text">Mix of Mexican (AMXL, FIBRAs) and US (SPY, QQQ) assets reduces single-market risk effectively.</div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header"><span class="card-title">&#x1F3AF; AI Recommendations</span><span class="card-sub">Personalized to your portfolio</span></div>
-        <div class="rec-list" id="recList">
-          <div class="rec-item"><div class="rec-num">1</div><div class="rec-content"><div class="rec-title">Build a 6-month Emergency Fund</div><div class="rec-text">With $18.5K/mo expenses, target $111K in liquid CEDE. Currently at ~$60K liquid. Prioritize closing this gap before new crypto exposure.</div><span class="rec-impact impact-high">High Impact</span></div></div>
-          <div class="rec-item"><div class="rec-num">2</div><div class="rec-content"><div class="rec-title">Reduce Crypto to 10% Max</div><div class="rec-text">Consider rebalancing $57K from crypto to lower-volatility assets. ETH's underperformance (-5.4%) is a signal to reassess allocation.</div><span class="rec-impact impact-high">High Impact</span></div></div>
-          <div class="rec-item"><div class="rec-num">3</div><div class="rec-content"><div class="rec-title">Maximize CEDE Laddering Strategy</div><div class="rec-text">Stagger your CEDE maturities (28d / 90d / 180d) to capture higher rates while maintaining monthly liquidity.</div><span class="rec-impact impact-med">Medium Impact</span></div></div>
-          <div class="rec-item"><div class="rec-num">4</div><div class="rec-content"><div class="rec-title">Add International Bonds Exposure</div><div class="rec-text">With US ETFs already in the portfolio, consider adding a bond ETF (BND or AGG) for income stability â€” 5â€“8% allocation recommended.</div><span class="rec-impact impact-low">Low Impact</span></div></div>
-        </div>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• CHAT PAGE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-  <div class="page chat-page" id="page-chat">
-    <div class="chat-topbar">
-      <div>
-        <div class="page-title" style="font-size:1.2rem">&#x1F4AC; AI Financial Advisor</div>
-        <div class="page-subtitle">Ask anything about your portfolio · Powered by Groq</div>
-      </div>
-      <span class="pill pill-green"><span class="pill-dot"></span>Connected</span>
+<!-- API DASHBOARD PAGE -->
+<div class="page" id="page-api">
+  <div class="topbar">
+    <div>
+      <div class="page-title">API Dashboard</div>
+      <div class="page-subtitle">Interactive endpoint explorer &amp; live testing playground</div>
     </div>
-    <div class="chat-layout">
-      <div class="chat-sidebar">
-        <div class="chat-sidebar-title">¡ Suggested Questions</div>
-        <div class="suggestions-list" id="suggestionsList"></div>
+    <div class="topbar-pills">
+      <span class="pill pill-green"><span class="pill-dot"></span>8 Endpoints</span>
+      <span class="pill pill-blue">REST &middot; JSON</span>
+    </div>
+  </div>
+  <div class="status-row">
+    <div class="status-item"><div class="status-indicator online"></div><span class="status-label">API Server</span><span class="status-val">localhost:5000</span></div>
+    <div class="status-item"><div class="status-indicator online"></div><span class="status-label">AI Gateway</span><span class="status-val">Claude Sonnet</span></div>
+    <div class="status-item"><div class="status-indicator online"></div><span class="status-label">Database</span><span class="status-val">SQLite &middot; wealthlens.db</span></div>
+    <div class="status-item"><div class="status-indicator demo"></div><span class="status-label">Market Data</span><span class="status-val">Demo mode</span></div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchApiTab('endpoints',this)">&#128203; Endpoints</button>
+    <button class="tab-btn" onclick="switchApiTab('playground',this)">&#129514; Playground</button>
+    <button class="tab-btn" onclick="switchApiTab('schema',this)">&#128451;&#65039; Schema</button>
+  </div>
+  <div class="tab-pane active" id="api-tab-endpoints">
+    <div class="api-grid">
+      <div class="endpoint-card">
+        <div class="endpoint-header"><span class="method-badge get">GET</span><span class="endpoint-path">/api/wealth/summary</span><span class="endpoint-desc">Returns total assets, goals, 30-day transactions</span></div>
+        <div class="endpoint-body"><button class="try-btn" onclick="runEndpoint('wealth-summary',this)">&#9654; Run</button><div class="response-preview" id="res-wealth-summary"></div></div>
       </div>
-      <div class="chat-main">
-        <div class="chat-messages" id="chatMessages">
-          <div class="chat-msg">
-            <div class="msg-avatar ai-avatar">W</div>
-            <div>
-              <div class="msg-bubble ai-bubble">Hola! I'm your WealthLens AI Advisor, powered by Claude. I have full context on your portfolio ($847K in assets, 34% savings rate, MXN base). Ask me anything â€” from CEDE strategy to crypto risk, budget optimization, or goal planning. <strong>Â¿En qué puedo ayudarte hoy?</strong></div>
-              <div class="msg-time">Today, just now</div>
-            </div>
-          </div>
-        </div>
-        <div class="quick-chips" id="quickChips"></div>
-        <div class="chat-input-bar">
-          <textarea class="chat-input" id="chatInput" placeholder="Ask about your portfolio, savings, investments…" rows="1" onkeydown="handleChatKey(event)" oninput="autoResize(this)"></textarea>
-          <button class="send-btn" id="sendBtn" onclick="sendChat()">
-            <span class="send-icon">â–¶</span>
-          </button>
-        </div>
+      <div class="endpoint-card">
+        <div class="endpoint-header"><span class="method-badge get">GET</span><span class="endpoint-path">/api/market/deposits</span><span class="endpoint-desc">Current CEDE rates from Mexican banks</span></div>
+        <div class="endpoint-body"><button class="try-btn" onclick="runEndpoint('market-deposits',this)">&#9654; Run</button><div class="response-preview" id="res-market-deposits"></div></div>
+      </div>
+      <div class="endpoint-card">
+        <div class="endpoint-header"><span class="method-badge get">GET</span><span class="endpoint-path">/api/market/stocks?symbols=AMXL.MX,SPY</span><span class="endpoint-desc">Stock prices via Yahoo Finance</span></div>
+        <div class="endpoint-body"><button class="try-btn" onclick="runEndpoint('market-stocks',this)">&#9654; Run</button><div class="response-preview" id="res-market-stocks"></div></div>
+      </div>
+      <div class="endpoint-card">
+        <div class="endpoint-header"><span class="method-badge get">GET</span><span class="endpoint-path">/api/market/crypto?ids=bitcoin,ethereum</span><span class="endpoint-desc">Crypto prices &amp; 24h change via CoinGecko</span></div>
+        <div class="endpoint-body"><button class="try-btn" onclick="runEndpoint('market-crypto',this)">&#9654; Run</button><div class="response-preview" id="res-market-crypto"></div></div>
+      </div>
+      <div class="endpoint-card">
+        <div class="endpoint-header"><span class="method-badge post">POST</span><span class="endpoint-path">/api/ai/dashboard</span><span class="endpoint-desc">AI-generated financial report with KPIs &amp; insights</span></div>
+        <div class="endpoint-body"><button class="try-btn" onclick="runEndpoint('ai-dashboard',this)">&#9654; Run</button><div class="response-preview" id="res-ai-dashboard"></div></div>
+      </div>
+      <div class="endpoint-card">
+        <div class="endpoint-header"><span class="method-badge post">POST</span><span class="endpoint-path">/api/chat</span><span class="endpoint-desc">AI financial advisor chat endpoint</span></div>
+        <div class="endpoint-body"><button class="try-btn" onclick="runEndpoint('chat',this)">&#9654; Run</button><div class="response-preview" id="res-chat"></div></div>
+      </div>
+      <div class="endpoint-card">
+        <div class="endpoint-header"><span class="method-badge get">GET</span><span class="endpoint-path">/api/status</span><span class="endpoint-desc">API health check &amp; version info</span></div>
+        <div class="endpoint-body"><button class="try-btn" onclick="runEndpoint('status',this)">&#9654; Run</button><div class="response-preview" id="res-status"></div></div>
+      </div>
+      <div class="endpoint-card">
+        <div class="endpoint-header"><span class="method-badge get">GET</span><span class="endpoint-path">/api/chat/history</span><span class="endpoint-desc">Retrieve stored conversation history</span></div>
+        <div class="endpoint-body"><button class="try-btn" onclick="runEndpoint('chat-history',this)">&#9654; Run</button><div class="response-preview" id="res-chat-history"></div></div>
       </div>
     </div>
   </div>
-
-  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• API DASHBOARD PAGE â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-  <div class="page" id="page-api">
-    <div class="topbar">
-      <div>
-        <div class="page-title">API Dashboard</div>
-        <div class="page-subtitle">Interactive endpoint explorer & live testing playground</div>
-      </div>
-      <div class="topbar-pills">
-        <span class="pill pill-green"><span class="pill-dot"></span>8 Endpoints</span>
-        <span class="pill pill-blue">REST · JSON</span>
-      </div>
-    </div>
-
-    <div class="status-row">
-      <div class="status-item"><div class="status-indicator online"></div><span class="status-label">API Server</span><span class="status-val">localhost:5000</span></div>
-      <div class="status-item"><div class="status-indicator online"></div><span class="status-label">AI Gateway</span><span class="status-val">Claude Sonnet</span></div>
-      <div class="status-item"><div class="status-indicator online"></div><span class="status-label">Database</span><span class="status-val">SQLite · wealthlens.db</span></div>
-      <div class="status-item"><div class="status-indicator demo"></div><span class="status-label">Market Data</span><span class="status-val">Demo mode</span></div>
-    </div>
-
-    <div class="tabs">
-      <button class="tab-btn active" onclick="switchApiTab('endpoints',this)">&#x1F4C0; Endpoints</button>
-      <button class="tab-btn" onclick="switchApiTab('playground',this)">ª Playground</button>
-      <button class="tab-btn" onclick="switchApiTab('schema',this)">„ï¸ Schema</button>
-    </div>
-
-    <div class="tab-pane active" id="api-tab-endpoints">
-      <div class="api-grid">
-        <!-- Wealth -->
-        <div class="endpoint-card">
-          <div class="endpoint-header">
-            <span class="method-badge get">GET</span>
-            <span class="endpoint-path">/api/wealth/summary</span>
-            <span class="endpoint-desc">Returns total assets, goals, 30-day transactions</span>
-          </div>
-          <div class="endpoint-body">
-            <button class="try-btn" onclick="runEndpoint('wealth-summary',this)">â–¶ Run</button>
-            <div class="response-preview" id="res-wealth-summary"></div>
-          </div>
-        </div>
-        <!-- Market deposits -->
-        <div class="endpoint-card">
-          <div class="endpoint-header">
-            <span class="method-badge get">GET</span>
-            <span class="endpoint-path">/api/market/deposits</span>
-            <span class="endpoint-desc">Current CEDE rates from Mexican banks</span>
-          </div>
-          <div class="endpoint-body">
-            <button class="try-btn" onclick="runEndpoint('market-deposits',this)">â–¶ Run</button>
-            <div class="response-preview" id="res-market-deposits"></div>
-          </div>
-        </div>
-        <!-- Stocks -->
-        <div class="endpoint-card">
-          <div class="endpoint-header">
-            <span class="method-badge get">GET</span>
-            <span class="endpoint-path">/api/market/stocks?symbols=AMXL.MX,SPY</span>
-            <span class="endpoint-desc">Stock prices via Yahoo Finance</span>
-          </div>
-          <div class="endpoint-body">
-            <button class="try-btn" onclick="runEndpoint('market-stocks',this)">â–¶ Run</button>
-            <div class="response-preview" id="res-market-stocks"></div>
-          </div>
-        </div>
-        <!-- Crypto -->
-        <div class="endpoint-card">
-          <div class="endpoint-header">
-            <span class="method-badge get">GET</span>
-            <span class="endpoint-path">/api/market/crypto?ids=bitcoin,ethereum</span>
-            <span class="endpoint-desc">Crypto prices & 24h change via CoinGecko</span>
-          </div>
-          <div class="endpoint-body">
-            <button class="try-btn" onclick="runEndpoint('market-crypto',this)">â–¶ Run</button>
-            <div class="response-preview" id="res-market-crypto"></div>
-          </div>
-        </div>
-        <!-- AI Dashboard -->
-        <div class="endpoint-card">
-          <div class="endpoint-header">
-            <span class="method-badge post">POST</span>
-            <span class="endpoint-path">/api/ai/dashboard</span>
-            <span class="endpoint-desc">AI-generated financial report with KPIs & insights</span>
-          </div>
-          <div class="endpoint-body">
-            <button class="try-btn" onclick="runEndpoint('ai-dashboard',this)">â–¶ Run</button>
-            <div class="response-preview" id="res-ai-dashboard"></div>
-          </div>
-        </div>
-        <!-- Chat -->
-        <div class="endpoint-card">
-          <div class="endpoint-header">
-            <span class="method-badge post">POST</span>
-            <span class="endpoint-path">/api/chat</span>
-            <span class="endpoint-desc">AI financial advisor chat endpoint</span>
-          </div>
-          <div class="endpoint-body">
-            <button class="try-btn" onclick="runEndpoint('chat',this)">â–¶ Run</button>
-            <div class="response-preview" id="res-chat"></div>
-          </div>
-        </div>
-        <!-- Status -->
-        <div class="endpoint-card">
-          <div class="endpoint-header">
-            <span class="method-badge get">GET</span>
-            <span class="endpoint-path">/api/status</span>
-            <span class="endpoint-desc">API health check & version info</span>
-          </div>
-          <div class="endpoint-body">
-            <button class="try-btn" onclick="runEndpoint('status',this)">â–¶ Run</button>
-            <div class="response-preview" id="res-status"></div>
-          </div>
-        </div>
-        <!-- Chat history -->
-        <div class="endpoint-card">
-          <div class="endpoint-header">
-            <span class="method-badge get">GET</span>
-            <span class="endpoint-path">/api/chat/history</span>
-            <span class="endpoint-desc">Retrieve stored conversation history</span>
-          </div>
-          <div class="endpoint-body">
-            <button class="try-btn" onclick="runEndpoint('chat-history',this)">â–¶ Run</button>
-            <div class="response-preview" id="res-chat-history"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="tab-pane" id="api-tab-playground">
-      <div class="card">
-        <div class="card-header"><span class="card-title">ª Live API Playground</span></div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.25rem">
-          <div>
-            <div style="margin-bottom:.75rem">
-              <label style="font-size:.75rem;color:var(--ink-soft);font-weight:600;display:block;margin-bottom:.4rem">Endpoint</label>
-              <select id="pgEndpoint" style="width:100%;padding:.55rem .75rem;border:1px solid var(--cream-border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.82rem;background:var(--cream)">
-                <option value="status">GET /api/status</option>
-                <option value="wealth-summary">GET /api/wealth/summary</option>
-                <option value="market-deposits">GET /api/market/deposits</option>
-                <option value="market-stocks">GET /api/market/stocks</option>
-                <option value="market-crypto">GET /api/market/crypto</option>
-                <option value="ai-dashboard">POST /api/ai/dashboard</option>
-                <option value="chat">POST /api/chat</option>
-              </select>
-            </div>
-            <div style="margin-bottom:.75rem">
-              <label style="font-size:.75rem;color:var(--ink-soft);font-weight:600;display:block;margin-bottom:.4rem">Request Body (JSON)</label>
-              <textarea id="pgBody" style="width:100%;min-height:120px;border:1px solid var(--cream-border);border-radius:8px;padding:.65rem;font-family:'DM Mono',monospace;font-size:.73rem;background:var(--cream);resize:vertical">{"question": "What is my biggest financial risk?"}</textarea>
-            </div>
-            <button onclick="runPlayground()" style="padding:.6rem 1.2rem;background:var(--ink);color:#fff;border:none;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">â–¶ Send Request</button>
-          </div>
-          <div>
-            <label style="font-size:.75rem;color:var(--ink-soft);font-weight:600;display:block;margin-bottom:.4rem">Response</label>
-            <div id="pgResponse" class="response-preview show" style="min-height:200px;display:block;font-size:.7rem">// Response will appear here…</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="tab-pane" id="api-tab-schema">
+  <div class="tab-pane" id="api-tab-playground">
+    <div class="card">
+      <div class="card-header"><span class="card-title">&#129514; Live API Playground</span></div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.25rem">
-        <div class="card">
-          <div class="card-header"><span class="card-title">„ï¸ users</span></div>
-          <div class="code-block">CREATE TABLE users (
-  id       INTEGER PRIMARY KEY,
-  email    TEXT UNIQUE NOT NULL,
+        <div>
+          <div style="margin-bottom:.75rem">
+            <label style="font-size:.75rem;color:var(--ink-soft);font-weight:600;display:block;margin-bottom:.4rem">Endpoint</label>
+            <select id="pgEndpoint" style="width:100%;padding:.55rem .75rem;border:1px solid var(--cream-border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.82rem;background:var(--cream)">
+              <option value="status">GET /api/status</option>
+              <option value="wealth-summary">GET /api/wealth/summary</option>
+              <option value="market-deposits">GET /api/market/deposits</option>
+              <option value="market-stocks">GET /api/market/stocks</option>
+              <option value="market-crypto">GET /api/market/crypto</option>
+              <option value="ai-dashboard">POST /api/ai/dashboard</option>
+              <option value="chat">POST /api/chat</option>
+            </select>
+          </div>
+          <div style="margin-bottom:.75rem">
+            <label style="font-size:.75rem;color:var(--ink-soft);font-weight:600;display:block;margin-bottom:.4rem">Request Body (JSON)</label>
+            <textarea id="pgBody" style="width:100%;min-height:120px;border:1px solid var(--cream-border);border-radius:8px;padding:.65rem;font-family:'DM Mono',monospace;font-size:.73rem;background:var(--cream);resize:vertical">{"question": "What is my biggest financial risk?"}</textarea>
+          </div>
+          <button onclick="runPlayground()" style="padding:.6rem 1.2rem;background:var(--ink);color:#fff;border:none;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif">&#9654; Send Request</button>
+        </div>
+        <div>
+          <label style="font-size:.75rem;color:var(--ink-soft);font-weight:600;display:block;margin-bottom:.4rem">Response</label>
+          <div id="pgResponse" class="response-preview show" style="min-height:200px;display:block;font-size:.7rem">// Response will appear here&hellip;</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="tab-pane" id="api-tab-schema">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.25rem">
+      <div class="card"><div class="card-header"><span class="card-title">&#128451;&#65039; users</span></div><div class="code-block">CREATE TABLE users (
+  id INTEGER PRIMARY KEY,
+  email TEXT UNIQUE NOT NULL,
   password TEXT NOT NULL,
-  name     TEXT NOT NULL,
-  lang     TEXT DEFAULT 'es',
+  name TEXT NOT NULL,
+  lang TEXT DEFAULT 'es',
   currency TEXT DEFAULT 'MXN',
-  created  TEXT
-);</div>
-        </div>
-        <div class="card">
-          <div class="card-header"><span class="card-title">„ï¸ assets</span></div>
-          <div class="code-block">CREATE TABLE assets (
-  id        INTEGER PRIMARY KEY,
-  user_id   INTEGER NOT NULL,
-  name      TEXT NOT NULL,
-  type      TEXT NOT NULL,
+  created TEXT
+);</div></div>
+      <div class="card"><div class="card-header"><span class="card-title">&#128451;&#65039; assets</span></div><div class="code-block">CREATE TABLE assets (
+  id INTEGER PRIMARY KEY,
+  user_id INTEGER NOT NULL,
+  name TEXT NOT NULL,
+  type TEXT NOT NULL,
   value_mxn REAL NOT NULL,
-  currency  TEXT DEFAULT 'MXN',
-  note      TEXT,
-  created   TEXT
-);</div>
-        </div>
-        <div class="card">
-          <div class="card-header"><span class="card-title">„ï¸ chat_history</span></div>
-          <div class="code-block">CREATE TABLE chat_history (
-  id         INTEGER PRIMARY KEY,
-  user_id    INTEGER NOT NULL,
-  question   TEXT NOT NULL,
-  answer     TEXT NOT NULL,
+  currency TEXT DEFAULT 'MXN',
+  note TEXT,
+  created TEXT
+);</div></div>
+      <div class="card"><div class="card-header"><span class="card-title">&#128451;&#65039; chat_history</span></div><div class="code-block">CREATE TABLE chat_history (
+  id INTEGER PRIMARY KEY,
+  user_id INTEGER NOT NULL,
+  question TEXT NOT NULL,
+  answer TEXT NOT NULL,
   created_at TEXT,
   FOREIGN KEY(user_id)
     REFERENCES users(id)
-);</div>
-        </div>
-        <div class="card">
-          <div class="card-header"><span class="card-title">„ï¸ goals</span></div>
-          <div class="code-block">CREATE TABLE goals (
-  id         INTEGER PRIMARY KEY,
-  user_id    INTEGER NOT NULL,
-  name       TEXT NOT NULL,
+);</div></div>
+      <div class="card"><div class="card-header"><span class="card-title">&#128451;&#65039; goals</span></div><div class="code-block">CREATE TABLE goals (
+  id INTEGER PRIMARY KEY,
+  user_id INTEGER NOT NULL,
+  name TEXT NOT NULL,
   target_mxn REAL NOT NULL,
-  saved_mxn  REAL DEFAULT 0,
-  deadline   TEXT,
-  created    TEXT
-);</div>
-        </div>
-      </div>
+  saved_mxn REAL DEFAULT 0,
+  deadline TEXT,
+  created TEXT
+);</div></div>
     </div>
+  </div>
+</div><!-- /page-api -->
 
-  </div><!-- /page-api -->
-
-</main><!-- /main -->
+</main>
 
 <script>
-// â”€â”€ NAV â”€â”€
-function showPage(id){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.getElementById('page-'+id).classList.add('active');
-  event.currentTarget.classList.add('active');
-  if(id==='chat') setTimeout(()=>document.getElementById('chatInput').focus(),300);
+// ── API KEY MANAGEMENT ──
+let anthropicKey = '';
+
+function saveApiKey() {
+  const val = document.getElementById('apiKeyInput').value.trim();
+  if (!val) return;
+  anthropicKey = val;
+  document.getElementById('apiKeyStatus').style.display = 'inline';
+  setTimeout(() => { document.getElementById('apiKeyBanner').style.display = 'none'; }, 1200);
+}
+
+function saveChatApiKey() {
+  const val = document.getElementById('chatApiKeyInput').value.trim();
+  if (!val) return;
+  anthropicKey = val;
+  document.getElementById('chatKeyStatus').style.display = 'inline';
+  document.getElementById('chatStatusPill').innerHTML = '<span class="pill-dot"></span>AI Active';
+  document.getElementById('chatStatusPill').className = 'pill pill-green';
+  setTimeout(() => { document.getElementById('chatApiKeyBar').style.display = 'none'; }, 1500);
+}
+
+// ── NAV ──
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  if (el) el.classList.add('active');
+  if (id === 'chat') setTimeout(() => document.getElementById('chatInput').focus(), 300);
   document.getElementById('sidebar').classList.remove('open');
 }
-function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open')}
 
-// â”€â”€ CHARTS â”€â”€
+function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
 
-// -- LIVE CRYPTO PRICES --
-async function loadLiveCrypto() {
-  try {
-    const res = await fetch('/api/market/crypto?ids=bitcoin,ethereum,solana,xrp');
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const data = await res.json();
-    if (data.error) throw new Error(data.error);
-    const map = {
-      bitcoin:  ['btcPrice','btcChange'],
-      ethereum: ['ethPrice','ethChange'],
-      solana:   ['solPrice','solChange'],
-      xrp:      ['xrpPrice','xrpChange']
-    };
-    for (const [id, [priceId, changeId]] of Object.entries(map)) {
-      const coin = data[id];
-      if (!coin) continue;
-      const priceEl  = document.getElementById(priceId);
-      const changeEl = document.getElementById(changeId);
-      if (priceEl) {
-        const mxn = coin.mxn || (coin.usd ? coin.usd * 17.15 : null);
-        priceEl.textContent = mxn
-          ? '$' + mxn.toLocaleString('en-MX', {maximumFractionDigits: 0}) + ' MXN'
-          : '--';
-      }
-      if (changeEl) {
-        const ch = coin.usd_24h_change;
-        if (ch != null) {
-          changeEl.textContent = (ch >= 0 ? '\u25b2 +' : '\u25bc ') + ch.toFixed(2) + '% today';
-          changeEl.className   = 'market-change ' + (ch >= 0 ? 'up' : 'down');
-        }
-      }
-    }
-  } catch(e) {
-    console.warn('Crypto price fetch failed:', e.message);
-    ['btcPrice','ethPrice','solPrice','xrpPrice'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el && (el.textContent === '\u2026' || el.textContent === '')) el.textContent = '--';
-    });
-  }
-}
-
-function buildBarChart(){
-  const data=[
+// ── CHARTS ──
+function buildBarChart() {
+  const data = [
     {m:'Jan',inc:48,exp:17},{m:'Feb',inc:50,exp:19},{m:'Mar',inc:51,exp:16},
     {m:'Apr',inc:52,exp:18},{m:'May',inc:52,exp:19},{m:'Jun',inc:52,exp:18.5}
   ];
-  const max=52;
-  const c=document.getElementById('incomeChart');
-  c.innerHTML='';
-  data.forEach(d=>{
-    const col=document.createElement('div');
-    col.className='bar-col';
-    const incH=Math.round((d.inc/max)*100);
-    const expH=Math.round((d.exp/max)*100);
-    col.innerHTML=`<div class="bar-stack">
+  const max = 52;
+  const c = document.getElementById('incomeChart');
+  c.innerHTML = '';
+  data.forEach(d => {
+    const col = document.createElement('div');
+    col.className = 'bar-col';
+    const incH = Math.round((d.inc / max) * 100);
+    const expH = Math.round((d.exp / max) * 100);
+    col.innerHTML = `<div class="bar-stack">
       <div class="bar income" style="height:${incH}%" title="Income: $${d.inc}K"></div>
       <div class="bar expense" style="height:${expH}%;margin-bottom:2px" title="Expenses: $${d.exp}K"></div>
     </div><div class="bar-lbl">${d.m}</div>`;
     c.appendChild(col);
   });
 }
-function buildDonut(){
-  const slices=[
+
+function buildDonut() {
+  const slices = [
     {label:'Cash/CEDE',pct:38,color:'#1D9E75'},
     {label:'Stocks',pct:33,color:'#185FA5'},
     {label:'Crypto',pct:17,color:'#5B47C2'},
     {label:'FIBRA',pct:12,color:'#C9A84C'}
   ];
-  let offset=0;
-  const r=15.9155,cx=21,cy=21,radius=15.9155;
-  let paths='<circle cx="21" cy="21" r="15.9155" fill="transparent" stroke="#F2EFE6" stroke-width="3"/>';
-  slices.forEach(s=>{
-    const dash=s.pct/100*100;
-    const gap=100-dash;
-    paths+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="transparent" stroke="${s.color}" stroke-width="3.5" stroke-dasharray="${dash} ${gap}" stroke-dashoffset="${-offset}" stroke-linecap="round" transform="rotate(-90 21 21)"/>`;
-    offset+=dash;
+  let offset = 0;
+  const r = 15.9155, cx = 21, cy = 21;
+  let paths = '<circle cx="21" cy="21" r="15.9155" fill="transparent" stroke="#F2EFE6" stroke-width="3"/>';
+  slices.forEach(s => {
+    const dash = s.pct / 100 * 100;
+    const gap = 100 - dash;
+    paths += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="transparent" stroke="${s.color}" stroke-width="3.5" stroke-dasharray="${dash} ${gap}" stroke-dashoffset="${-offset}" stroke-linecap="round" transform="rotate(-90 21 21)"/>`;
+    offset += dash;
   });
-  document.getElementById('donutChart').innerHTML=paths;
-  const leg=document.getElementById('donutLegend');
-  leg.innerHTML=slices.map(s=>`<div class="alloc-row"><div class="alloc-dot" style="background:${s.color}"></div><span class="alloc-name">${s.label}</span><span class="alloc-pct">${s.pct}%</span></div>`).join('');
+  document.getElementById('donutChart').innerHTML = paths;
+  const leg = document.getElementById('donutLegend');
+  leg.innerHTML = slices.map(s => `<div class="alloc-row"><div class="alloc-dot" style="background:${s.color}"></div><span class="alloc-name">${s.label}</span><span class="alloc-pct">${s.pct}%</span></div>`).join('');
 }
 
-// â”€â”€ SUGGESTIONS & QUICK CHIPS â”€â”€
-const suggestions=[
+// ── SUGGESTIONS & QUICK CHIPS ──
+const suggestions = [
   {cat:'Portfolio',q:'What is my biggest financial risk right now?'},
   {cat:'CEDE',q:'Should I ladder my CEDEs across different terms?'},
   {cat:'Crypto',q:'Is 17% crypto too much for my risk profile?'},
@@ -935,212 +825,212 @@ const suggestions=[
   {cat:'Diversification',q:'Should I add bonds to my portfolio?'},
   {cat:'FIBRA',q:'Is FUNO11 a good FIBRA to hold long-term?'},
 ];
-const quickChipTexts=[
-  'Biggest risk?','CEDE vs crypto?','Reach $1M faster?','Best bank rate now?','Cut expenses by 10%?'
-];
-function buildSuggestions(){
-  document.getElementById('suggestionsList').innerHTML=
-    suggestions.map(s=>`<div class="suggestion-chip" onclick="useSuggestion('${s.q.replace(/'/g,"\\'")}')"><div class="chip-category">${s.cat}</div>${s.q}</div>`).join('');
-  document.getElementById('quickChips').innerHTML=
-    quickChipTexts.map(t=>`<div class="q-chip" onclick="useSuggestion('${t.replace(/'/g,"\\'")}')"><span>${t}</span></div>`).join('');
+const quickChipTexts = ['Biggest risk?','CEDE vs crypto?','Reach $1M faster?','Best bank rate now?','Cut expenses by 10%?'];
+
+function buildSuggestions() {
+  document.getElementById('suggestionsList').innerHTML =
+    suggestions.map(s => `<div class="suggestion-chip" onclick="useSuggestion('${s.q.replace(/'/g,"\\'")}')"><div class="chip-category">${s.cat}</div>${s.q}</div>`).join('');
+  document.getElementById('quickChips').innerHTML =
+    quickChipTexts.map(t => `<div class="q-chip" onclick="useSuggestion('${t.replace(/'/g,"\\'")}')"><span>${t}</span></div>`).join('');
 }
-function useSuggestion(q){
-  document.getElementById('chatInput').value=q;
+
+function useSuggestion(q) {
+  document.getElementById('chatInput').value = q;
   sendChat();
 }
 
-// â”€â”€ CHAT â”€â”€
-const chatHistory=[];
-const systemPrompt=`You are WealthLens AI, a financial advisor for a Mexican user. Portfolio context:
+// ── CHAT ──
+const chatHistory = [];
+const systemPrompt = `You are WealthLens AI, a financial advisor for a Mexican user. Portfolio context:
 - Total assets: $847,000 MXN
 - Breakdown: 38% Cash/CEDE, 33% Mexican & US stocks (AMXL.MX, SPY, QQQ), 17% Crypto (BTC, ETH), 12% FIBRA (FUNO11)
 - Monthly income: $52,000 MXN. Monthly expenses: $18,500 MXN. Savings rate: 34%.
-- Top CEDE rate: Banregio 12.10% APR, 28 días.
+- Top CEDE rate: Banregio 12.10% APR, 28 dias.
 - Banxico TIIE rate: ~10.5% base.
 - Active goals: Emergency fund (60% complete), Retirement fund (15% complete).
 - User speaks English and Spanish.
 Give personalized, specific, actionable advice. Reference their actual numbers. Be warm but direct. Use bullet points sparingly. Keep answers under 180 words. If asked in Spanish, reply in Spanish.`;
 
-async function sendChat(){
-  const input=document.getElementById('chatInput');
-  const q=input.value.trim();
-  if(!q)return;
-  input.value='';
-  input.style.height='auto';
-  document.getElementById('sendBtn').disabled=true;
-  appendMsg('user',q);
-  chatHistory.push({role:'user',content:q});
-  const typingId=appendTyping();
-  try{
-    const res=await fetch('/api/chat',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({question:q})
-    });
-    const data=await res.json();
-    removeTyping(typingId);
-    if(!data.ok){
-      appendMsg('ai','⚠️ AI advisor error: '+(data.error||'The AI could not generate a reply. Ensure GROQ_API_KEY is set in your Render Environment Variables.'));
-    } else {
-      const answer=data.answer||'Sorry, I could not generate a response.';
-      appendMsg('ai',answer);
-      chatHistory.push({role:'assistant',content:answer});
-    }
-  }catch(e){
-    removeTyping(typingId);
-    appendMsg('ai','⚠️ Could not connect to the server. Make sure your app is running on Render and GROQ_API_KEY is set in Environment Variables. Error: '+e.message);
+async function sendChat() {
+  const input = document.getElementById('chatInput');
+  const q = input.value.trim();
+  if (!q) return;
+
+  if (!anthropicKey) {
+    appendMsg('ai', '&#9888;&#65039; Please enter your Anthropic API key above to enable AI chat.');
+    return;
   }
-  document.getElementById('sendBtn').disabled=false;
+
+  input.value = '';
+  input.style.height = 'auto';
+  document.getElementById('sendBtn').disabled = true;
+  appendMsg('user', q);
+  chatHistory.push({role:'user',content:q});
+  const typingId = appendTyping();
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': anthropicKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: systemPrompt,
+        messages: chatHistory
+      })
+    });
+    const data = await res.json();
+    removeTyping(typingId);
+    if (data.error) {
+      appendMsg('ai', '&#9888;&#65039; API error: ' + (data.error.message || JSON.stringify(data.error)));
+    } else {
+      const answer = data.content?.[0]?.text || "Sorry, I couldn't generate a response. Please try again.";
+      appendMsg('ai', answer);
+      chatHistory.push({role:'assistant', content:answer});
+    }
+  } catch(e) {
+    removeTyping(typingId);
+    appendMsg('ai', '&#9888;&#65039; Connection error: ' + e.message + '. Make sure your API key is correct and you have network access.');
+  }
+  document.getElementById('sendBtn').disabled = false;
 }
-function appendMsg(role,text){
-  const msgs=document.getElementById('chatMessages');
-  const div=document.createElement('div');
-  div.className=`chat-msg ${role}`;
-  const now=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-  const formatted=text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
-  div.innerHTML=role==='user'
-    ?`<div><div class="msg-bubble user-bubble">${formatted}</div><div class="msg-time">${now}</div></div><div class="msg-avatar user-avatar-chat">N</div>`
-    :`<div class="msg-avatar ai-avatar">W</div><div><div class="msg-bubble ai-bubble">${formatted}</div><div class="msg-time">${now}</div></div>`;
+
+function appendMsg(role, text) {
+  const msgs = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = `chat-msg ${role}`;
+  const now = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+  const formatted = text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+  div.innerHTML = role === 'user'
+    ? `<div><div class="msg-bubble user-bubble">${formatted}</div><div class="msg-time">${now}</div></div><div class="msg-avatar user-avatar-chat">N</div>`
+    : `<div class="msg-avatar ai-avatar">W</div><div><div class="msg-bubble ai-bubble">${formatted}</div><div class="msg-time">${now}</div></div>`;
   msgs.appendChild(div);
-  msgs.scrollTop=msgs.scrollHeight;
+  msgs.scrollTop = msgs.scrollHeight;
   return div;
 }
-let typingCounter=0;
-function appendTyping(){
-  const id='typing-'+(++typingCounter);
-  const msgs=document.getElementById('chatMessages');
-  const div=document.createElement('div');
-  div.className='chat-msg';
-  div.id=id;
-  div.innerHTML=`<div class="msg-avatar ai-avatar">W</div><div class="msg-bubble ai-bubble"><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`;
+
+let typingCounter = 0;
+function appendTyping() {
+  const id = 'typing-' + (++typingCounter);
+  const msgs = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = 'chat-msg';
+  div.id = id;
+  div.innerHTML = `<div class="msg-avatar ai-avatar">W</div><div class="msg-bubble ai-bubble"><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`;
   msgs.appendChild(div);
-  msgs.scrollTop=msgs.scrollHeight;
+  msgs.scrollTop = msgs.scrollHeight;
   return id;
 }
-function removeTyping(id){const el=document.getElementById(id);if(el)el.remove();}
-function handleChatKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();}}
-function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,120)+'px';}
+function removeTyping(id) { const el = document.getElementById(id); if(el) el.remove(); }
+function handleChatKey(e) { if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); } }
+function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 120) + 'px'; }
 
-// â”€â”€ AI ANALYSIS â”€â”€
-async function generateAIAnalysis(){
-  document.getElementById('analysisLoading').style.display='block';
-  document.getElementById('analysisContent').style.opacity='.4';
-  try{
-    const res=await fetch('/api/ai/dashboard',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({prompt:'Generate 4 insights and 4 recommendations based on my portfolio.'})
+// ── AI ANALYSIS ──
+async function generateAIAnalysis() {
+  if (!anthropicKey) {
+    alert('Please enter your Anthropic API key in the AI Analysis page to enable this feature.');
+    return;
+  }
+  document.getElementById('analysisLoading').style.display = 'block';
+  document.getElementById('analysisContent').style.opacity = '.4';
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': anthropicKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: 'You are a financial analyst. Return ONLY valid JSON, no markdown, no backticks. Analyze the given portfolio and return this exact structure: {"health_score": number 0-100, "health_label": "string", "insights": [{"icon":"emoji","title":"string","text":"string","color":"#hexcolor"}], "recommendations":[{"title":"string","text":"string","impact":"high|medium|low"}]}',
+        messages: [{role:'user',content:'Portfolio: $847K total assets. 38% CEDE (Banregio 12.1% APR, Inbursa 11.8%), 33% stocks (AMXL.MX +14.2%, SPY +8.7%, QQQ +11.2%), 17% crypto (BTC +23.1%, ETH -5.4%), 12% FIBRA (FUNO11 +9.3%). Income $52K/mo, expenses $18.5K/mo, savings rate 34%. Emergency fund 60% funded. Banxico TIIE 10.5%. Generate 4 insights and 4 recommendations.'}]
+      })
     });
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    const data=await res.json();
-    if(!data.ok) throw new Error(data.error||'AI analysis failed');
-    const d=data.dashboard;
-    // Map backend response to applyAnalysis format
-    const report={
-      health_score: d.health_score||72,
-      health_label: d.health_label||'Good',
-      insights: (d.insights||[]).map(ins=>({
-        icon: ins.type==='positive'?'✅':ins.type==='warning'?'⚠️':'💡',
-        title: ins.title,
-        text: ins.body,
-        color: ins.type==='positive'?'var(--green)':ins.type==='warning'?'var(--red)':'var(--blue)'
-      })),
-      recommendations: (d.recommendations||[]).map(rec=>({
-        title: rec.title,
-        text: rec.detail,
-        impact: rec.impact||'medium'
-      }))
-    };
-    applyAnalysis(report);
-  }catch(e){
-    // fallback
-    applyAnalysis({
-      health_score:72,health_label:'Good â€” Room to optimize',
-      insights:[
-        {icon:'âœ…',title:'Strong Savings Rate',text:'Your 34% savings rate is well above the 20% benchmark, building wealth consistently every month.',color:'var(--gold)'},
-        {icon:'âš ï¸',title:'Crypto Overweight',text:'At 17%, crypto exposure exceeds the 10% max for a balanced risk profile. ETH\'s -5.4% is a warning sign.',color:'var(--red)'},
-        {icon:'&#x1F4C8;',title:'CEDE Outperformance',text:'Banregio at 12.1% vs 10.5% TIIE means you\'re capturing a 160bps spread. Excellent fixed-income positioning.',color:'var(--blue)'},
-        {icon:'Ž',title:'Geographic Balance',text:'Your MX/US split is healthy. FUNO11 FIBRA adds real estate exposure without direct property management.',color:'var(--green)'}
-      ],
-      recommendations:[
-        {title:'Close Emergency Fund Gap',text:'You need $51K more to reach a 6-month emergency buffer. Redirect next 3 months of surplus savings before investing further.',impact:'high'},
-        {title:'Trim Crypto to 10%',text:'Rebalance ~$57K from crypto into CEDEs or bonds. Use BTC\'s recent rally as a tax-efficient exit point.',impact:'high'},
-        {title:'CEDE Laddering',text:'Split your $320K cash/CEDE across 28d/90d/180d tranches to capture higher rates while maintaining liquidity.',impact:'medium'},
-        {title:'Add Bond Exposure',text:'A 5â€“8% allocation to AGG or BND would reduce portfolio volatility without sacrificing much return.',impact:'low'}
-      ]
-    });
+    const data = await res.json();
+    const text = data.content?.[0]?.text || '{}';
+    const clean = text.replace(/```json|```/g, '').trim();
+    const report = JSON.parse(clean);
+
+    document.getElementById('healthScore').textContent = report.health_score || 72;
+    document.getElementById('healthBar').style.width = (report.health_score || 72) + '%';
+    document.getElementById('healthLabel').textContent = report.health_label || 'Good';
+
+    if (report.insights && report.insights.length) {
+      document.getElementById('insightGrid').innerHTML = report.insights.map(i =>
+        `<div class="insight-card" style="border-left-color:${i.color||'var(--gold)'}">
+          <div class="insight-icon">${i.icon||''}</div>
+          <div class="insight-title">${i.title}</div>
+          <div class="insight-text">${i.text}</div>
+        </div>`).join('');
+    }
+    if (report.recommendations && report.recommendations.length) {
+      document.getElementById('recList').innerHTML = report.recommendations.map((r,i) =>
+        `<div class="rec-item"><div class="rec-num">${i+1}</div><div class="rec-content">
+          <div class="rec-title">${r.title}</div>
+          <div class="rec-text">${r.text}</div>
+          <span class="rec-impact impact-${r.impact==='high'?'high':r.impact==='medium'?'med':'low'}">${r.impact==='high'?'High Impact':r.impact==='medium'?'Medium Impact':'Low Impact'}</span>
+        </div></div>`).join('');
+    }
+  } catch(e) {
+    alert('AI analysis error: ' + e.message);
   }
-  document.getElementById('analysisLoading').style.display='none';
-  document.getElementById('analysisContent').style.opacity='1';
-}
-function applyAnalysis(r){
-  document.getElementById('healthScore').textContent=r.health_score||72;
-  document.getElementById('healthBar').style.width=(r.health_score||72)+'%';
-  document.getElementById('healthLabel').textContent=r.health_label||'';
-  if(r.insights){
-    const colors=[,'var(--red)','var(--blue)','var(--green)'];
-    document.getElementById('insightGrid').innerHTML=r.insights.map((ins,i)=>`
-      <div class="insight-card" style="border-left-color:${ins.color||colors[i]||'var(--gold)'}">
-        <div class="insight-icon">${ins.icon||'¡'}</div>
-        <div class="insight-title">${ins.title}</div>
-        <div class="insight-text">${ins.text}</div>
-      </div>`).join('');
-  }
-  if(r.recommendations){
-    document.getElementById('recList').innerHTML=r.recommendations.map((rec,i)=>`
-      <div class="rec-item"><div class="rec-num">${i+1}</div><div class="rec-content">
-        <div class="rec-title">${rec.title}</div>
-        <div class="rec-text">${rec.text}</div>
-        <span class="rec-impact impact-${rec.impact==='high'?'high':rec.impact==='medium'?'med':'low'}">${rec.impact?.charAt(0).toUpperCase()+rec.impact?.slice(1)||'Medium'} Impact</span>
-      </div></div>`).join('');
-  }
+  document.getElementById('analysisLoading').style.display = 'none';
+  document.getElementById('analysisContent').style.opacity = '1';
 }
 
-// â”€â”€ API DEMO RESPONSES â”€â”€
-const demoResponses={
-  'status':{ok:true,version:'2.0.1',ai_configured:true,ai_model:'claude-sonnet-4-20250514',ai_provider:'Anthropic',features:['chat','ai_dashboard','market_data','goals','assets']},
-  'wealth-summary':{ok:true,wealth:{total_assets_mxn:847000,asset_count:8},goals:{total_goals:3,total_saved_mxn:285000,total_target_mxn:1100000},recent_30_days:{income_mxn:52000,expenses_mxn:18500}},
-  'market-deposits':{ok:true,rates:[{bank:'Banregio',rate:12.10,term:'28 días',type:'CEDE'},{bank:'Inbursa',rate:11.80,term:'90 días',type:'CEDE'},{bank:'Banbajío',rate:11.50,term:'180 días',type:'CEDE'}],source:'static_fallback',reference:'Banxico TIIE ~10.5%'},
-  'market-stocks':{ok:true,stocks:[{symbol:'AMXL.MX',price:17.82,change:2.4},{symbol:'SPY',price:541.30,change:0.8},{symbol:'QQQ',price:468.15,change:1.1}]},
-  'market-crypto':{ok:true,crypto:[{id:'bitcoin',symbol:'BTC',price:105240,change_24h:3.2},{id:'ethereum',symbol:'ETH',price:3812,change_24h:-1.1},{id:'solana',symbol:'SOL',price:178.50,change_24h:4.7}]},
-  'ai-dashboard':{ok:true,dashboard:{report_title:'Q2 2026 Financial Dashboard',health_score:72,kpis:[{label:'Net Worth',value:'$612K'},{label:'Savings Rate',value:'34%'}],insights:['Strong CEDE positioning at 12.1% APR','Crypto exposure slightly elevated at 17%']}},
-  'chat':{ok:true,answer:'Based on your $847K portfolio and 34% savings rate, your biggest risk is crypto concentration at 17%. With ETH down -5.4%, I recommend trimming to 10% and moving the surplus into a Banregio 28-day CEDE at 12.1% APR.',demo:false},
-  'chat-history':{ok:true,history:[{id:1,question:'What is my savings rate?',answer:'Your savings rate is 34% â€” excellent!',created_at:'2026-06-05'},{id:2,question:'Should I buy more BTC?',answer:'With 17% crypto exposure, I\'d hold off until you rebalance.',created_at:'2026-06-04'}]}
-};
-async function runEndpoint(id,btn){
-  const el=document.getElementById('res-'+id);
-  el.textContent='Loading…';
-  el.classList.add('show');
-  btn.disabled=true;
-  await new Promise(r=>setTimeout(r,600+Math.random()*400));
-  el.textContent=JSON.stringify(demoResponses[id]||{ok:true},null,2);
-  btn.disabled=false;
-}
-async function runPlayground(){
-  const id=document.getElementById('pgEndpoint').value;
-  const out=document.getElementById('pgResponse');
-  out.textContent='Running…';
-  await new Promise(r=>setTimeout(r,500+Math.random()*500));
-  out.textContent=JSON.stringify(demoResponses[id]||{ok:true},null,2);
-}
-function switchApiTab(id,btn){
-  document.querySelectorAll('#page-api .tab-pane').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('#page-api .tabs .tab-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('api-tab-'+id).classList.add('active');
+// ── API TAB SWITCHER ──
+function switchApiTab(id, btn) {
+  document.querySelectorAll('#page-api .tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('#page-api .tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('api-tab-' + id).classList.add('active');
   btn.classList.add('active');
 }
 
-// â”€â”€ INIT â”€â”€
-window.addEventListener('DOMContentLoaded',()=>{
-  buildBarChart();
-  buildDonut();
-  buildSuggestions();
-  loadLiveCrypto();
-  setInterval(loadLiveCrypto, 60000); // refresh every 60s
-});
-  // Keep Render server warm — ping every 4 minutes
-  setInterval(() => fetch('/ping').catch(() => {}), 4 * 60 * 1000);
+// ── DEMO ENDPOINT RESPONSES ──
+const demoResponses = {
+  'wealth-summary': {"ok":true,"data":{"total_assets":847000,"net_worth":612000,"monthly_income":52000,"monthly_expenses":18500,"savings_rate":0.34,"top_goal":"Emergency Fund (60%)"}},
+  'market-deposits': {"ok":true,"rates":[{"bank":"Banregio","rate":12.1,"term":"28d"},{"bank":"Inbursa","rate":11.8,"term":"90d"},{"bank":"Banbajio","rate":11.5,"term":"180d"}]},
+  'market-stocks': {"ok":true,"prices":{"AMXL.MX":17.82,"SPY":541.30,"QQQ":468.15}},
+  'market-crypto': {"ok":true,"prices":{"bitcoin":{"usd":105240,"mxn":1829000,"change_24h":3.2},"ethereum":{"usd":3812,"mxn":66200,"change_24h":-1.1}}},
+  'ai-dashboard': {"ok":true,"health_score":72,"health_label":"Good — Room to optimize","demo":true},
+  'chat': {"ok":true,"answer":"Based on your portfolio analysis, your crypto concentration at 16.8% is the most significant near-term risk. Consider rebalancing if BTC/ETH drops significantly.","demo":true},
+  'status': {"ok":true,"version":"1.0.0","ai_gateway":"claude-sonnet","db":"wealthlens.db","uptime":"demo"},
+  'chat-history': {"ok":true,"messages":[],"count":0}
+};
+
+function runEndpoint(key, btn) {
+  const el = document.getElementById('res-' + key);
+  el.classList.add('show');
+  el.textContent = 'Loading...';
+  btn.disabled = true;
+  setTimeout(() => {
+    el.textContent = JSON.stringify(demoResponses[key] || {ok:true,demo:true}, null, 2);
+    btn.disabled = false;
+  }, 600);
+}
+
+function runPlayground() {
+  const key = document.getElementById('pgEndpoint').value;
+  const el = document.getElementById('pgResponse');
+  el.textContent = 'Sending request...';
+  setTimeout(() => {
+    el.textContent = JSON.stringify(demoResponses[key] || {ok:true,demo:true}, null, 2);
+  }, 700);
+}
+
+// ── INIT ──
+buildBarChart();
+buildDonut();
+buildSuggestions();
 </script>
 </body>
 </html>
-
