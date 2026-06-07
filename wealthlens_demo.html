@@ -839,6 +839,48 @@ function showPage(id){
 function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open')}
 
 // â”€â”€ CHARTS â”€â”€
+
+// -- LIVE CRYPTO PRICES --
+async function loadLiveCrypto() {
+  try {
+    const res = await fetch('/api/market/crypto?ids=bitcoin,ethereum,solana,xrp');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    const map = {
+      bitcoin:  ['btcPrice','btcChange'],
+      ethereum: ['ethPrice','ethChange'],
+      solana:   ['solPrice','solChange'],
+      xrp:      ['xrpPrice','xrpChange']
+    };
+    for (const [id, [priceId, changeId]] of Object.entries(map)) {
+      const coin = data[id];
+      if (!coin) continue;
+      const priceEl  = document.getElementById(priceId);
+      const changeEl = document.getElementById(changeId);
+      if (priceEl) {
+        const mxn = coin.mxn || (coin.usd ? coin.usd * 17.15 : null);
+        priceEl.textContent = mxn
+          ? '$' + mxn.toLocaleString('en-MX', {maximumFractionDigits: 0}) + ' MXN'
+          : '--';
+      }
+      if (changeEl) {
+        const ch = coin.usd_24h_change;
+        if (ch != null) {
+          changeEl.textContent = (ch >= 0 ? '\u25b2 +' : '\u25bc ') + ch.toFixed(2) + '% today';
+          changeEl.className   = 'market-change ' + (ch >= 0 ? 'up' : 'down');
+        }
+      }
+    }
+  } catch(e) {
+    console.warn('Crypto price fetch failed:', e.message);
+    ['btcPrice','ethPrice','solPrice','xrpPrice'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el && (el.textContent === '\u2026' || el.textContent === '')) el.textContent = '--';
+    });
+  }
+}
+
 function buildBarChart(){
   const data=[
     {m:'Jan',inc:48,exp:17},{m:'Feb',inc:50,exp:19},{m:'Mar',inc:51,exp:16},
@@ -984,24 +1026,31 @@ async function generateAIAnalysis(){
   document.getElementById('analysisLoading').style.display='block';
   document.getElementById('analysisContent').style.opacity='.4';
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
+    const res=await fetch('/api/ai/dashboard',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:1000,
-        system:'You are a financial analyst. Return ONLY valid JSON, no markdown, no backticks. Analyze the given portfolio and return this exact structure: {"health_score": number 0-100, "health_label": "string", "insights": [{"icon":"emoji","title":"string","text":"string","color":"#hexcolor"}], "recommendations":[{"title":"string","text":"string","impact":"high|medium|low"}]}',
-        messages:[{role:'user',content:'Portfolio: $847K total assets. 38% CEDE (Banregio 12.1% APR, Inbursa 11.8%), 33% stocks (AMXL.MX +14.2%, SPY +8.7%, QQQ +11.2%), 17% crypto (BTC +23.1%, ETH -5.4%), 12% FIBRA (FUNO11 +9.3%). Income $52K/mo, expenses $18.5K/mo, savings rate 34%. Emergency fund 60% funded. Banxico TIIE 10.5%. Generate 4 insights and 4 recommendations.'}]
-      })
+      body:JSON.stringify({prompt:'Generate 4 insights and 4 recommendations based on my portfolio.'})
     });
+    if(!res.ok) throw new Error('HTTP '+res.status);
     const data=await res.json();
-          if (!data.ok) {
-            appendMessage('advisor', '⚠️ ' + (data.error || 'Could not reach the server. Please try again.'));
-            return;
-          }
-    const text=data.content?.[0]?.text||'{}';
-    const clean=text.replace(/```json|```/g,'').trim();
-    const report=JSON.parse(clean);
+    if(!data.ok) throw new Error(data.error||'AI analysis failed');
+    const d=data.dashboard;
+    // Map backend response to applyAnalysis format
+    const report={
+      health_score: d.health_score||72,
+      health_label: d.health_label||'Good',
+      insights: (d.insights||[]).map(ins=>({
+        icon: ins.type==='positive'?'✅':ins.type==='warning'?'⚠️':'💡',
+        title: ins.title,
+        text: ins.body,
+        color: ins.type==='positive'?'var(--green)':ins.type==='warning'?'var(--red)':'var(--blue)'
+      })),
+      recommendations: (d.recommendations||[]).map(rec=>({
+        title: rec.title,
+        text: rec.detail,
+        impact: rec.impact||'medium'
+      }))
+    };
     applyAnalysis(report);
   }catch(e){
     // fallback
