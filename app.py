@@ -857,13 +857,10 @@ def api_chat_history():
     ).fetchall()
     return jsonify({'ok': True, 'history': [dict(r) for r in rows]})
 
-import os, requests as req
-from flask import request, jsonify
+# ─── ANTHROPIC AI CHAT PROXY ──────────────────────────────────────────────────
+# Key is read inside the function so Render env vars are always picked up live.
 
-ANTHROPIC_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
-
-PORTFOLIO_SYSTEM = """
-You are WealthLens AI Advisor, a personal finance expert for Mexican investors.
+PORTFOLIO_SYSTEM = """You are WealthLens AI Advisor, a personal finance expert for Mexican investors.
 You are speaking with Natarajan Demo, a premium user.
 
 PORTFOLIO SNAPSHOT (June 2026):
@@ -871,55 +868,82 @@ PORTFOLIO SNAPSHOT (June 2026):
 - Savings Rate: 34% (above average)
 - Monthly Income: $38,500 MXN
 - Monthly Expenses: $25,400 MXN
+- Net Monthly Savings: $13,100 MXN
 
 HOLDINGS:
-1. Banregio CEDE 28d: $180,000 MXN — 11.50% APR
-2. Inbursa CEDE 91d: $116,000 MXN — 10.80% APR
-3. AMXL.MX: $145,000 MXN — 2,850 shares
-4. SPY: $118,000 MXN — 22 shares
-5. Bitcoin: $95,000 MXN — 0.0934 BTC
-6. Ethereum: $49,000 MXN — 1.42 ETH
-7. Cash (BBVA): $144,000 MXN — 3.1% savings rate
+1. Banregio CEDE 28d: $180,000 MXN — 11.50% APR (matures Jun 30)
+2. Inbursa CEDE 91d:  $116,000 MXN — 10.80% APR (matures Sep 1)
+3. AMXL.MX:          $145,000 MXN — 2,850 shares @ $50.87
+4. SPY:              $118,000 MXN — 22 shares @ $5,360
+5. Bitcoin:          $95,000 MXN  — 0.0934 BTC
+6. Ethereum:         $49,000 MXN  — 1.42 ETH
+7. Cash (BBVA):      $144,000 MXN — 3.1% savings rate
 
-CEDE RATES: Banregio 11.5%, Inbursa 10.8%, Banbajío 10.25%, HSBC 9.75%, Santander 9.5%
+ALLOCATION: CEDEs 35% | Stocks 31% | Crypto 17% | Cash 17%
 
-Respond in a friendly, expert tone. Be specific with numbers. Answer in the same
-language the user writes (Spanish or English). Keep responses concise (2-4 paragraphs).
-""".strip()
+LIVE CEDE RATES: Banregio 11.5%, Inbursa 10.8%, Banbajio 10.25%, HSBC 9.75%, Santander 9.5%
+
+KEY RISKS: Crypto overweight (17% vs recommended 10%), idle cash earning only 3.1%.
+
+Respond in a friendly, expert tone. Be specific with portfolio numbers.
+Answer in the same language the user writes (Spanish or English).
+Keep responses concise but actionable — 2 to 4 paragraphs max."""
 
 
 @app.route("/api/ai/chat", methods=["POST"])
 def ai_chat_proxy():
-    """Secure proxy — API key stays server-side, never exposed to browser."""
-    if not ANTHROPIC_KEY:
-        return jsonify({"ok": False, "error": "ANTHROPIC_API_KEY not set on server"}), 500
+    """Secure Anthropic proxy — API key lives in Render env var, never sent to browser."""
+    import requests as _req
 
-    data = request.get_json(force=True) or {}
-    messages = data.get("messages", [])
-    if not messages:
-        return jsonify({"ok": False, "error": "No messages provided"}), 400
+    # Read key fresh every call so Render env var changes take effect immediately
+    anthropic_key = os.environ.get("ANTHROPIC_API_KEY", "").strip()
+    if not anthropic_key:
+        return jsonify({"ok": False, "error": "ANTHROPIC_API_KEY not configured on server. Add it in Render → Environment Variables."}), 500
+
+    data = request.get_json(force=True, silent=True) or {}
+    raw_messages = data.get("messages", [])
+
+    # Sanitise: keep only role + string content, enforce user/assistant alternation
+    clean = []
+    for m in raw_messages:
+        role    = str(m.get("role", "")).strip()
+        content = str(m.get("content", "")).strip()
+        if role in ("user", "assistant") and content:
+            # Skip consecutive same-role messages (Anthropic rejects them)
+            if clean and clean[-1]["role"] == role:
+                continue
+            clean.append({"role": role, "content": content})
+
+    # Must have at least one user message and start with user
+    if not clean or clean[0]["role"] != "user":
+        return jsonify({"ok": False, "error": "Conversation must start with a user message."}), 400
 
     try:
-        resp = req.post(
+        resp = _req.post(
             "https://api.anthropic.com/v1/messages",
             headers={
-                "x-api-key": ANTHROPIC_KEY,
-                "anthropic-version": "2023-06-01",
-                "Content-Type": "application/json",
+                "x-api-key":          anthropic_key,
+                "anthropic-version":  "2023-06-01",
+                "Content-Type":       "application/json",
             },
             json={
-                "model": "claude-sonnet-4-20250514",
+                "model":      "claude-haiku-4-5",   # fast + cheap; swap to claude-sonnet-4-5 for deeper answers
                 "max_tokens": 600,
-                "system": PORTFOLIO_SYSTEM,
-                "messages": messages,
+                "system":     PORTFOLIO_SYSTEM,
+                "messages":   clean,
             },
             timeout=30,
         )
-        resp.raise_for_status()
+
+        if not resp.ok:
+            # Surface the exact Anthropic error so debugging is easy
+            return jsonify({"ok": False, "error": f"Anthropic {resp.status_code}: {resp.text}"}), 502
+
         answer = resp.json()["content"][0]["text"]
         return jsonify({"ok": True, "answer": answer})
-    except req.exceptions.HTTPError as e:
-        return jsonify({"ok": False, "error": str(e)}), 502
+
+    except _req.exceptions.Timeout:
+        return jsonify({"ok": False, "error": "Request to Anthropic timed out — please try again."}), 504
     except Exception as e:
         return jsonify({"ok": False, "error": str(e)}), 500
 
